@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:threebotlogin_app/screens/ScanScreen.dart';
-import 'package:threebotlogin_app/screens/QrScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   final Widget homescreen;

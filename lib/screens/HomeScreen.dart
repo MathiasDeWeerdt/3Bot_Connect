@@ -13,18 +13,11 @@ class HomeScreen extends StatelessWidget {
           title: new Text('3Bot'),
         ),
         body: Center(
-          child: Column(
-            children: <Widget>[ RaisedButton(
+          child: RaisedButton(
             onPressed: () {
               Navigator.push(context,MaterialPageRoute(builder: (context) => ScanScreen()));
             },
             child: Text("Go to scanscreen"),
-          ), RaisedButton(
-            onPressed: () {
-              Navigator.push(context,MaterialPageRoute(builder: (context) => QrScreen()));
-            },
-            child: Text("Go to QR"),
-          ),],
           )
         ));
   }

@@ -1,4 +1,4 @@
-package com.example.threebotlogin_app;
+package org.jimber.threebotlogin;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

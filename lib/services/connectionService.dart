@@ -1,0 +1,22 @@
+import 'package:http/http.dart' as http;
+import 'package:threebotlogin_app/main.dart';
+import 'dart:convert';
+
+String apiurl = config.apiUrl;
+Map<String, String> requestHeaders = {
+       'Content-type': 'application/json'
+     };
+
+sendScannedFlag(String hash) async {
+  print('$apiurl/flag');
+  http.post('$apiurl/flag', body: json.encode({
+    'hash': hash
+  }), headers: requestHeaders).catchError((onError) => print(onError));
+}
+
+sendSignedHash( String hash, String signedHash) {
+  http.post('$apiurl/sign', body: json.encode({
+    'hash': hash,
+    'signedHash': signedHash
+  }), headers: requestHeaders).catchError((onError) => print(onError));
+}

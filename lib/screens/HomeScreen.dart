@@ -24,15 +24,7 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => ScanScreen()));
               },
               child: Text("Go to scanscreen"),
-            ),
-            RaisedButton(
-              onPressed: () {
-                signHash("hoi");
-                sendScannedFlag('hoi');
-              },
-              child: Text("ddd"),
-            ),
-            Text(config.apiUrl)
+            )
           ],
         )));
   }

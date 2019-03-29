@@ -25,6 +25,7 @@ dependencies:
   shared_preferences:
   flutter_sodium:
   http:
+  firebase_messaging:
 
 dev_dependencies:
   flutter_test:

@@ -7,10 +7,11 @@ Map<String, String> requestHeaders = {
        'Content-type': 'application/json'
      };
 
-sendScannedFlag(String hash) async {
+sendScannedFlag(String hash, String deviceId) async {
   print('$apiurl/flag');
   http.post('$apiurl/flag', body: json.encode({
-    'hash': hash
+    'hash': hash,
+    'deviceId': deviceId
   }), headers: requestHeaders).catchError((onError) => print(onError));
 }
 

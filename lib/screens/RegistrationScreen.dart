@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:threebotlogin_app/main.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:threebotlogin_app/screens/HomeScreen.Dart';
@@ -204,6 +205,7 @@ class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStat
   }
 
   Future onCodeRead(dynamic value) async {
+    HapticFeedback.mediumImpact();
     setState(() {
       qrData = value;
       helperText = "Choose new pin";

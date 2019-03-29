@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class PinField extends StatefulWidget {
   final Widget pinField;
   final int pinLength = 4;
   final callback;
-
   PinField({Key key, this.pinField, this.callback}) : super(key: key);
   _PinFieldState createState() => _PinFieldState();
 }
@@ -21,7 +21,7 @@ class _PinFieldState extends State<PinField> {
       height: size,
       width: size,
       decoration: BoxDecoration(color: Colors.black, shape: BoxShape.circle),
-      duration: Duration(milliseconds: 250),
+      duration: Duration(milliseconds: 100),
       curve: Curves.bounceInOut,
     );
   }
@@ -128,6 +128,7 @@ class _PinFieldState extends State<PinField> {
   }
 
   void onOk() {
+    HapticFeedback.mediumImpact();
     String pin = "";
     input.forEach((char) => pin += char);
     print(pin);
@@ -138,13 +139,15 @@ class _PinFieldState extends State<PinField> {
   }
 
   void onClear() {
+    HapticFeedback.mediumImpact();
     setState(() {
       input.removeLast();
     });
   }
 
-  void handleInput(String buttonText) {
+  void handleInput(String buttonText) async {
     if (input.length < widget.pinLength) {
+      HapticFeedback.lightImpact();
       setState(() {
         input.add(buttonText);
       });

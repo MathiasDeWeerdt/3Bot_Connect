@@ -6,12 +6,14 @@ List<CameraDescription> cameras;
 Config config;
 
 Future<void> main() async {
-
-
   config = new Config(
     apiUrl: 'http://192.168.1.85:5000/api'
   );
-  cameras = await availableCameras();
+  try {
+    cameras = await availableCameras();
+  } on QRReaderException catch (e) {
+    print(e.description);
+  }
   runApp(MyApp());
 }
 

@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:threebotlogin_app/config.dart';
 import 'package:threebotlogin_app/screens/HomeScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
-
 List<CameraDescription> cameras;
 Config config;
 
 Future<void> main() async {
+
+
   config = new Config(
     apiUrl: 'http://192.168.1.85:5000/api'
   );
-  try {
-    cameras = await availableCameras();
-  } on Exception catch (e) {
-    // logError(e.code, e.description);
-  }
+  cameras = await availableCameras();
   runApp(MyApp());
 }
 

@@ -8,6 +8,7 @@ import 'package:threebotlogin_app/widgets/PinField.dart';
 import 'package:threebotlogin_app/services/userService.dart';
 import 'package:threebotlogin_app/services/connectionService.dart';
 import 'package:threebotlogin_app/services/cryptoService.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 class ScanScreen extends StatefulWidget {
   final Widget scanScreen;
   ScanScreen({Key key, this.scanScreen}) : super(key: key);
@@ -23,12 +24,16 @@ class _ScanScreenState extends State<ScanScreen> with TickerProviderStateMixin {
   String qrData = '';
   String pin;
   String helperText = "In order to finish registration, scan QR code";
-
+  final FirebaseMessaging messaging = FirebaseMessaging();
+  String deviceId = '';
 
   @override
   void initState() {
     super.initState();
-
+    messaging.getToken().then((t) {
+      print(t);
+      deviceId = t;
+    });
     animationController = new AnimationController(
       duration: new Duration(seconds: 1),
       vsync: this,
@@ -194,11 +199,11 @@ class _ScanScreenState extends State<ScanScreen> with TickerProviderStateMixin {
       savePrivateKey(jsonDecode(qrData)['privateKey']);
       var signedHash = signHash(hash);
       sendSignedHash(hash, await signedHash);
-      Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen()));
+      Navigator.pop(context,MaterialPageRoute(builder: (context) => HomeScreen()));
     }
   }
 
-  void onCodeRead(dynamic value) {
+  Future onCodeRead(dynamic value) async {
     setState(() {
       qrData = value;
       helperText = "Choose new pin";
@@ -206,7 +211,7 @@ class _ScanScreenState extends State<ScanScreen> with TickerProviderStateMixin {
     animationController.stop();
     sliderAnimationController.forward();
     controller.stopScanning();
-    sendScannedFlag(jsonDecode(qrData)['hash']);
+    sendScannedFlag(jsonDecode(qrData)['hash'], deviceId);
 
   }
 

@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (pin == p) {
       print('pin OK');
       final hash = widget.message['hash'];
-      var signedHash = await signHash(hash);
+      var signedHash = await signHash(hash, await getPrivateKey());
       sendSignedHash(hash, signedHash);
       Navigator.pop(context,MaterialPageRoute(builder: (context) => HomeScreen()));
     } else {

@@ -196,9 +196,10 @@ class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStat
       });
     } else if (pin ==value) {
       var hash = jsonDecode(qrData)['hash'];
+      var privateKey = jsonDecode(qrData)['privateKey'];
       savePin(pin);
-      savePrivateKey(jsonDecode(qrData)['privateKey']);
-      var signedHash = signHash(hash);
+      savePrivateKey(privateKey);
+      var signedHash = signHash(hash, privateKey);
       sendSignedHash(hash, await signedHash);
       Navigator.pop(context,MaterialPageRoute(builder: (context) => HomeScreen()));
     }

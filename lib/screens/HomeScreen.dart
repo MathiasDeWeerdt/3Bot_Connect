@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:threebotlogin_app/screens/LoginScreen.dart';
-import 'package:threebotlogin_app/screens/ScanScreen.dart';
+import 'package:threebotlogin_app/screens/RegistrationScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             RaisedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ScanScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationScreen()));
               },
               child: Text("Go to scanscreen"),
             ),

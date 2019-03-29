@@ -9,13 +9,13 @@ import 'package:threebotlogin_app/services/userService.dart';
 import 'package:threebotlogin_app/services/connectionService.dart';
 import 'package:threebotlogin_app/services/cryptoService.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-class ScanScreen extends StatefulWidget {
-  final Widget scanScreen;
-  ScanScreen({Key key, this.scanScreen}) : super(key: key);
+class RegistrationScreen extends StatefulWidget {
+  final Widget registrationScreen;
+  RegistrationScreen({Key key, this.registrationScreen}) : super(key: key);
   _ScanScreenState createState() => _ScanScreenState();
 }
 
-class _ScanScreenState extends State<ScanScreen> with TickerProviderStateMixin {
+class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStateMixin {
   QRReaderController controller;
   AnimationController animationController;
   Animation<double> verticalPosition;

@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'package:threebotlogin_app/main.dart';
+import 'package:threebotlogin/main.dart';
 import 'dart:convert';
 
 String apiurl = config.apiUrl;

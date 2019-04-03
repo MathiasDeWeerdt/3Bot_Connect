@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:threebotlogin_app/config.dart';
-import 'package:threebotlogin_app/screens/HomeScreen.dart';
+import 'package:threebotlogin/config.dart';
+import 'package:threebotlogin/screens/RegistrationScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
+
 List<CameraDescription> cameras;
 Config config;
 
@@ -12,7 +13,7 @@ Future<void> main() async {
   try {
     cameras = await availableCameras();
   } on QRReaderException catch (e) {
-    print(e.description);
+    print(e);
   }
   runApp(MyApp());
 }
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xff0f296a),
         accentColor: Color(0xff16a085)
       ),
-      home: HomeScreen(),
+      home: RegistrationScreen(),
     );
   }
 }

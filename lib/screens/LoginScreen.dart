@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:threebotlogin_app/screens/HomeScreen.Dart';
-import 'package:threebotlogin_app/widgets/PinField.dart';
-import 'package:threebotlogin_app/services/userService.dart';
-import 'package:threebotlogin_app/services/cryptoService.dart';
-import 'package:threebotlogin_app/services/connectionService.dart';
+import 'package:threebotlogin/screens/HomeScreen.Dart';
+import 'package:threebotlogin/widgets/PinField.dart';
+import 'package:threebotlogin/services/userService.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
+import 'package:threebotlogin/services/connectionService.dart';
 
 class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
@@ -32,6 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
   pinFilledIn(p) async {
     print(widget.message);
     final pin = await getPin();
+    print(pin);
+    print(p);
     if (pin == p) {
       print('pin OK');
       final hash = widget.message['hash'];

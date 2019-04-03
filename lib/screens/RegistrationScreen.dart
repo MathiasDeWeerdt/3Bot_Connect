@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:threebotlogin_app/main.dart';
-import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
-import 'package:threebotlogin_app/screens/HomeScreen.Dart';
-import 'package:threebotlogin_app/widgets/PinField.dart';
-import 'package:threebotlogin_app/services/userService.dart';
-import 'package:threebotlogin_app/services/connectionService.dart';
-import 'package:threebotlogin_app/services/cryptoService.dart';
+import 'package:threebotlogin/screens/HomeScreen.Dart';
+import 'package:threebotlogin/widgets/PinField.dart';
+import 'package:threebotlogin/services/userService.dart';
+import 'package:threebotlogin/services/connectionService.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:threebotlogin/widgets/Scanner.dart';
+import 'package:threebotlogin/services/firebaseService.dart';
+
 class RegistrationScreen extends StatefulWidget {
   final Widget registrationScreen;
   RegistrationScreen({Key key, this.registrationScreen}) : super(key: key);
@@ -17,118 +17,32 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStateMixin {
-  QRReaderController controller;
-  AnimationController animationController;
-  Animation<double> verticalPosition;
+  final FirebaseMessaging messaging = FirebaseMessaging();
+  String helperText = "In order to finish registration, scan QR code";
   AnimationController sliderAnimationController;
   Animation<double> offset;
+  String deviceId = '';
   String qrData = '';
   String pin;
-  String helperText = "In order to finish registration, scan QR code";
-  final FirebaseMessaging messaging = FirebaseMessaging();
-  String deviceId = '';
-
+  
   @override
-  void initState() {
+  void initState(){
     super.initState();
     messaging.getToken().then((t) {
       print(t);
       deviceId = t;
     });
-    animationController = new AnimationController(
-      duration: new Duration(seconds: 1),
-      vsync: this,
-    );
-    animationController.addListener(() {
-      this.setState(() {});
-    });
     sliderAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1));
     sliderAnimationController.addListener(() {
       this.setState(() {});
     });
-    offset = Tween<double>(begin: 0.0, end: 500.0).animate(CurvedAnimation(
-        parent: sliderAnimationController, curve: Curves.bounceOut));
 
-    animationController.forward();
-    verticalPosition = Tween<double>(begin: 10.0, end: 200.0).animate(
-        CurvedAnimation(parent: animationController, curve: Curves.linear))
-      ..addStatusListener((state) {
-        if (state == AnimationStatus.completed) {
-          animationController.reverse();
-        } else if (state == AnimationStatus.dismissed) {
-          animationController.forward();
-        }
-      });
-    onNewCameraSelected(cameras[0]);
-  }
-  Widget finder () {
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
+    offset = Tween<double>(begin: 0.0, end: 500.0).animate(CurvedAnimation(parent: sliderAnimationController, curve: Curves.bounceOut));
 
-    return Container(
-    width: w,
-    height: MediaQuery.of(context).size.height,
-    child: ClipRect(
-      child: OverflowBox(
-        alignment: Alignment.center,
-        child: FittedBox(
-          fit: BoxFit.cover,
-          child: Container(
-            width: w  / controller.value.aspectRatio,
-            height: h,
-            child: QRReaderPreview(controller), // this is my CameraPreview
-          ),
-        ),
-      ),
-    ),
-  );
-  }
-
-  Widget finderx() {
-    return Stack(
-      alignment: FractionalOffset.topCenter,
-      children: <Widget>[
-        finder(),
-        qrData == ''
-            ? Center(
-                child: Container(
-                alignment: Alignment.topCenter,
-                padding: EdgeInsets.only(top: 100),
-                child: Stack(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 200.0,
-                      width: 300.0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red, width: 2.0)),
-                      ),
-                    ),
-                    Positioned(
-                      top: verticalPosition.value,
-                      child: Container(
-                        width: 300.0,
-                        height: 2.0,
-                        color: Colors.red,
-                      ),
-                    )
-                  ],
-                ),
-              ))
-            : BackdropFilter(
-                child: new Container(
-                  decoration:
-                      new BoxDecoration(color: Colors.white.withOpacity(0.0)),
-                ),
-                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              ),
-      ],
-    );
   }
 
   Widget content() {
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
@@ -172,15 +86,24 @@ class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    initFirebaseMessagingListener(context);
     return Scaffold(
         body: Stack(children: [
-      finderx(),
-      Align(
-        // alignment: Alignment(0, MediaQuery.of(context).size.width * controller.value.aspectRatio),
-        alignment: Alignment.bottomCenter,
-        child: content()
-      )
+        Scanner(callback: (qr) => gotQrData(qr), context: context,),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: content()
+        )
     ]));
+  }
+
+  void gotQrData(value) {
+    setState(() {
+      qrData = value;
+      helperText = "Choose new pin";
+    });
+    sliderAnimationController.forward();
+    sendScannedFlag(jsonDecode(qrData)['hash'], deviceId);
   }
 
   Future pinFilledIn(String value) async {
@@ -197,37 +120,13 @@ class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStat
     } else if (pin ==value) {
       var hash = jsonDecode(qrData)['hash'];
       var privateKey = jsonDecode(qrData)['privateKey'];
-      savePin(pin);
+      savePin(value);
       savePrivateKey(privateKey);
       var signedHash = signHash(hash, privateKey);
       sendSignedHash(hash, await signedHash);
-      Navigator.pop(context,MaterialPageRoute(builder: (context) => HomeScreen()));
+      Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen()));
     }
-  }
-
-  Future onCodeRead(dynamic value) async {
-    HapticFeedback.mediumImpact();
-    setState(() {
-      qrData = value;
-      helperText = "Choose new pin";
-    });
-    animationController.stop();
-    sliderAnimationController.forward();
-    controller.stopScanning();
-    sendScannedFlag(jsonDecode(qrData)['hash'], deviceId);
-
-  }
-
-  void onNewCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null) {
-      await controller.dispose();
-    }
-    controller = new QRReaderController(cameraDescription, ResolutionPreset.low,
-        [CodeFormat.qr, CodeFormat.pdf417], onCodeRead);
-
-    try {
-      await controller.initialize();
-      controller.startScanning();
-    } on QRReaderException catch (e) {}
   }
 }
+
+

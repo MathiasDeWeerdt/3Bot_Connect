@@ -18,3 +18,8 @@ Future<String> getPrivateKey () async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString('privatekey');
 }
+void clearData() async{
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('pin');
+  prefs.remove('privatekey');
+}

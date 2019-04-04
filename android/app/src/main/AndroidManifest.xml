@@ -11,7 +11,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="threebotlogin"
+        android:label="3bot"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

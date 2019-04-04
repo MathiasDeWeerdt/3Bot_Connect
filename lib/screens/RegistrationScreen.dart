@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/screens/HomeScreen.Dart';
+import 'package:threebotlogin/screens/SuccessfulScreen.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/connectionService.dart';
@@ -124,7 +124,7 @@ class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStat
       savePrivateKey(privateKey);
       var signedHash = signHash(hash, privateKey);
       sendSignedHash(hash, await signedHash);
-      Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen()));
+      Navigator.push(context,MaterialPageRoute(builder: (context) => SuccessfulScreen()));
     }
   }
 }

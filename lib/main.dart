@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:threebotlogin/config.dart';
+import 'package:threebotlogin/screens/HomeScreen.Dart';
 import 'package:threebotlogin/screens/RegistrationScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
+import 'package:threebotlogin/services/userService.dart';
 
 List<CameraDescription> cameras;
 Config config;
+String pk;
 
 Future<void> main() async {
   config = new Config(
-    apiUrl: 'http://192.168.1.85:5000/api'
+    apiUrl: 'https://login.threefold.me/api'
   );
+
+  pk = await getPrivateKey();
   try {
     cameras = await availableCameras();
   } on QRReaderException catch (e) {
@@ -28,7 +33,9 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xff0f296a),
         accentColor: Color(0xff16a085)
       ),
-      home: RegistrationScreen(),
+      home: pk == null
+      ? RegistrationScreen()
+      : HomeScreen()
     );
   }
 }

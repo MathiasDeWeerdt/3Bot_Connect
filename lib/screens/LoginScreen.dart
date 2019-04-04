@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/screens/HomeScreen.Dart';
+import 'package:threebotlogin/screens/SuccessfulScreen.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final hash = widget.message['hash'];
       var signedHash = await signHash(hash, await getPrivateKey());
       sendSignedHash(hash, signedHash);
-      Navigator.pop(context,MaterialPageRoute(builder: (context) => HomeScreen()));
+      Navigator.pop(context,MaterialPageRoute(builder: (context) => SuccessfulScreen()));
     } else {
       print('pin NOK');
       setState(() {

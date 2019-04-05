@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/screens/RegistrationScreen.dart';
 import 'package:threebotlogin/services/userService.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,6 +10,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  @override
+  void initState(){
+    super.initState();
+    getPrivateKey().then((pk) => pk == null ? Navigator.pushNamed(context, '/register') : null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,14 +54,14 @@ class _HomeScreenState extends State<HomeScreen> {
             FlatButton(
               child: new Text("Cancel"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pop(context);
               },
             ),
             FlatButton(
               child: new Text("Continue"),
               onPressed: () {
                 clearData();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationScreen()));
+                Navigator.pushReplacementNamed(context, '/register');
               },
             ),
           ],

@@ -57,7 +57,7 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
             fit: BoxFit.cover,
             child: controller.value.isInitialized && controller != null
                 ? Container(
-                    width: w / controller.value.aspectRatio,
+                    width: controller.value.aspectRatio * w ,
                     height: h,
                     child: QRReaderPreview(controller),
                   )

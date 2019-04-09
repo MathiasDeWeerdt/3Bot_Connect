@@ -11,9 +11,9 @@ void initFirebaseMessagingListener (context) async{
           Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(message: message['data'])));
         },
         onLaunch: (Map<String, dynamic> message) async {
-          String sent_time;
-          if (sent_time != message['data']['google.sent_time']) {
-            sent_time = message['data']['google.sent_time'];
+          String sentTime;
+          if (sentTime != message['data']['google.sent_time']) {
+            sentTime = message['data']['google.sent_time'];
             print('On launch $message');
             Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(message: message['data'])));
           }

@@ -47,16 +47,14 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
   Widget finder() {
     final size = MediaQuery.of(context).size;
     final deviceRatio = size.width / size.height;
-
-    return Container(
-      width: size.width,
-      height: size.height,
-      child: ClipRect(
-        child: OverflowBox(
-          alignment: Alignment.center,
+    return Transform.scale(
+      scale: controller.value.aspectRatio / deviceRatio,
+      child: Center(
+        child: AspectRatio(
+          aspectRatio: controller.value.aspectRatio,
           child: controller.value.isInitialized && controller != null
               ? Container(
-                  width: size.width * controller.value.aspectRatio,
+                  width: size.width,
                   height: size.height,
                   child: QRReaderPreview(controller),
                 )

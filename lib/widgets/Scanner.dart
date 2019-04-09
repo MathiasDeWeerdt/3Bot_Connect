@@ -45,30 +45,28 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
   }
 
   Widget finder() {
-    var w = MediaQuery.of(widget.context).size.width;
-    var h = MediaQuery.of(widget.context).size.height;
+    final size = MediaQuery.of(context).size;
+    final deviceRatio = size.width / size.height;
+
     return Container(
-      width: w,
-      height: h,
+      width: size.width,
+      height: size.height,
       child: ClipRect(
         child: OverflowBox(
           alignment: Alignment.center,
-          child: FittedBox(
-            fit: BoxFit.cover,
-            child: controller.value.isInitialized && controller != null
-                ? Container(
-                    width: controller.value.aspectRatio * w ,
-                    height: h,
-                    child: QRReaderPreview(controller),
-                  )
-                : Container(
-                    color: Colors.black,
-                    child: SizedBox(
-                      height: h,
-                      width: w,
-                    ),
+          child: controller.value.isInitialized && controller != null
+              ? Container(
+                  width: size.width * controller.value.aspectRatio,
+                  height: size.height,
+                  child: QRReaderPreview(controller),
+                )
+              : Container(
+                  color: Colors.black,
+                  child: SizedBox(
+                    width: size.width,
+                    height: size.width,
                   ),
-          ),
+                ),
         ),
       ),
     );
@@ -121,7 +119,7 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
     HapticFeedback.mediumImpact();
     animationController.stop();
     controller.stopScanning();
-    
+
     widget.callback(value);
   }
 
@@ -130,7 +128,8 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
     if (controller != null) {
       await controller.dispose();
     }
-    controller = new QRReaderController(cameraDescription, ResolutionPreset.low, [CodeFormat.qr, CodeFormat.pdf417], onCodeRead);
+    controller = new QRReaderController(cameraDescription, ResolutionPreset.low,
+        [CodeFormat.qr, CodeFormat.pdf417], onCodeRead);
     controller.addListener(() {
       if (mounted) setState(() {});
     });

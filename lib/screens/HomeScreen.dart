@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:threebotlogin/services/userService.dart';
+import 'package:threebotlogin/services/firebaseService.dart';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    initFirebaseMessagingListener(context);
     return Scaffold(
         appBar: new AppBar(
           title: new Text('3Bot'),

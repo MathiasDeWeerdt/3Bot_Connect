@@ -13,7 +13,8 @@ String pk;
 
 Future<void> main() async {
   config = new Config(
-    apiUrl: 'https://login.threefold.me/api'
+    // apiUrl: 'https://login.threefold.me/api'
+    apiUrl: 'http://192.168.1.136:5000/api'
   );
 
   pk = await getPrivateKey();

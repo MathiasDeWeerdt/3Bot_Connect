@@ -7,7 +7,6 @@ import 'package:threebotlogin/services/connectionService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:threebotlogin/widgets/Scanner.dart';
-import 'package:threebotlogin/services/firebaseService.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final Widget registrationScreen;
@@ -27,6 +26,7 @@ class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStat
   @override
   void initState(){
     super.initState();
+    messaging.requestNotificationPermissions();
     messaging.getToken().then((t) {
       print(t);
       deviceId = t;
@@ -85,7 +85,6 @@ class _ScanScreenState extends State<RegistrationScreen> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    initFirebaseMessagingListener(context);
     return Scaffold(
         body: Stack(children: [
         Scanner(callback: (qr) => gotQrData(qr), context: context,),

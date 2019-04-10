@@ -29,7 +29,7 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
       vsync: this,
     );
     animationController.forward();
-    verticalPosition = Tween<double>(begin: 10.0, end: 200.0).animate(
+    verticalPosition = Tween<double>(begin: 20.0, end: 180.0).animate(
         CurvedAnimation(parent: animationController, curve: Curves.linear))
       ..addStatusListener((state) {
         if (state == AnimationStatus.completed) {
@@ -87,7 +87,11 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
                       width: 300.0,
                       child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red, width: 2.0)),
+                            border: Border.all(
+                                color: Colors.white,
+                                width: 2.0),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
                       ),
                     ),
                     Positioned(
@@ -95,7 +99,7 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
                       child: Container(
                         width: 300.0,
                         height: 2.0,
-                        color: Colors.red,
+                        color: Colors.white,
                       ),
                     )
                   ],

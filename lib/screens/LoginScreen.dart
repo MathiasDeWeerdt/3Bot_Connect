@@ -18,14 +18,32 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(
-          title: new Text('Login'),
+        appBar: AppBar(
+          title: Text('Login'),
+          elevation: 0.0,
         ),
-        body: Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[Text(helperText), PinField(callback: (p) => pinFilledIn(p))],
-        )));
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Theme.of(context).primaryColor,
+            child: Container(
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20))),
+                    child: Container(
+                        padding: EdgeInsets.only(top: 24, bottom: 38),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(helperText),
+                              PinField(callback: (p) => pinFilledIn(p))
+                            ],
+                          ),
+                        ))))));
   }
 
   pinFilledIn(p) async {
@@ -43,7 +61,6 @@ class _LoginScreenState extends State<LoginScreen> {
       print('pin NOK');
       setState(() {
         helperText = "Pin code not ok";
-        //  TODO: count attempts
       });
     }
   }

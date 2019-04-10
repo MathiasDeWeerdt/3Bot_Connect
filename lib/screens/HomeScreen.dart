@@ -11,35 +11,104 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    getPrivateKey().then((pk) => pk == null ? Navigator.pushNamed(context, '/register') : null);
+    // getPrivateKey().then((pk) => pk == null ? Navigator.pushNamed(context, '/register') : null);
   }
 
   @override
   Widget build(BuildContext context) {
     initFirebaseMessagingListener(context);
     return Scaffold(
-        appBar: new AppBar(
-          title: new Text('3Bot'),
+        appBar: AppBar(
+          title: Text('3Bot'),
+          elevation: 0.0,
         ),
-        body: Center(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('You are already registered.'),
-            Text('If you need to login you\'ll get a notification'),
-            SizedBox(height: 20,),
-            RaisedButton(
-              child: Text("Register an other user"),
-              onPressed: () {
-                _showDialog();
-              },
-            )
-          ],
-        )));
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Theme.of(context).primaryColor,
+            child: Container(
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20))),
+                    child: Container(
+                        padding: EdgeInsets.only(top: 24, bottom: 38),
+                        child: Center(
+                          child: FutureBuilder(
+                              initialData: loading(context),
+                              future: getPrivateKey(),
+                              builder: (BuildContext context,AsyncSnapshot snapshot) {
+                                if(snapshot.hasData) return alreadyRegistered(context);
+                                else return notRegistered(context);
+                              }),
+                        ))))));
+  }
+  Column loading(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        CircularProgressIndicator(),
+        SizedBox(
+          height: 20,
+        ),
+        Text('Checking if you are already registered....'),
+      ],
+    );
+  }
+  Column notRegistered(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text('You are not registered yet.'),
+        SizedBox(
+          height: 20,
+        ),
+        RaisedButton(
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(10)),
+          padding: EdgeInsets.all(12),
+          child: Text(
+            "Register now",
+            style: TextStyle(color: Colors.white),
+          ),
+          color: Theme.of(context).accentColor,
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/register');
+          },
+        )
+      ],
+    );
+  }
+
+  Column alreadyRegistered(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text('You are already registered.'),
+        Text('If you need to login you\'ll get a notification'),
+        SizedBox(
+          height: 20,
+        ),
+        RaisedButton(
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(10)),
+          padding: EdgeInsets.all(12),
+          child: Text(
+            "Register an other user",
+            style: TextStyle(color: Colors.white),
+          ),
+          color: Theme.of(context).accentColor,
+          onPressed: () {
+            _showDialog();
+          },
+        )
+      ],
+    );
   }
 
   void _showDialog() {
@@ -50,7 +119,8 @@ class _HomeScreenState extends State<HomeScreen> {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Are you sure?"),
-          content: new Text("If you continue, you won't be abel to login with the current account again"),
+          content: new Text(
+              "If you continue, you won't be abel to login with the current account again"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
@@ -71,4 +141,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+  content(BuildContext context) {}
 }

@@ -47,26 +47,27 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
   Widget finder() {
     final size = MediaQuery.of(context).size;
     final deviceRatio = size.width / size.height;
-    return Transform.scale(
-      scale: controller.value.aspectRatio / deviceRatio,
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: controller.value.aspectRatio,
-          child: controller.value.isInitialized && controller != null
-              ? Container(
-                  width: size.width,
-                  height: size.height,
-                  child: QRReaderPreview(controller),
-                )
-              : Container(
-                  color: Colors.black,
-                  child: SizedBox(
-                    width: size.width,
-                    height: size.width,
-                  ),
-                ),
-        ),
-      ),
+    return Container(
+      child: controller.value.isInitialized
+          ? Transform.scale(
+              scale: controller.value.aspectRatio / deviceRatio,
+              child: Center(
+                child: AspectRatio(
+                    aspectRatio: controller.value.aspectRatio,
+                    child: Container(
+                      width: size.width,
+                      height: size.height,
+                      child: QRReaderPreview(controller),
+                    )),
+              ),
+            )
+          : Container(
+              color: Colors.black,
+              child: SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
     );
   }
 
@@ -87,9 +88,7 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
                       width: 300.0,
                       child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.white,
-                                width: 2.0),
+                            border: Border.all(color: Colors.white, width: 2.0),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(20))),
                       ),

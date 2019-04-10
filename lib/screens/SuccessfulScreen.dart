@@ -12,15 +12,30 @@ class _SuccessfulScreenState extends State<SuccessfulScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(
-          title: new Text('3Bot'),
+        appBar: AppBar(
+          title: Text('Logged in'),
+          elevation: 0.0,
         ),
-        body: Center(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('You are logged in, go back to PC'),
-          ],
-        )));
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Theme.of(context).primaryColor,
+            child: Container(
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20))),
+                    child: Container(
+                        padding: EdgeInsets.only(top: 24, bottom: 38),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text('You are logged in, go back to PC')
+                            ],
+                          ),
+                        ))))));
   }
 }

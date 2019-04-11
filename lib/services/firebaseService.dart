@@ -1,6 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
+import 'userService.dart';
+import 'connectionService.dart';
 
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
@@ -29,4 +31,19 @@ void initFirebaseMessagingListener (context) async{
           .listen((IosNotificationSettings settings) {
         print("Settings registered: $settings");
       });
+}
+
+void checkIfThereAreLoginAttents (context) async {
+  if (await getPrivateKey() != null) {
+    _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.getToken().then((t) {
+      checkLoginAttempts(t).then((attempt) {
+        print('-----=====------');
+        print(t);
+        print(attempt.body);
+        if(attempt.body != '') Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(message: {'hash': attempt.body})));
+        print('-----=====------');
+      });
+    });
+  }
 }

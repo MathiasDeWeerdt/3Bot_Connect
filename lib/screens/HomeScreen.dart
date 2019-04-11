@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 
@@ -10,11 +11,28 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  bool checkedIfLoginPending = false;
   @override
   void initState() {
     super.initState();
-    // getPrivateKey().then((pk) => pk == null ? Navigator.pushNamed(context, '/register') : null);
+    getPrivateKey().then(
+        (pk) => pk == null ? Navigator.pushNamed(context, '/register') : null);
+    WidgetsBinding.instance.addObserver(this);
+    if (!checkedIfLoginPending) {
+      checkIfThereAreLoginAttents(context);
+      setState(() {
+        checkedIfLoginPending = true;
+      });
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+    if (state == AppLifecycleState.resumed) {
+      checkIfThereAreLoginAttents(context);
+    }
   }
 
   @override
@@ -36,18 +54,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20),
                             topRight: Radius.circular(20))),
-                    child: Container(
-                        padding: EdgeInsets.only(top: 24, bottom: 38),
-                        child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                            child: Center(
                           child: FutureBuilder(
                               initialData: loading(context),
                               future: getPrivateKey(),
-                              builder: (BuildContext context,AsyncSnapshot snapshot) {
-                                if(snapshot.hasData) return alreadyRegistered(context);
-                                else return notRegistered(context);
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.hasData)
+                                  return alreadyRegistered(context);
+                                else
+                                  return notRegistered(context);
                               }),
-                        ))))));
+                        )),
+                        Text('version 0.2'),
+                      ],
+                    )))));
   }
+
   Column loading(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -60,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
+
   Column notRegistered(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -78,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           color: Theme.of(context).accentColor,
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/register');
+            Navigator.pushNamed(context, '/register');
           },
         )
       ],
@@ -89,8 +117,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        Icon(
+          Icons.check_circle,
+          size: 42,
+          color: Theme.of(context).accentColor,
+        ),
+        SizedBox(
+          height: 20,
+        ),
         Text('You are already registered.'),
-        Text('If you need to login you\'ll get a notification'),
+        Text('If you need to login you\'ll get a notification.'),
         SizedBox(
           height: 20,
         ),

@@ -33,7 +33,18 @@ class _SuccessfulScreenState extends State<SuccessfulScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Text('You are logged in, go back to PC')
+                              Icon(
+                                Icons.check_circle,
+                                size: 42,
+                                color: Theme.of(context).accentColor,
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text('You are logged in, go back to PC'),
+                              SizedBox(
+                                height: 60,
+                              ),
                             ],
                           ),
                         ))))));

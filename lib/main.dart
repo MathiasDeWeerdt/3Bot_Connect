@@ -13,8 +13,9 @@ String pk;
 
 Future<void> main() async {
   config = new Config(
-    // apiUrl: 'https://login.threefold.me/api'
-    apiUrl: 'http://192.168.1.136:5000/api'
+      apiUrl: isInDebugMode
+          ? 'http://192.168.1.136:5000/api'
+          : 'https://login.threefold.me/api'
   );
 
   pk = await getPrivateKey();
@@ -26,6 +27,12 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
+bool get isInDebugMode {
+  bool inDebugMode = false;
+  assert(inDebugMode = true);
+  return inDebugMode;
+}
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -33,9 +40,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '3bot',
       theme: ThemeData(
-        primaryColor: Color(0xff0f296a),
-        accentColor: Color(0xff16a085)
-      ),
+          primaryColor: Color(0xff0f296a), accentColor: Color(0xff16a085)),
       routes: {
         '/': (context) => HomeScreen(),
         '/register': (context) => RegistrationScreen(),

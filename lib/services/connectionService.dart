@@ -21,3 +21,7 @@ sendSignedHash( String hash, String signedHash) {
     'signedHash': signedHash
   }), headers: requestHeaders).catchError((onError) => print(onError));
 }
+
+Future checkLoginAttempts(String deviceId) {
+  return http.get('$apiurl/attemts/$deviceId', headers: requestHeaders);
+}

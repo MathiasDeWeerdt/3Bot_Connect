@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
-
+import 'package:package_info/package_info.dart';
+import 'package:threebotlogin/main.dart';
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
 
@@ -13,18 +14,23 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool checkedIfLoginPending = false;
+  String version = '0.0.0';
   @override
   void initState() {
     super.initState();
-    getPrivateKey().then(
-        (pk) => pk == null ? Navigator.pushNamed(context, '/register') : null);
     WidgetsBinding.instance.addObserver(this);
+    getPrivateKey().then((pk) => pk == null ? Navigator.pushNamed(context, '/register') : null);
     if (!checkedIfLoginPending) {
       checkIfThereAreLoginAttents(context);
       setState(() {
         checkedIfLoginPending = true;
       });
     }
+
+    PackageInfo.fromPlatform().then((packageInfo) => 
+      version = packageInfo.version
+    );
+
   }
 
   @override
@@ -70,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   return notRegistered(context);
                               }),
                         )),
-                        Text('version 0.2'),
+                        Text('v ' + version + (isInDebugMode? '-DEBUG' : '')),
                       ],
                     )))));
   }

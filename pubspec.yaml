@@ -9,9 +9,9 @@ description: A new Flutter project.
 # In Android, build-name is used as versionName while build-number used as versionCode.
 # Read more about Android versioning at https://developer.android.com/studio/publish/versioning
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
-# Read more about iOS versioning at
+# Read more about iOS versioning at\
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 0.1.2+1
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -23,9 +23,12 @@ dependencies:
     git:
       url: https://github.com/coeneivan/fast_qr_reader_view
   shared_preferences:
-  flutter_sodium:
   http:
   firebase_messaging:
+  flutter_sodium:
+    git:
+      url: https://github.com/rmtmckenzie/flutter_sodium
+  package_info:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

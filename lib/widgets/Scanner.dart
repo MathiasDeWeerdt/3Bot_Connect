@@ -129,7 +129,7 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
     if (controller != null) {
       await controller.dispose();
     }
-    controller = new QRReaderController(cameraDescription, ResolutionPreset.low,
+    controller = new QRReaderController(cameraDescription, ResolutionPreset.high,
         [CodeFormat.qr, CodeFormat.pdf417], onCodeRead);
     controller.addListener(() {
       if (mounted) setState(() {});

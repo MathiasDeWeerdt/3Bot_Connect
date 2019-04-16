@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>399226968341-dco92m6pkqecnn0a6jtl38o930s7cckf.apps.googleusercontent.com</string>
+	<string>399226968341-hf8eptroon7e68fgm54pah1fp7kpentd.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.399226968341-dco92m6pkqecnn0a6jtl38o930s7cckf</string>
+	<string>com.googleusercontent.apps.399226968341-hf8eptroon7e68fgm54pah1fp7kpentd</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDnFaau9fVjWqsoKQ5u22krMmY-RDMAaEk</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.jimber.threebotlogin</string>
+	<string>org.jimber.threebot</string>
 	<key>PROJECT_ID</key>
 	<string>threebotlogin</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:399226968341:ios:95eb1acf46b3e9e6</string>
+	<string>1:399226968341:ios:bb957777dd903caa</string>
 	<key>DATABASE_URL</key>
 	<string>https://threebotlogin.firebaseio.com</string>
 </dict>

@@ -119,11 +119,9 @@ class _PinFieldState extends State<PinField> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      SizedBox(height: 25),
       generateTextFields(context),
-      SizedBox(height: 50),
+      SizedBox(height: 25),
       generateNumbers(context),
-      SizedBox(height: 75),
     ]);
   }
 

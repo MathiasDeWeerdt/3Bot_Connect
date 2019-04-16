@@ -38,9 +38,6 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
           animationController.forward();
         }
       });
-    animationController.addListener(() {
-      this.setState(() {});
-    });
     onNewCameraSelected(cameras[0]);
   }
 

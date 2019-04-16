@@ -38,7 +38,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       this.setState(() {});
     });
 
-    offset = Tween<double>(begin: 0.0, end: 500.0).animate(CurvedAnimation(
+    offset = Tween<double>(begin: 0.0, end:  500).animate(CurvedAnimation(
         parent: sliderAnimationController, curve: Curves.bounceOut));
   }
 
@@ -81,12 +81,14 @@ class _ScanScreenState extends State<RegistrationScreen>
                     children: <Widget>[
                       Container(
                           width: double.infinity,
-                          padding: EdgeInsets.only(top: 24, bottom: 38),
-                          child: Center(child: Text(helperText))),
-                      SizedBox(
-                        height: offset.value,
+                          padding: EdgeInsets.only(top: 24, bottom: 24),
+                          child: Center(child: Text(helperText, style: TextStyle(fontSize: 16),))),
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 100),
+                        padding: EdgeInsets.only(bottom: 24),
+                        curve: Curves.bounceInOut,
                         width: double.infinity,
-                        child: PinField(callback: (p) => pinFilledIn(p)),
+                        child: qrData != '' ? PinField(callback: (p) => pinFilledIn(p)) : null,
                       ),
                     ],
                   ),

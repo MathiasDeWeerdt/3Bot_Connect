@@ -28,7 +28,6 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
       duration: new Duration(seconds: 1),
       vsync: this,
     );
-    animationController.forward();
     verticalPosition = Tween<double>(begin: 20.0, end: 180.0).animate(
         CurvedAnimation(parent: animationController, curve: Curves.linear))
       ..addStatusListener((state) {
@@ -38,6 +37,11 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
           animationController.forward();
         }
       });
+
+    animationController.forward();
+    animationController.addListener(() {	
+      this.setState(() {});	
+    });
     onNewCameraSelected(cameras[0]);
   }
 

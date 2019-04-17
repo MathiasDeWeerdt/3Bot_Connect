@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:uni_links/uni_links.dart';
+import 'RegistrationWithoutScanScreen.dart';
+
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
 
@@ -19,24 +23,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    getPrivateKey().then((pk) => pk == null ? Navigator.pushNamed(context, '/register') : null);
-    if (!checkedIfLoginPending) {
-      checkIfThereAreLoginAttents(context);
-      setState(() {
-        checkedIfLoginPending = true;
-      });
-    }
+    PackageInfo.fromPlatform().then((packageInfo) => {
+          setState(() {
+            version = packageInfo.version;
+          })
+        });
+    initUniLinks();
+    checkIfThereAreLoginAttents(context);
+  }
 
-    PackageInfo.fromPlatform().then((packageInfo) => 
-      version = packageInfo.version
-    );
-
+  Future<Null> initUniLinks() async {
+    getLinksStream().listen((String incomingLink) {
+      Uri link = Uri.parse(incomingLink);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  RegistrationWithoutScanScreen(link.queryParameters)));
+    });
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print(state);
     if (state == AppLifecycleState.resumed) {
+      initUniLinks();
       checkIfThereAreLoginAttents(context);
     }
   }
@@ -76,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   return notRegistered(context);
                               }),
                         )),
-                        Text('v ' + version + (isInDebugMode? '-DEBUG' : '')),
+                        Text('v ' + version + (isInDebugMode ? '-DEBUG' : '')),
                       ],
                     )))));
   }
@@ -112,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
           color: Theme.of(context).accentColor,
           onPressed: () {
-            Navigator.pushNamed(context, '/register');
+            Navigator.pushNamed(context, '/scan');
           },
         )
       ],
@@ -175,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               child: new Text("Continue"),
               onPressed: () {
                 clearData();
-                Navigator.pushReplacementNamed(context, '/register');
+                Navigator.pushReplacementNamed(context, '/scan');
               },
             ),
           ],

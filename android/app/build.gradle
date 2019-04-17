@@ -38,7 +38,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "org.jimber.threebotlogin"
         minSdkVersion 21
         targetSdkVersion 28
@@ -60,14 +59,14 @@ android {
         }
     }
     buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-        }
         release {
             signingConfig signingConfigs.release
             ndk {
                 abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
             }
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 }

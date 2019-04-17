@@ -5,7 +5,7 @@ import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/connectionService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/Scanner.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -16,22 +16,15 @@ class RegistrationScreen extends StatefulWidget {
 
 class _ScanScreenState extends State<RegistrationScreen>
     with TickerProviderStateMixin {
-  final FirebaseMessaging messaging = FirebaseMessaging();
   String helperText = "In order to finish registration, scan QR code";
   AnimationController sliderAnimationController;
   Animation<double> offset;
-  String deviceId = '';
   String qrData = '';
   String pin;
 
   @override
   void initState() {
     super.initState();
-    messaging.requestNotificationPermissions();
-    messaging.getToken().then((t) {
-      print(t);
-      deviceId = t;
-    });
     sliderAnimationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 1));
     sliderAnimationController.addListener(() {
@@ -125,6 +118,7 @@ class _ScanScreenState extends State<RegistrationScreen>
         helperText = 'Confirm pin';
       });
     } else if (pin != value) {
+
       setState(() {
         pin = null;
         helperText = 'Pins do not match, choose pin';

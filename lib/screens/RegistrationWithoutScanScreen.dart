@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/connectionService.dart';
+import 'package:threebotlogin/main.dart';
 
-class LoginScreen extends StatefulWidget {
-  final Widget loginScreen;
+class RegistrationWithoutScanScreen extends StatefulWidget {
+  final Widget registrationWithoutScanScreen;
   final message;
+  final initialData;
+  RegistrationWithoutScanScreen(this.initialData, {Key key, this.message, this.registrationWithoutScanScreen}) : super(key: key);
 
-  LoginScreen({Key key, this.message, this.loginScreen}) : super(key: key);
-
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegistrationWithoutScanScreen createState() => _RegistrationWithoutScanScreen();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  String helperText = 'Give in your pincode to log in';
+class _RegistrationWithoutScanScreen extends State<RegistrationWithoutScanScreen> {
+  String helperText = 'Choose new pin';
+  String pin;
+  @override 
+  void initState() {
+    super.initState();
+    sendScannedFlag(widget.initialData['hash'], deviceId);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Login'),
+          title: Text('Registration'),
           elevation: 0.0,
         ),
         body: Container(
@@ -49,22 +57,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         ))))));
   }
 
-  pinFilledIn(p) async {
-    print(widget.message);
-    final pin = await getPin();
-    print(pin);
-    print(p);
-    if (pin == p) {
-      print('pin OK');
-      final hash = widget.message['hash'];
-      var signedHash = await signHash(hash, await getPrivateKey());
-      sendSignedHash(hash, signedHash);
-      Navigator.pushReplacementNamed(context, '/success');
-    } else {
-      print('pin NOK');
+  Future pinFilledIn(String value) async {
+    if (pin == null) {
       setState(() {
-        helperText = "Pin code not ok";
+        pin = value;
+        helperText = 'Confirm pin';
       });
+    } else if (pin != value) {
+      setState(() {
+        pin = null;
+        helperText = 'Pins do not match, choose pin';
+      });
+    } else if (pin == value) {
+      var hash = widget.initialData['hash'];
+      var privateKey = widget.initialData['privateKey'];
+      savePin(value);
+      savePrivateKey(privateKey);
+      var signedHash = signHash(hash, privateKey);
+      sendSignedHash(hash, await signedHash);
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     }
   }
 }

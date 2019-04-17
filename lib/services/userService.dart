@@ -16,7 +16,6 @@ Future savePrivateKey(key) async {
 }
 Future<String> getPrivateKey () async {
   final prefs = await SharedPreferences.getInstance();
-  print('------------- DONE -------------');
   return prefs.getString('privatekey');
 }
 void clearData() async{

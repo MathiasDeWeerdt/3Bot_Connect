@@ -16,6 +16,7 @@ sendScannedFlag(String hash, String deviceId) async {
 }
 
 sendSignedHash( String hash, String signedHash) {
+  print('$apiurl/sign');
   http.post('$apiurl/sign', body: json.encode({
     'hash': hash,
     'signedHash': signedHash

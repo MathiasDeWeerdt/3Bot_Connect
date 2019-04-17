@@ -156,6 +156,7 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
   @override
   void dispose() {
     controller?.dispose();
+    animationController.dispose();
     super.dispose();
   }
 

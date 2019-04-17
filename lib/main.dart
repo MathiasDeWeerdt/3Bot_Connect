@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:threebotlogin/config.dart';
 import 'package:threebotlogin/screens/HomeScreen.Dart';
@@ -10,6 +11,7 @@ import 'package:threebotlogin/services/userService.dart';
 List<CameraDescription> cameras;
 Config config;
 String pk;
+String deviceId;
 
 Future<void> main() async {
   config = new Config(
@@ -24,6 +26,15 @@ Future<void> main() async {
   } on QRReaderException catch (e) {
     print(e);
   }
+
+  FirebaseMessaging messaging = FirebaseMessaging();
+  messaging.requestNotificationPermissions();
+      messaging.getToken().then((t) {
+        deviceId = t;
+        print('Got device id $deviceId');
+      });
+  // Platform messages may fail, so we use a try/catch PlatformException.
+  
   runApp(MyApp());
 }
 
@@ -43,6 +54,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Color(0xff0f296a), accentColor: Color(0xff16a085)),
       routes: {
         '/': (context) => HomeScreen(),
+        '/scan': (context) => RegistrationScreen(),
         '/register': (context) => RegistrationScreen(),
         '/login': (context) => LoginScreen(),
         '/success': (context) => SuccessfulScreen()

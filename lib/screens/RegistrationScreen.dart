@@ -31,7 +31,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       this.setState(() {});
     });
 
-    offset = Tween<double>(begin: 0.0, end:  500).animate(CurvedAnimation(
+    offset = Tween<double>(begin: 0.0, end:  500.0).animate(CurvedAnimation(
         parent: sliderAnimationController, curve: Curves.bounceOut));
   }
 
@@ -45,9 +45,9 @@ class _ScanScreenState extends State<RegistrationScreen>
               decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              padding: EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0))),
+              padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
               width: double.infinity,
               child: Text(
                 'REGISTRATION',
@@ -55,7 +55,7 @@ class _ScanScreenState extends State<RegistrationScreen>
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 21),
+                    fontSize: 21.0),
               ),
             )),
         Container(
@@ -66,19 +66,19 @@ class _ScanScreenState extends State<RegistrationScreen>
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  padding: EdgeInsets.only(top: 12.0, bottom: 12),
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0))),
+                  padding: EdgeInsets.only(top: 12.0, bottom: 12.0),
                   width: double.infinity,
                   child: Column(
                     children: <Widget>[
                       Container(
                           width: double.infinity,
-                          padding: EdgeInsets.only(top: 24, bottom: 24),
-                          child: Center(child: Text(helperText, style: TextStyle(fontSize: 16),))),
+                          padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
+                          child: Center(child: Text(helperText, style: TextStyle(fontSize: 16.0),))),
                       AnimatedContainer(
                         duration: Duration(milliseconds: 100),
-                        padding: EdgeInsets.only(bottom: 24),
+                        padding: EdgeInsets.only(bottom: 24.0),
                         curve: Curves.bounceInOut,
                         width: double.infinity,
                         child: qrData != '' ? PinField(callback: (p) => pinFilledIn(p)) : null,

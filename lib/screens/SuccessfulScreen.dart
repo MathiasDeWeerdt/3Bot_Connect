@@ -25,25 +25,25 @@ class _SuccessfulScreenState extends State<SuccessfulScreen> {
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0))),
                     child: Container(
-                        padding: EdgeInsets.only(top: 24, bottom: 38),
+                        padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
                         child: Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Icon(
                                 Icons.check_circle,
-                                size: 42,
+                                size: 42.0,
                                 color: Theme.of(context).accentColor,
                               ),
                               SizedBox(
-                                height: 20,
+                                height: 20.0,
                               ),
                               Text('You are logged in, go back to PC'),
                               SizedBox(
-                                height: 60,
+                                height: 60.0,
                               ),
                             ],
                           ),

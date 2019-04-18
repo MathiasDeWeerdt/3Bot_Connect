@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
@@ -7,8 +8,9 @@ import 'package:threebotlogin/services/connectionService.dart';
 class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
   final message;
+  final bool closeWhenLoggedIn;
 
-  LoginScreen({Key key, this.message, this.loginScreen}) : super(key: key);
+  LoginScreen(this.message, {Key key, this.loginScreen, this.closeWhenLoggedIn = false}) : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -31,18 +33,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0))),
                     child: Container(
-                        padding: EdgeInsets.only(top: 24, bottom: 38),
+                        padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
                         child: Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Container(
                                 width: double.infinity,
-                                padding: EdgeInsets.only(top: 24, bottom: 24),
-                                child: Center(child: Text(helperText, style: TextStyle(fontSize: 16),))),
+                                padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
+                                child: Center(child: Text(helperText, style: TextStyle(fontSize: 16.0),))),
                               PinField(callback: (p) => pinFilledIn(p))
                             ],
                           ),
@@ -59,7 +61,12 @@ class _LoginScreenState extends State<LoginScreen> {
       final hash = widget.message['hash'];
       var signedHash = await signHash(hash, await getPrivateKey());
       sendSignedHash(hash, signedHash);
-      Navigator.pushReplacementNamed(context, '/success');
+      print("Close when logged in is ${widget.closeWhenLoggedIn}");
+      if(widget.closeWhenLoggedIn) {
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      } else {
+        Navigator.pushReplacementNamed(context, '/success');
+      }
     } else {
       print('pin NOK');
       setState(() {

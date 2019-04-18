@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:threebotlogin/screens/LoginScreen.dart';
+import 'package:threebotlogin/services/connectionService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
@@ -17,8 +20,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
-  bool checkedIfLoginPending = false;
+  bool openPendingLoginAttemt = true;
   String version = '0.0.0';
+
   @override
   void initState() {
     super.initState();
@@ -28,19 +32,59 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             version = packageInfo.version;
           })
         });
-    initUniLinks();
     checkIfThereAreLoginAttents(context);
+    initUniLinks();
+    initFirebaseMessagingListener(context);
   }
 
   Future<Null> initUniLinks() async {
-    getLinksStream().listen((String incomingLink) {
-      Uri link = Uri.parse(incomingLink);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  RegistrationWithoutScanScreen(link.queryParameters)));
+    print('checking uni links...............................');
+
+    print('---------------------------------------------');
+    String initialLink = await getInitialLink();
+    if (initialLink != null) {
+      checkWhatPageToOpen(Uri.parse(initialLink));
+    } else {
+      print('Opening stream');
+      getLinksStream().listen((String incomingLink) {
+        checkWhatPageToOpen(Uri.parse(incomingLink));
+      });
+    }
+    print('<---------------------------------------------');
+  }
+
+  checkWhatPageToOpen(Uri link) {
+    setState(() {
+      openPendingLoginAttemt = false;
     });
+    if (link.host == 'register') {
+      print('Register via link');
+      openPage(RegistrationWithoutScanScreen(
+        link.queryParameters,
+      ));
+    } else if (link.host == 'login') {
+      print('Login via link');
+      openPage(LoginScreen(
+        link.queryParameters,
+        closeWhenLoggedIn: true,
+      ));
+    }
+  }
+
+  openPage(page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+  }
+
+  void checkIfThereAreLoginAttents (context) async {
+  if (await getPrivateKey() != null && deviceId != null) {
+      checkLoginAttempts(deviceId).then((attempt) {
+        print('-----=====------');
+        print(deviceId);
+        print(attempt.body);
+        if(attempt.body != '' && openPendingLoginAttemt) Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen({'hash': attempt.body})));
+        print('-----=====------');
+      });
+    }
   }
 
   @override
@@ -54,7 +98,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    initFirebaseMessagingListener(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('3Bot'),
@@ -69,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0))),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[

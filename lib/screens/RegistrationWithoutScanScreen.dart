@@ -10,19 +10,24 @@ class RegistrationWithoutScanScreen extends StatefulWidget {
   final Widget registrationWithoutScanScreen;
   final message;
   final initialData;
-  RegistrationWithoutScanScreen(this.initialData, {Key key, this.message, this.registrationWithoutScanScreen}) : super(key: key);
+  RegistrationWithoutScanScreen(this.initialData,
+      {Key key, this.message, this.registrationWithoutScanScreen})
+      : super(key: key);
 
-  _RegistrationWithoutScanScreen createState() => _RegistrationWithoutScanScreen();
+  _RegistrationWithoutScanScreen createState() =>
+      _RegistrationWithoutScanScreen();
 }
 
-class _RegistrationWithoutScanScreen extends State<RegistrationWithoutScanScreen> {
+class _RegistrationWithoutScanScreen
+    extends State<RegistrationWithoutScanScreen> {
   String helperText = 'Choose new pin';
   String pin;
-  @override 
+  @override
   void initState() {
     super.initState();
-    sendScannedFlag(widget.initialData['hash'], deviceId);
+    getPrivateKey().then((pk) => pk != null ?  _showDialog() : sendScannedFlag(widget.initialData['hash'], deviceId)); 
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,18 +44,23 @@ class _RegistrationWithoutScanScreen extends State<RegistrationWithoutScanScreen
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0))),
                     child: Container(
-                        padding: EdgeInsets.only(top: 24, bottom: 38),
+                        padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
                         child: Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.only(top: 24, bottom: 24),
-                                child: Center(child: Text(helperText, style: TextStyle(fontSize: 16),))),
+                                  width: double.infinity,
+                                  padding:
+                                      EdgeInsets.only(top: 24.0, bottom: 24.0),
+                                  child: Center(
+                                      child: Text(
+                                    helperText,
+                                    style: TextStyle(fontSize: 16.0),
+                                  ))),
                               PinField(callback: (p) => pinFilledIn(p))
                             ],
                           ),
@@ -77,5 +87,35 @@ class _RegistrationWithoutScanScreen extends State<RegistrationWithoutScanScreen
       sendSignedHash(hash, await signedHash);
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     }
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("You are about to register a new account"),
+          content: new Text(
+              "If you continue, you won't be abel to login with the current account again"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: new Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child: new Text("Continue"),
+              onPressed: () {
+                Navigator.pop(context);
+                clearData();
+                sendScannedFlag(widget.initialData['hash'], deviceId);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -91,7 +91,7 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.white, width: 2.0),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
+                                BorderRadius.all(Radius.circular(20.0))),
                       ),
                     ),
                     Positioned(

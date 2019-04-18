@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:threebotlogin/config.dart';
 import 'package:threebotlogin/screens/HomeScreen.Dart';
 import 'package:threebotlogin/screens/RegistrationScreen.dart';
-import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/screens/SuccessfulScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -33,8 +32,6 @@ Future<void> main() async {
         deviceId = t;
         print('Got device id $deviceId');
       });
-  // Platform messages may fail, so we use a try/catch PlatformException.
-  
   runApp(MyApp());
 }
 
@@ -45,7 +42,6 @@ bool get isInDebugMode {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,7 +52,6 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomeScreen(),
         '/scan': (context) => RegistrationScreen(),
         '/register': (context) => RegistrationScreen(),
-        '/login': (context) => LoginScreen(),
         '/success': (context) => SuccessfulScreen()
       },
     );

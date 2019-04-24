@@ -24,5 +24,6 @@ sendSignedHash( String hash, String signedHash) {
 }
 
 Future checkLoginAttempts(String deviceId) {
+  print('$apiurl/attemts/$deviceId');
   return http.get('$apiurl/attemts/$deviceId', headers: requestHeaders);
 }

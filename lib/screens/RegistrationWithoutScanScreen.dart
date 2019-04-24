@@ -25,7 +25,9 @@ class _RegistrationWithoutScanScreen
   @override
   void initState() {
     super.initState();
-    getPrivateKey().then((pk) => pk != null ?  _showDialog() : sendScannedFlag(widget.initialData['hash'], deviceId)); 
+    getPrivateKey().then((pk) => pk != null
+        ? _showDialog()
+        : sendScannedFlag(widget.initialData['hash'], deviceId));
   }
 
   @override
@@ -85,7 +87,9 @@ class _RegistrationWithoutScanScreen
       savePrivateKey(privateKey);
       var signedHash = signHash(hash, privateKey);
       sendSignedHash(hash, await signedHash);
+
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      Navigator.pushReplacementNamed(context, '/success');
     }
   }
 
@@ -103,6 +107,7 @@ class _RegistrationWithoutScanScreen
               child: new Text("Cancel"),
               onPressed: () {
                 Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/');
               },
             ),
             FlatButton(

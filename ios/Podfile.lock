@@ -75,6 +75,10 @@ PODS:
   - Protobuf (3.7.0)
   - shared_preferences (0.0.1):
     - Flutter
+  - uni_links (0.0.1):
+    - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - fast_qr_reader_view (from `.symlinks/plugins/fast_qr_reader_view/ios`)
@@ -83,6 +87,8 @@ DEPENDENCIES:
   - flutter_sodium (from `.symlinks/plugins/flutter_sodium/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - uni_links (from `.symlinks/plugins/uni_links/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -110,6 +116,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
+  uni_links:
+    :path: ".symlinks/plugins/uni_links/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
 
 SPEC CHECKSUMS:
   fast_qr_reader_view: 53b38a544886e650381ca579e0cdd5ae142fffa6
@@ -128,6 +138,8 @@ SPEC CHECKSUMS:
   package_info: 78cabb3c322943c55d39676f4a5bfc748c01d055
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
+  uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
+  url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298
 
 PODFILE CHECKSUM: b65fdc01ac03a090f3353379dc29c17e902177aa
 

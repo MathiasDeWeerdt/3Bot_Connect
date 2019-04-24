@@ -41,7 +41,7 @@ class _SuccessfulScreenState extends State<SuccessfulScreen> {
                               SizedBox(
                                 height: 20.0,
                               ),
-                              Text('You are logged in, go back to PC'),
+                              Text('You are logged in, go back to the browser now.'),
                               SizedBox(
                                 height: 60.0,
                               ),

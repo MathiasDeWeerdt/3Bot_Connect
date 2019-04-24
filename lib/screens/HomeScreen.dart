@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             version = packageInfo.version;
           })
         });
-    checkIfThereAreLoginAttents(context);
+    checkIfThereAreLoginAttents();
     initUniLinks();
     initFirebaseMessagingListener(context);
   }
@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   checkWhatPageToOpen(Uri link) {
+    print(link.queryParameters);
     setState(() {
       openPendingLoginAttemt = false;
     });
@@ -75,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  void checkIfThereAreLoginAttents (context) async {
+  void checkIfThereAreLoginAttents () async {
   if (await getPrivateKey() != null && deviceId != null) {
       checkLoginAttempts(deviceId).then((attempt) {
         print('-----=====------');
@@ -92,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     print(state);
     if (state == AppLifecycleState.resumed) {
       initUniLinks();
-      checkIfThereAreLoginAttents(context);
+      checkIfThereAreLoginAttents();
     }
   }
 

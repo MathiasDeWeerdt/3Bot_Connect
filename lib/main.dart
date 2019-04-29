@@ -1,22 +1,26 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/config.dart';
+import 'config.dart';
 import 'package:threebotlogin/screens/HomeScreen.Dart';
 import 'package:threebotlogin/screens/RegistrationScreen.dart';
 import 'package:threebotlogin/screens/SuccessfulScreen.dart';
+import 'package:threebotlogin/screens/ProfileScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:threebotlogin/services/userService.dart';
 
 List<CameraDescription> cameras;
-Config config;
 String pk;
 String deviceId;
+Config config;
 
 Future<void> main() async {
-  config = new Config(
-      apiUrl: isInDebugMode
+  config = Config(
+      threeBotApiUrl: isInDebugMode
           ? 'http://192.168.1.136:5000/api'
-          : 'https://login.threefold.me/api'
+          : 'https://login.threefold.me/api',
+      openKycApiUrl: isInDebugMode
+          ? 'http://192.168.1.136:5005'
+          : 'https://open.kyc', // TODO: change me to a real open KYC url
   );
 
   pk = await getPrivateKey();
@@ -52,7 +56,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomeScreen(),
         '/scan': (context) => RegistrationScreen(),
         '/register': (context) => RegistrationScreen(),
-        '/success': (context) => SuccessfulScreen()
+        '/success': (context) => SuccessfulScreen(),
+        '/profile': (context) => ProfileScreen()
       },
     );
   }

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
-import 'package:threebotlogin/services/connectionService.dart';
+import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/main.dart';
 
 class RegistrationWithoutScanScreen extends StatefulWidget {

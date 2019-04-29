@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
-import 'package:threebotlogin/services/connectionService.dart';
+import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/Scanner.dart';
@@ -126,8 +126,14 @@ class _ScanScreenState extends State<RegistrationScreen>
     } else if (pin == value) {
       var hash = jsonDecode(qrData)['hash'];
       var privateKey = jsonDecode(qrData)['privateKey'];
+      var doubleName = jsonDecode(qrData)['doubleName'];
+      var email = jsonDecode(qrData)['email'];
+
       savePin(value);
       savePrivateKey(privateKey);
+      saveEmail(email, false);
+      saveDoubleName(doubleName);
+      
       var signedHash = signHash(hash, privateKey);
       sendSignedHash(hash, await signedHash);
       Navigator.pushReplacementNamed(context, '/success');

@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
-import 'package:threebotlogin/services/connectionService.dart';
+import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:uni_links/uni_links.dart';
 import 'RegistrationWithoutScanScreen.dart';
+import 'package:threebotlogin/services/openKYCService.dart';
+import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -21,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttemt = true;
+  String doubleName;
   String version = '0.0.0';
 
   @override
@@ -32,25 +34,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             version = packageInfo.version;
           })
         });
-    checkIfThereAreLoginAttents();
-    initUniLinks();
-    initFirebaseMessagingListener(context);
+    onActivate(context: context);
   }
 
   Future<Null> initUniLinks() async {
-    print('checking uni links...............................');
-
-    print('---------------------------------------------');
     String initialLink = await getInitialLink();
     if (initialLink != null) {
       checkWhatPageToOpen(Uri.parse(initialLink));
     } else {
-      print('Opening stream');
       getLinksStream().listen((String incomingLink) {
         checkWhatPageToOpen(Uri.parse(incomingLink));
       });
     }
-    print('<---------------------------------------------');
   }
 
   checkWhatPageToOpen(Uri link) {
@@ -76,13 +71,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  void checkIfThereAreLoginAttents () async {
-  if (await getPrivateKey() != null && deviceId != null) {
+  void checkIfThereAreLoginAttents() async {
+    if (await getPrivateKey() != null && deviceId != null) {
       checkLoginAttempts(deviceId).then((attempt) {
         print('-----=====------');
         print(deviceId);
         print(attempt.body);
-        if(attempt.body != '' && openPendingLoginAttemt) Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen({'hash': attempt.body})));
+        if (attempt.body != '' && openPendingLoginAttemt)
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LoginScreen({'hash': attempt.body})));
         print('-----=====------');
       });
     }
@@ -92,18 +91,45 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print(state);
     if (state == AppLifecycleState.resumed) {
-      initUniLinks();
-      checkIfThereAreLoginAttents();
+      onActivate();
+    }
+  }
+
+  Future onActivate({context}) async {
+    if (context != null) {
+      initFirebaseMessagingListener(context);
+    }
+    initUniLinks();
+    checkIfThereAreLoginAttents();
+    String dn = await getDoubleName();
+    if (dn != null || dn != '') {
+      getEmail().then((emailMap) async {
+        if (!emailMap['verified']) {
+          checkVerificationStatus(dn).then((newEmailMap) {
+            print(newEmailMap.body);
+            var body = jsonDecode(newEmailMap.body);
+            saveEmail(body['email'], body['verified'] == 1);
+          });
+        }
+      });
+      setState(() {
+        doubleName = dn;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('3Bot'),
-          elevation: 0.0,
-        ),
+        appBar: AppBar(title: Text('3Bot'), elevation: 0.0, actions: <Widget>[
+          doubleName != null 
+          ? IconButton(
+            icon: Icon(Icons.person),
+            tooltip: 'Your profile',
+            onPressed: () { Navigator.pushNamed(context, '/profile'); },
+          )
+          : Container(),
+        ]),
         body: Container(
             width: double.infinity,
             height: double.infinity,
@@ -230,6 +256,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               child: new Text("Continue"),
               onPressed: () {
                 clearData();
+                setState(() {
+                  doubleName = null;
+                });
                 Navigator.pushReplacementNamed(context, '/scan');
               },
             ),
@@ -238,6 +267,4 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       },
     );
   }
-
-  content(BuildContext context) {}
 }

@@ -2,7 +2,9 @@ import 'package:meta/meta.dart';
 
 class Config {
   Config({
-    @required this.apiUrl
+    @required this.threeBotApiUrl,
+    @required this.openKycApiUrl
   });
-  final String apiUrl;
+  final String threeBotApiUrl;
+  final String openKycApiUrl;
 }

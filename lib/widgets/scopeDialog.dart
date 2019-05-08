@@ -8,7 +8,7 @@ showScopeDialog(context, List<dynamic> scope, String appId, callback) {
     builder: (BuildContext context) {
       // return object of type Dialog
       return AlertDialog(
-        title: Text(appId + " wants to access following scope"),
+        title: Text("Do you want to share following information with " + appId + "?"),
         content: Text(stringScope),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog

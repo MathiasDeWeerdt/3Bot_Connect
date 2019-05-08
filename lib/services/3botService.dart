@@ -23,7 +23,6 @@ sendData(String hash, String signedHash, data) {
       .catchError((onError) => print(onError));
 }
 
-Future checkLoginAttempts(String deviceId) {
-  print('$threeBotApiUrl/attemts/$deviceId');
-  return http.get('$threeBotApiUrl/attemts/$deviceId', headers: requestHeaders);
+Future checkLoginAttempts(String doubleName) {
+  return http.get('$threeBotApiUrl/attempts/$doubleName', headers: requestHeaders);
 }

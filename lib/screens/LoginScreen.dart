@@ -65,15 +65,17 @@ class _LoginScreenState extends State<LoginScreen> {
   pinFilledIn(p) async {
     print(widget.message);
     print('pinFilledIn');
-    print(widget.message['scope']);
+    print(widget.message);
     print('initalBody');
     final pin = await getPin();
     print(pin);
     print(p);
     if (pin == p) {
       print('pin OK');
-      if (widget.message['scope'] != null && widget.message['scope'].length > 0) {
-        showScopeDialog(context, jsonDecode(widget.message['scope']), widget.message['appId'], sendIt);
+      if (widget.message['scope'] != null) {
+        print(widget.message['scope']);
+        print(widget.message['scope'].split(","));
+        showScopeDialog(context, widget.message['scope'].split(","), widget.message['appId'], sendIt);
       }
       else {
         sendIt();
@@ -97,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var scope = {};
     var data;
     if (widget.message['scope'] != null) {
-      if (widget.message['scope'].contains('user:email')) scope['email'] = await email;
+      if (widget.message['scope'].split(",").contains('user:email')) scope['email'] = await email;
     }
     if (scope.isNotEmpty) {
       print(scope.isEmpty);
@@ -106,9 +108,11 @@ class _LoginScreenState extends State<LoginScreen> {
     sendData(state, await signedHash, data);
 
     if (widget.closeWhenLoggedIn) {
+      Navigator.popUntil(context, ModalRoute.withName('/'));
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     } else {
-      Navigator.pushReplacementNamed(context, '/success');
+      Navigator.popUntil(context, ModalRoute.withName('/'));
+      Navigator.pushNamed(context, '/success');
     }
   }
 }

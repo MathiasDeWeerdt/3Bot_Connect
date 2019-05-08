@@ -129,8 +129,8 @@ class _ScanScreenState extends State<RegistrationScreen>
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-      if (qrData['scope'] != null && qrData['scope'].length > 0) {
-        showScopeDialog(context, qrData['scope'], qrData['appId'], saveValues);
+      if (qrData['scope'] != null) {
+        showScopeDialog(context, qrData['scope'].split(","), qrData['appId'], saveValues);
       }
       else {
         saveValues();
@@ -155,14 +155,15 @@ class _ScanScreenState extends State<RegistrationScreen>
     var scope = {};
     var data;
     if (qrData['scope'] != null) {
-      if (qrData['scope'].contains('user:email')) scope['email'] = email;
+      if (qrData['scope'].split(",").contains('user:email')) scope['email'] = email;
     }
     if (scope.isNotEmpty) {
       print(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, privateKey);
     }
     sendData(hash, await signedHash, data);
-    Navigator.pushReplacementNamed(context, '/success');
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.pushNamed(context, '/success');
    
   }
 }

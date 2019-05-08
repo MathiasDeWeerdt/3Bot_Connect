@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
@@ -5,13 +7,13 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class RegistrationWithoutScanScreen extends StatefulWidget {
   final Widget registrationWithoutScanScreen;
-  final message;
   final initialData;
   RegistrationWithoutScanScreen(this.initialData,
-      {Key key, this.message, this.registrationWithoutScanScreen})
+      {Key key, this.registrationWithoutScanScreen})
       : super(key: key);
 
   _RegistrationWithoutScanScreen createState() =>
@@ -81,16 +83,44 @@ class _RegistrationWithoutScanScreen
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-      var hash = widget.initialData['hash'];
-      var privateKey = widget.initialData['privateKey'];
-      savePin(value);
-      savePrivateKey(privateKey);
-      var signedHash = signHash(hash, privateKey);
-      sendData(hash, await signedHash, null);
-
-      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-      Navigator.pushReplacementNamed(context, '/success');
+    print(widget.initialData['scope']);
+      print('pin OK');
+      if (widget.initialData['scope'] != null) {
+        showScopeDialog(context, widget.initialData['scope'].split(","),
+            widget.initialData['appId'], sendIt);
+      } else {
+        sendIt();
+      }
     }
+  }
+
+  sendIt() async {
+    var hash = widget.initialData['hash'];
+    var privateKey = widget.initialData['privateKey'];
+    var doubleName = widget.initialData['doubleName'];
+    var email = widget.initialData['email'];
+    var publicKey = widget.initialData['appPublicKey'];
+
+    savePin(pin);
+    savePrivateKey(privateKey);
+    saveEmail(email, false);
+    saveDoubleName(doubleName);
+
+    var signedHash = signHash(hash, privateKey);
+    var scope = {};
+    var data;
+    if (widget.initialData['scope'] != null) {
+      if (widget.initialData['scope'].split(",").contains('user:email')) scope['email'] = email;
+    }
+    if (scope.isNotEmpty) {
+      print(scope.isEmpty);
+      data = await encrypt(jsonEncode(scope), publicKey, privateKey);
+    }
+    sendData(hash, await signedHash, data);
+
+    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.pushNamed(context, '/success');
   }
 
   void _showDialog() {

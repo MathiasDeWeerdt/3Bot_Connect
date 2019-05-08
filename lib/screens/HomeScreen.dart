@@ -71,9 +71,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  void checkIfThereAreLoginAttents() async {
+  void checkIfThereAreLoginAttempts(doubleName) async {
     if (await getPrivateKey() != null && deviceId != null) {
-      checkLoginAttempts(deviceId).then((attempt) {
+      checkLoginAttempts(doubleName).then((attempt) {
         print('-----=====------');
         print(deviceId);
         print(attempt.body);
@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => LoginScreen({'hash': attempt.body})));
+                  builder: (context) => LoginScreen(jsonDecode(attempt.body))));
         print('-----=====------');
       });
     }
@@ -100,8 +100,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       initFirebaseMessagingListener(context);
     }
     initUniLinks();
-    checkIfThereAreLoginAttents();
     String dn = await getDoubleName();
+    checkIfThereAreLoginAttempts(dn);
     if (dn != null || dn != '') {
       getEmail().then((emailMap) async {
         if (!emailMap['verified']) {

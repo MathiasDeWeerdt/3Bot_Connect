@@ -8,6 +8,8 @@ void initFirebaseMessagingListener (context) async{
       _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           print('On message $message');
+          
+          Navigator.popUntil(context, ModalRoute.withName('/'));
           Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(message['data'])));
         },
         onLaunch: (Map<String, dynamic> message) async {
@@ -15,11 +17,15 @@ void initFirebaseMessagingListener (context) async{
           if (sentTime != message['data']['google.sent_time']) {
             sentTime = message['data']['google.sent_time'];
             print('On launch $message');
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(message['data'])));
+            
+          Navigator.popUntil(context, ModalRoute.withName('/'));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(message['data'])));
           }
         },
         onResume: (Map<String, dynamic> message) async {
           print('On resume $message');
+          
+          Navigator.popUntil(context, ModalRoute.withName('/'));
           Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(message['data'])));
         },
       );

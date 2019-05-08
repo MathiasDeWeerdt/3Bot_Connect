@@ -1,16 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
+import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
   final message;
   final bool closeWhenLoggedIn;
+  // data: {appPublicKey: xKHlaIyza5dSxswOmvuYV7MDreIbLllK9T0n3c1tu0g=, appId: ExampleAppId, scope: ["user:email"], state: gk4NFmIrrEZiSjv6J0tl9mDBSZTP3Dah, doubleName: ol.d}}
 
-  LoginScreen(this.message, {Key key, this.loginScreen, this.closeWhenLoggedIn = false}) : super(key: key);
+  LoginScreen(this.message,
+      {Key key, this.loginScreen, this.closeWhenLoggedIn = false})
+      : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -42,9 +48,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
-                                child: Center(child: Text(helperText, style: TextStyle(fontSize: 16.0),))),
+                                  width: double.infinity,
+                                  padding:
+                                      EdgeInsets.only(top: 24.0, bottom: 24.0),
+                                  child: Center(
+                                      child: Text(
+                                    helperText,
+                                    style: TextStyle(fontSize: 16.0),
+                                  ))),
                               PinField(callback: (p) => pinFilledIn(p))
                             ],
                           ),
@@ -53,25 +64,51 @@ class _LoginScreenState extends State<LoginScreen> {
 
   pinFilledIn(p) async {
     print(widget.message);
+    print('pinFilledIn');
+    print(widget.message['scope']);
+    print('initalBody');
     final pin = await getPin();
     print(pin);
     print(p);
     if (pin == p) {
       print('pin OK');
-      final hash = widget.message['hash'];
-      var signedHash = await signHash(hash, await getPrivateKey());
-      sendSignedHash(hash, signedHash);
-      print("Close when logged in is ${widget.closeWhenLoggedIn}");
-      if(widget.closeWhenLoggedIn) {
-        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-      } else {
-        Navigator.pushReplacementNamed(context, '/success');
+      if (widget.message['scope'] != null && widget.message['scope'].length > 0) {
+        showScopeDialog(context, jsonDecode(widget.message['scope']), widget.message['appId'], sendIt);
+      }
+      else {
+        sendIt();
       }
     } else {
       print('pin NOK');
       setState(() {
         helperText = "Pin code not ok";
       });
+    }
+  }
+
+  sendIt() async {
+    print('sendIt');
+    var state = widget.message['state'];
+    var publicKey = widget.message['appPublicKey'];
+    var privateKey = getPrivateKey();
+    var email = getEmail();
+
+    var signedHash = signHash(state,  await privateKey);
+    var scope = {};
+    var data;
+    if (widget.message['scope'] != null) {
+      if (widget.message['scope'].contains('user:email')) scope['email'] = await email;
+    }
+    if (scope.isNotEmpty) {
+      print(scope.isEmpty);
+      data = await encrypt(jsonEncode(scope), publicKey, await privateKey);
+    }
+    sendData(state, await signedHash, data);
+
+    if (widget.closeWhenLoggedIn) {
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    } else {
+      Navigator.pushReplacementNamed(context, '/success');
     }
   }
 }

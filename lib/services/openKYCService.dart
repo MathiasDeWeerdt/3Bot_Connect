@@ -8,6 +8,5 @@ Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 Future checkVerificationStatus(String doubleName) async {
   requestHeaders['signature'] = await signHash(doubleName, await getPrivateKey());
   print('$openKycApiUrl/users/$doubleName');
-  print(requestHeaders);
   return http.get('$openKycApiUrl/users/$doubleName', headers: requestHeaders);
 }

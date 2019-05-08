@@ -86,7 +86,7 @@ class _RegistrationWithoutScanScreen
       savePin(value);
       savePrivateKey(privateKey);
       var signedHash = signHash(hash, privateKey);
-      sendSignedHash(hash, await signedHash);
+      sendData(hash, await signedHash, null);
 
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       Navigator.pushReplacementNamed(context, '/success');

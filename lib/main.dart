@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'config.dart';
-import 'package:threebotlogin/screens/HomeScreen.Dart';
+import 'package:threebotlogin/screens/HomeScreen.dart';
 import 'package:threebotlogin/screens/RegistrationScreen.dart';
 import 'package:threebotlogin/screens/SuccessfulScreen.dart';
 import 'package:threebotlogin/screens/ProfileScreen.dart';

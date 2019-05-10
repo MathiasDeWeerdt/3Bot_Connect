@@ -7,12 +7,10 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/widgets/scopeDialog.dart';
 import 'package:uni_links/uni_links.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -113,11 +111,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           checkVerificationStatus(dn).then((newEmailMap) async {
             print(newEmailMap.body);
             var body = jsonDecode(newEmailMap.body);
-            var email = (await getEmail())['email'];
-            // TODO check why md5 is not known
-            if (md5.convert(utf8.encode(email)).toString() == body['email']) {
-              saveEmail(email, body['verified'] == 1);
-            }
+            saveEmailVerified(body['verified'] == 1);
           });
         }
       });

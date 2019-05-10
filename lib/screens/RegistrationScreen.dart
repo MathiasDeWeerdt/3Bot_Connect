@@ -155,7 +155,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     var scope = {};
     var data;
     if (qrData['scope'] != null) {
-      if (qrData['scope'].split(",").contains('user:email')) scope['email'] = email;
+      if (qrData['scope'].split(",").contains('user:email')) scope['email'] = await getEmail();
     }
     if (scope.isNotEmpty) {
       print(scope.isEmpty);

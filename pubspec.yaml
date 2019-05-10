@@ -11,7 +11,7 @@ description: A new Flutter project.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at\
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.3.3+8
+version: 0.3.5+10
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -25,6 +25,7 @@ dependencies:
   shared_preferences:
   http:
   firebase_messaging:
+  crypto: ^2.0.6
   flutter_sodium:
     git:
       url: https://github.com/rmtmckenzie/flutter_sodium

@@ -7,10 +7,13 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/widgets/scopeDialog.dart';
 import 'package:uni_links/uni_links.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -22,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttemt = true;
-  String doubleName;
+  String doubleName = '';
   String version = '0.0.0';
 
   @override
@@ -36,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         });
     onActivate(context: context);
   }
+
+  void testCallback() {}
 
   Future<Null> initUniLinks() async {
     String initialLink = await getInitialLink();
@@ -71,9 +76,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  void checkIfThereAreLoginAttempts(doubleName) async {
+  void checkIfThereAreLoginAttempts(dn) async {
     if (await getPrivateKey() != null && deviceId != null) {
-      checkLoginAttempts(doubleName).then((attempt) {
+      checkLoginAttempts(dn).then((attempt) {
         print('-----=====------');
         print(deviceId);
         print(attempt.body);
@@ -105,10 +110,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (dn != null || dn != '') {
       getEmail().then((emailMap) async {
         if (!emailMap['verified']) {
-          checkVerificationStatus(dn).then((newEmailMap) {
+          checkVerificationStatus(dn).then((newEmailMap) async {
             print(newEmailMap.body);
             var body = jsonDecode(newEmailMap.body);
-            saveEmail(body['email'], body['verified'] == 1);
+            var email = (await getEmail())['email'];
+            // TODO check why md5 is not known
+            if (md5.convert(utf8.encode(email)).toString() == body['email']) {
+              saveEmail(email, body['verified'] == 1);
+            }
           });
         }
       });
@@ -122,13 +131,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('3Bot'), elevation: 0.0, actions: <Widget>[
-          doubleName != null 
-          ? IconButton(
-            icon: Icon(Icons.person),
-            tooltip: 'Your profile',
-            onPressed: () { Navigator.pushNamed(context, '/profile'); },
-          )
-          : Container(),
+          doubleName != null
+              ? IconButton(
+                  icon: Icon(Icons.person),
+                  tooltip: 'Your profile',
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/profile');
+                  },
+                )
+              : Container(),
         ]),
         body: Container(
             width: double.infinity,
@@ -148,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             child: Center(
                           child: FutureBuilder(
                               initialData: loading(context),
-                              future: getPrivateKey(),
+                              future: getDoubleName(),
                               builder: (BuildContext context,
                                   AsyncSnapshot snapshot) {
                                 if (snapshot.hasData)
@@ -193,6 +204,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
           color: Theme.of(context).accentColor,
           onPressed: () {
+            // showScopeDialog(context, 'user:email'.split(','), 'YOUR APP', testCallback);
             Navigator.pushNamed(context, '/scan');
           },
         )
@@ -206,65 +218,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       children: <Widget>[
         Icon(
           Icons.check_circle,
-          size: 42,
+          size: 42.0,
           color: Theme.of(context).accentColor,
         ),
         SizedBox(
-          height: 20,
+          height: 20.0,
+        ),
+        Text('Hi ' + doubleName, style: TextStyle(fontSize: 24.0), ),
+        SizedBox(
+          height: 24.0,
         ),
         Text('You are already registered.'),
         Text('If you need to login you\'ll get a notification.'),
         SizedBox(
           height: 20,
         ),
-        RaisedButton(
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(10)),
-          padding: EdgeInsets.all(12),
-          child: Text(
-            "Register an other user",
-            style: TextStyle(color: Colors.white),
-          ),
-          color: Theme.of(context).accentColor,
-          onPressed: () {
-            _showDialog();
-          },
-        )
       ],
     );
   }
 
-  void _showDialog() {
-    // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Are you sure?"),
-          content: new Text(
-              "If you continue, you won't be abel to login with the current account again"),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            FlatButton(
-              child: new Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            FlatButton(
-              child: new Text("Continue"),
-              onPressed: () {
-                clearData();
-                setState(() {
-                  doubleName = null;
-                });
-                Navigator.pushReplacementNamed(context, '/scan');
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  
 }

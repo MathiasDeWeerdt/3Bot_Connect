@@ -21,3 +21,18 @@ showScopeDialog(context, List<dynamic> scope, String appId, callback) {
     },
   );
 }
+
+// class ScopeDialog extends StatefulWidget {
+//   ScopeDialog({Key key}) : super(key: key);
+
+//   _ScopeDialogState createState() => _ScopeDialogState();
+// }
+
+// class _ScopeDialogState extends State<ScopeDialog> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//        child: child,
+//     );
+//   }
+// }

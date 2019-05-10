@@ -110,7 +110,7 @@ class _RegistrationWithoutScanScreen
     var scope = {};
     var data;
     if (widget.initialData['scope'] != null) {
-      if (widget.initialData['scope'].split(",").contains('user:email')) scope['email'] = email;
+      if (widget.initialData['scope'].split(",").contains('user:email')) scope['email'] = await getEmail();
     }
     if (scope.isNotEmpty) {
       print(scope.isEmpty);

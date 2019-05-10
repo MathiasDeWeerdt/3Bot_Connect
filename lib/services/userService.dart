@@ -35,6 +35,13 @@ Future saveEmail(String email, bool verified) async {
   prefs.remove('emailVerified');
   prefs.setBool('emailVerified', verified);
 }
+
+Future saveEmailVerified(bool verified) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('emailVerified');
+  prefs.setBool('emailVerified', verified);
+}
+
 Future<Map<String, Object>> getEmail () async {
   final prefs = await SharedPreferences.getInstance();
   return {

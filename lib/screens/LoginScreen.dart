@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
     print(p);
     if (pin == p) {
       print('pin OK');
-      if (widget.message['scope'] != null) {
+      if (widget.message != null && widget.message['scope'] != null) {
         print(widget.message['scope']);
         print(widget.message['scope'].split(","));
         showScopeDialog(context, widget.message['scope'].split(","), widget.message['appId'], sendIt);

@@ -41,6 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
+                              Expanded(child: Container(),),
                               Icon(
                                 Icons.person,
                                 size: 42.0,
@@ -51,34 +52,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               Text('Hi ' + doubleName),
                               SizedBox(
-                                height: 60.0,
+                                height: 24.0,
                               ),
                               email != null
                                   ? Text(email['email'])
                                   : Container(),
                               email != null && email['verified']
-                                  ?  Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(right: 10),
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .accentColor,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(20.0)),
-                                              ),
-                                              child: Icon(
-                                                Icons.check,
-                                                color: Colors.white,
-                                                size: 15,
-                                              ),
-                                            ),
-                                            Text('Email verified.')
-                                          ],
-                                        )
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Container(
+                                          margin: EdgeInsets.only(right: 10),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Theme.of(context).accentColor,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20.0)),
+                                          ),
+                                          child: Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                            size: 15,
+                                          ),
+                                        ),
+                                        Text('Email verified.')
+                                      ],
+                                    )
                                   : email != null
                                       ? Row(
                                           mainAxisAlignment:
@@ -102,7 +102,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             Text('Email not verified, yet.')
                                           ],
                                         )
-                                      : Container()
+                                      : Container(),
+                              SizedBox(
+                                height: 48.0,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    RaisedButton(
+                                      shape: new RoundedRectangleBorder(
+                                          borderRadius:
+                                              new BorderRadius.circular(10)),
+                                      padding: EdgeInsets.all(12),
+                                      child: Text(
+                                        "Register an other user",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      color: Theme.of(context).errorColor,
+                                      onPressed: () {
+                                        _showDialog();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ))))));
@@ -119,5 +143,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
         email = emailMap;
       });
     });
+  }
+
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Are you sure?"),
+          content: new Text(
+              "If you continue, you won't be abel to login with the current account again"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: new Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child: new Text("Continue"),
+              onPressed: () {
+                clearData();
+                setState(() {
+                  doubleName = null;
+                });
+                Navigator.pushReplacementNamed(context, '/scan');
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

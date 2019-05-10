@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           checkVerificationStatus(dn).then((newEmailMap) {
             print(newEmailMap.body);
             var body = jsonDecode(newEmailMap.body);
-            saveEmail(body['email'], body['verified'] == 1);
+            saveEmailVerified(body['verified'] == 1);
           });
         }
       });

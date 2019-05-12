@@ -111,8 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     } else {
-      Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.pushNamed(context, '/success');
+      Navigator.pushNamedAndRemoveUntil(context, '/success',ModalRoute.withName('/'));
     }
   }
 }

@@ -120,7 +120,7 @@ class _RegistrationWithoutScanScreen
 
     SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     Navigator.popUntil(context, ModalRoute.withName('/'));
-    Navigator.pushNamed(context, '/success');
+    Navigator.of(context).pushNamed('/success');
   }
 
   void _showDialog() {

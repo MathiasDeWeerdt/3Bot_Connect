@@ -165,10 +165,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             FlatButton(
               child: new Text("Continue"),
               onPressed: () {
-                clearData();
-                
+                clearData();                
                 Navigator.popUntil(context, ModalRoute.withName('/'));
-                Navigator.pushReplacementNamed(context, '/scan');
               },
             ),
           ],

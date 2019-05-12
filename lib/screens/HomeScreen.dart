@@ -37,8 +37,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     onActivate(context: context);
   }
 
-  void testCallback() {}
-
   Future<Null> initUniLinks() async {
     String initialLink = await getInitialLink();
     if (initialLink != null) {
@@ -187,7 +185,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
           color: Theme.of(context).accentColor,
           onPressed: () {
-            // showScopeDialog(context, 'user:email'.split(','), 'YOUR APP', testCallback);
             Navigator.pushNamed(context, '/scan');
           },
         )

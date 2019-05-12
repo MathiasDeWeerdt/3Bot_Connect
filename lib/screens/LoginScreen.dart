@@ -75,9 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (widget.message != null && widget.message['scope'] != null) {
         print(widget.message['scope']);
         print(widget.message['scope'].split(","));
-        showScopeDialog(context, widget.message['scope'].split(","), widget.message['appId'], sendIt);
-      }
-      else {
+        showScopeDialog(context, widget.message['scope'].split(","),
+            widget.message['appId'], sendIt);
+      } else {
         sendIt();
       }
     } else {
@@ -95,11 +95,12 @@ class _LoginScreenState extends State<LoginScreen> {
     var privateKey = getPrivateKey();
     var email = getEmail();
 
-    var signedHash = signHash(state,  await privateKey);
+    var signedHash = signHash(state, await privateKey);
     var scope = {};
     var data;
     if (widget.message['scope'] != null) {
-      if (widget.message['scope'].split(",").contains('user:email')) scope['email'] = await email;
+      if (widget.message['scope'].split(",").contains('user:email'))
+        scope['email'] = await email;
     }
     if (scope.isNotEmpty) {
       print(scope.isEmpty);
@@ -111,7 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     } else {
-      Navigator.pushNamedAndRemoveUntil(context, '/success',ModalRoute.withName('/'));
+      Navigator.popUntil(context, ModalRoute.withName('/'));
+      Navigator.of(context).pushNamed('/success');
     }
   }
 }

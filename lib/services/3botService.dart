@@ -14,9 +14,9 @@ sendScannedFlag(String hash, String deviceId) async {
       .catchError((onError) => print(onError));
 }
 
-sendData(String hash, String signedHash, data) {
+Future sendData(String hash, String signedHash, data) {
   print('$threeBotApiUrl/sign');
-  http
+  return http
       .post('$threeBotApiUrl/sign',
           body: json.encode({'hash': hash, 'signedHash': signedHash, 'data': data}),
           headers: requestHeaders)

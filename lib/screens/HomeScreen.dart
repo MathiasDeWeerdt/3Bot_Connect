@@ -12,7 +12,6 @@ import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 
-
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
 
@@ -125,15 +124,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('3Bot'), elevation: 0.0, actions: <Widget>[
-          doubleName != null
-              ? IconButton(
-                  icon: Icon(Icons.person),
-                  tooltip: 'Your profile',
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/profile');
-                  },
-                )
-              : Container(),
+          FutureBuilder(
+              future: getDoubleName(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return IconButton(
+                    icon: Icon(Icons.person),
+                    tooltip: 'Your profile',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/profile');
+                    },
+                  );
+                } else
+                  return Container();
+              }),
         ]),
         body: Container(
             width: double.infinity,
@@ -152,32 +156,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         Expanded(
                             child: Center(
                           child: FutureBuilder(
-                              initialData: loading(context),
                               future: getDoubleName(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.hasData)
-                                  return alreadyRegistered(context);
-                                else
+                              builder: (BuildContext context,AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  return alreadyRegistered(context, snapshot.data);
+                                } else
                                   return notRegistered(context);
                               }),
                         )),
                         Text('v ' + version + (isInDebugMode ? '-DEBUG' : '')),
                       ],
                     )))));
-  }
-
-  Column loading(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        CircularProgressIndicator(),
-        SizedBox(
-          height: 20,
-        ),
-        Text('Checking if you are already registered....'),
-      ],
-    );
   }
 
   Column notRegistered(BuildContext context) {
@@ -206,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Column alreadyRegistered(BuildContext context) {
+  Column alreadyRegistered(BuildContext context, String data) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -218,7 +207,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         SizedBox(
           height: 20.0,
         ),
-        Text('Hi ' + doubleName, style: TextStyle(fontSize: 24.0), ),
+        Text(
+          'Hi ' + data,
+          style: TextStyle(fontSize: 24.0),
+        ),
         SizedBox(
           height: 24.0,
         ),
@@ -230,6 +222,4 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ],
     );
   }
-
-  
 }

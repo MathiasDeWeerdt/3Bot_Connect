@@ -162,8 +162,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       data = await encrypt(jsonEncode(scope), publicKey, privateKey);
     }
     sendData(hash, await signedHash, data);
-    Navigator.popUntil(context, ModalRoute.withName('/'));
-    Navigator.pushNamed(context, '/success');
+    Navigator.pushNamedAndRemoveUntil(context, '/success',ModalRoute.withName('/'));
    
   }
 }

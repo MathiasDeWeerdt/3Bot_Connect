@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
+import 'package:threebotlogin/services/openKYCService.dart';
+import 'package:threebotlogin/services/userService.dart';
 
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
@@ -10,46 +12,47 @@ void initFirebaseMessagingListener(context) async {
   _firebaseMessaging.configure(
     onMessage: (Map<String, dynamic> message) async {
       print('On message $message');
-
-      Navigator.popUntil(context, ModalRoute.withName('/'));
-      var data = message['data'];
-      if (Platform.isIOS) {
-        data = message;
-      }
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
+      openLogin(context, message);
     },
     onLaunch: (Map<String, dynamic> message) async {
-      String sentTime;
-      if (sentTime != message['data']['google.sent_time']) {
-        sentTime = message['data']['google.sent_time'];
-        print('On launch $message');
-
-        Navigator.popUntil(context, ModalRoute.withName('/'));
-        var data = message['data'];
-        if (Platform.isIOS) {
-          data = message;
-        }
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => LoginScreen(data)));
-      }
+      print('On launch $message');
+      openLogin(context, message);
     },
     onResume: (Map<String, dynamic> message) async {
       print('On resume $message');
-
-      Navigator.popUntil(context, ModalRoute.withName('/'));
-      var data = message['data'];
-      if (Platform.isIOS) {
-        data = message;
-      }
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
+      openLogin(context, message);
     },
   );
+
   _firebaseMessaging.requestNotificationPermissions(
       const IosNotificationSettings(sound: true, badge: true, alert: true));
   _firebaseMessaging.onIosSettingsRegistered
       .listen((IosNotificationSettings settings) {
     print("Settings registered: $settings");
   });
+}
+
+void openLogin(context, message) {
+  print('OpenLogin');
+
+  var data = message['data'];
+  if (Platform.isIOS) data = message;
+
+  print(data['type']);
+  if (data['type'] == 'login') {
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
+  } else if (data['type'] == 'email_verification') {
+    print('email_verification');
+    getEmail().then((emailMap) async {
+      if (!emailMap['verified']) {
+        checkVerificationStatus(await getDoubleName()).then((newEmailMap) async {
+          print(newEmailMap.body);
+          var body = jsonDecode(newEmailMap.body);
+          saveEmailVerified(body['verified'] == 1);
+        });
+      }
+    });
+  }
 }

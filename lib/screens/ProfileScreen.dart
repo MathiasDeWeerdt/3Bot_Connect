@@ -16,7 +16,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     getUserValues();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,11 +165,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             FlatButton(
               child: new Text("Continue"),
               onPressed: () {
-                clearData();
-                setState(() {
-                  doubleName = null;
-                });
-                Navigator.pushReplacementNamed(context, '/scan');
+                clearData();                
+                Navigator.popUntil(context, ModalRoute.withName('/'));
               },
             ),
           ],

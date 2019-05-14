@@ -8,6 +8,7 @@ import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/Scanner.dart';
 import 'package:threebotlogin/widgets/scopeDialog.dart';
+
 class RegistrationScreen extends StatefulWidget {
   final Widget registrationScreen;
   RegistrationScreen({Key key, this.registrationScreen}) : super(key: key);
@@ -130,9 +131,9 @@ class _ScanScreenState extends State<RegistrationScreen>
       });
     } else if (pin == value) {
       if (qrData['scope'] != null) {
-        showScopeDialog(context, qrData['scope'].split(","), qrData['appId'], saveValues);
-      }
-      else {
+        showScopeDialog(
+            context, qrData['scope'].split(","), qrData['appId'], saveValues);
+      } else {
         saveValues();
       }
     }
@@ -155,15 +156,16 @@ class _ScanScreenState extends State<RegistrationScreen>
     var scope = {};
     var data;
     if (qrData['scope'] != null) {
-      if (qrData['scope'].split(",").contains('user:email')) scope['email'] = await getEmail();
+      if (qrData['scope'].split(",").contains('user:email'))
+        scope['email'] = await getEmail();
     }
     if (scope.isNotEmpty) {
       print(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, privateKey);
     }
-    sendData(hash, await signedHash, data);
-    Navigator.popUntil(context, ModalRoute.withName('/'));
-    Navigator.pushNamed(context, '/success');
-   
+    sendData(hash, await signedHash, data).then((x) {
+      Navigator.popUntil(context, ModalRoute.withName('/'));
+      Navigator.of(context).pushNamed('/success');
+    });
   }
 }

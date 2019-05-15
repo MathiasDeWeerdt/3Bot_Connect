@@ -49,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   checkWhatPageToOpen(Uri link) {
+    print('==============');
     print(link.queryParameters);
     setState(() {
       openPendingLoginAttemt = false;
@@ -60,11 +61,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ));
     } else if (link.host == 'login') {
       print('Login via link');
-      openPage(LoginScreen(
-        link.queryParameters,
-        closeWhenLoggedIn: true,
-      ));
+      openPage(LoginScreen(link.queryParameters));
     }
+    print('==============');
   }
 
   openPage(page) {
@@ -155,9 +154,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             child: Center(
                           child: FutureBuilder(
                               future: getDoubleName(),
-                              builder: (BuildContext context,AsyncSnapshot snapshot) {
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
                                 if (snapshot.hasData) {
-                                  return alreadyRegistered(context, snapshot.data);
+                                  return alreadyRegistered(
+                                      context, snapshot.data);
                                 } else
                                   return notRegistered(context);
                               }),

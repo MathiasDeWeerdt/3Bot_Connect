@@ -39,7 +39,7 @@ void openLogin(context, message) {
   if (Platform.isIOS) data = message;
 
   print(data['type']);
-  if (data['type'] == 'login') {
+  if (data['type'] == null || data['type'] == 'login') {
     Navigator.popUntil(context, ModalRoute.withName('/'));
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoginScreen(data)));

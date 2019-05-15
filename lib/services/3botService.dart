@@ -7,6 +7,7 @@ Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
 sendScannedFlag(String hash, String deviceId) async {
   print('$threeBotApiUrl/flag');
+  print(deviceId);
   http
       .post('$threeBotApiUrl/flag',
           body: json.encode({'hash': hash, 'deviceId': deviceId}),

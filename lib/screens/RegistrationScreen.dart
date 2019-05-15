@@ -109,13 +109,13 @@ class _ScanScreenState extends State<RegistrationScreen>
     ]));
   }
 
-  void gotQrData(value) {
+  Future gotQrData(value) async {
     setState(() {
       qrData = jsonDecode(value);
       helperText = "Choose new pin";
     });
     sliderAnimationController.forward();
-    sendScannedFlag(qrData['hash'], deviceId);
+    sendScannedFlag(qrData['hash'], await signHash(deviceId, qrData['privateKey']));
   }
 
   Future pinFilledIn(String value) async {

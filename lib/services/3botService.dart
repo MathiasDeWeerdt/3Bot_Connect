@@ -26,3 +26,25 @@ Future sendData(String hash, String signedHash, data) {
 Future checkLoginAttempts(String doubleName) {
   return http.get('$threeBotApiUrl/attempts/$doubleName', headers: requestHeaders);
 }
+
+Future<bool> checkVersionNumber(String version) async {
+  print('$threeBotApiUrl/minversion');
+  var minVersion = (await http.get('$threeBotApiUrl/minversion', headers: requestHeaders)).body;
+
+  print('min ' + minVersion);
+  print('current ' + version);
+
+  try {
+    var min = int.parse(minVersion);
+    var current = int.parse(version);
+    print('checkVersionNumber');
+    print('min ' + min.toString());
+    print('current ' + current.toString());
+    print((min <= current).toString());
+    return min <= current;
+
+  } on Exception catch (e)  {
+    print(e);
+    return false;
+  }
+}

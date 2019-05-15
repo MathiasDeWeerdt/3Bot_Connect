@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             version = packageInfo.version;
           })
         });
-    onActivate(context: context);
+    onActivate(true);
   }
 
   Future<Null> initUniLinks() async {
@@ -91,30 +91,36 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print(state);
     if (state == AppLifecycleState.resumed) {
-      onActivate();
+      onActivate(false);
     }
   }
 
-  Future onActivate({context}) async {
-    if (context != null) {
-      initFirebaseMessagingListener(context);
-    }
-    initUniLinks();
-    String dn = await getDoubleName();
-    checkIfThereAreLoginAttempts(dn);
-    if (dn != null || dn != '') {
-      getEmail().then((emailMap) async {
-        if (!emailMap['verified']) {
-          checkVerificationStatus(dn).then((newEmailMap) async {
-            print(newEmailMap.body);
-            var body = jsonDecode(newEmailMap.body);
-            saveEmailVerified(body['verified'] == 1);
-          });
-        }
-      });
-      setState(() {
-        doubleName = dn;
-      });
+  Future onActivate(bool initFirebase) async {
+    var buildNr = (await PackageInfo.fromPlatform()).buildNumber;
+    print('Current buildnr is ' + buildNr);
+    if (await checkVersionNumber(buildNr)) {
+      if (initFirebase) {
+        initFirebaseMessagingListener(context);
+      }
+      initUniLinks();
+      String dn = await getDoubleName();
+      checkIfThereAreLoginAttempts(dn);
+      if (dn != null || dn != '') {
+        getEmail().then((emailMap) async {
+          if (!emailMap['verified']) {
+            checkVerificationStatus(dn).then((newEmailMap) async {
+              print(newEmailMap.body);
+              var body = jsonDecode(newEmailMap.body);
+              saveEmailVerified(body['verified'] == 1);
+            });
+          }
+        });
+        setState(() {
+          doubleName = dn;
+        });
+      }
+    } else {
+      Navigator.pushReplacementNamed(context, '/error');
     }
   }
 

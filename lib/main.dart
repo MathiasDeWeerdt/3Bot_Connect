@@ -4,6 +4,7 @@ import 'config.dart';
 import 'package:threebotlogin/screens/HomeScreen.dart';
 import 'package:threebotlogin/screens/RegistrationScreen.dart';
 import 'package:threebotlogin/screens/SuccessfulScreen.dart';
+import 'package:threebotlogin/screens/ErrorScreen.dart';
 import 'package:threebotlogin/screens/ProfileScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -16,10 +17,17 @@ Config config;
 Future<void> main() async {
   config = Config(
       threeBotApiUrl: isInDebugMode
+<<<<<<< HEAD
           ? 'http://192.168.2.60:5000/api'
           : 'https://login.threefold.me/api',
       openKycApiUrl: isInDebugMode
           ? 'http://192.168.2.60:5005'
+=======
+          ? 'http://192.168.2.80:5000/api'
+          : 'https://login.threefold.me/api',
+      openKycApiUrl: isInDebugMode
+          ? 'http://192.168.2.80:5005'
+>>>>>>> d1edee06ba3519776a6762c244e601ba2029af9f
           : 'https://openkyc.live/', // TODO: change me to a real open KYC url
   );
 
@@ -57,7 +65,8 @@ class MyApp extends StatelessWidget {
         '/scan': (context) => RegistrationScreen(),
         '/register': (context) => RegistrationScreen(),
         '/success': (context) => SuccessfulScreen(),
-        '/profile': (context) => ProfileScreen()
+        '/profile': (context) => ProfileScreen(),
+        '/error': (context) => ErrorScreen()
       },
     );
   }

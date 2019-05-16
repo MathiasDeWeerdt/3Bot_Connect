@@ -163,7 +163,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       print(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, privateKey);
     }
-    sendData(hash, await signedHash, data).then((x) {
+    sendData(hash, await signedHash, data, null).then((x) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       Navigator.of(context).pushNamed('/success');
     });

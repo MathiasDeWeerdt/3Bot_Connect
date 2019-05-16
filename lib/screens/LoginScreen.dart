@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
@@ -23,6 +25,33 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   String helperText = 'Give in your pincode to log in';
+  List<int> imageList = new List();
+  var selectedImageId = -1;
+  var correctImage = -1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    var generated = 1;
+    var rng = new Random();
+
+    correctImage = int.parse(widget.message['randomImageId']);
+
+    imageList.add(correctImage);
+
+    while (generated <= 3) {
+      var x = rng.nextInt(266) + 1;
+      if (!imageList.contains(x)) {
+        imageList.add(x);
+        generated++;
+      }
+    }
+    setState(() {
+      imageList.shuffle();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,6 +82,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                       EdgeInsets.only(top: 24.0, bottom: 24.0),
                                   child: Center(
                                       child: Text(
+                                    'Please select the icon presented on your monitor.',
+                                    style: TextStyle(fontSize: 16.0),
+                                  ))),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Spacer(),
+                                    ImageButton(imageList[0], selectedImageId, imageSelectedCallback),
+                                    Spacer(),
+                                    ImageButton(imageList[1], selectedImageId, imageSelectedCallback),
+                                    Spacer(),
+                                    ImageButton(imageList[2], selectedImageId, imageSelectedCallback),
+                                    Spacer(),
+                                    ImageButton(imageList[3], selectedImageId, imageSelectedCallback),
+                                    Spacer(),
+                                  ]),
+                              Container(
+                                  width: double.infinity,
+                                  padding:
+                                      EdgeInsets.only(top: 24.0, bottom: 24.0),
+                                  child: Center(
+                                      child: Text(
                                     helperText,
                                     style: TextStyle(fontSize: 16.0),
                                   ))),
@@ -62,26 +113,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         ))))));
   }
 
+  imageSelectedCallback(imageId) {
+    setState(() {
+      selectedImageId = imageId;
+    });
+  }
+
   pinFilledIn(p) async {
-    print(widget.message);
-    print('pinFilledIn');
-    print(widget.message);
-    print('initalBody');
     final pin = await getPin();
-    print(pin);
-    print(p);
     if (pin == p) {
-      print('pin OK');
       if (widget.message != null && widget.message['scope'] != null) {
-        print(widget.message['scope']);
-        print(widget.message['scope'].split(","));
         showScopeDialog(context, widget.message['scope'].split(","),
             widget.message['appId'], sendIt);
       } else {
         sendIt();
       }
     } else {
-      print('pin NOK');
       setState(() {
         helperText = "Pin code not ok";
       });
@@ -89,6 +136,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   sendIt() async {
+
+    if(selectedImageId == correctImage) {
+      // Correct image selected
+      print("We selected the CORRECT image!");
+    } else {
+      // Wrong image
+      print("We selected the WRONG image!");
+    }
     print('sendIt');
     var state = widget.message['state'];
     var publicKey = widget.message['appPublicKey'];
@@ -106,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, await privateKey);
     }
-    sendData(state, await signedHash, data);
+    sendData(state, await signedHash, data, selectedImageId);
 
     if (widget.closeWhenLoggedIn) {
       Navigator.popUntil(context, ModalRoute.withName('/'));

@@ -116,7 +116,7 @@ class _RegistrationWithoutScanScreen
       print(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, privateKey);
     }
-    sendData(hash, await signedHash, data);
+    sendData(hash, await signedHash, data, null);
 
     SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     Navigator.popUntil(context, ModalRoute.withName('/'));

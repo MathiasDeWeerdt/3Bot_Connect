@@ -14,11 +14,11 @@ sendScannedFlag(String hash, String deviceId) async {
       .catchError((onError) => print(onError));
 }
 
-Future sendData(String hash, String signedHash, data) {
+Future sendData(String hash, String signedHash, data, selectedImageId) {
   print('$threeBotApiUrl/sign');
   return http
       .post('$threeBotApiUrl/sign',
-          body: json.encode({'hash': hash, 'signedHash': signedHash, 'data': data}),
+          body: json.encode({'hash': hash, 'signedHash': signedHash, 'data': data, 'selectedImageId': selectedImageId}),
           headers: requestHeaders)
       .catchError((onError) => print(onError));
 }

@@ -46,7 +46,7 @@ class _RegistrationWithoutScanScreen
             child: Container(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20.0),
                             topRight: Radius.circular(20.0))),
@@ -130,7 +130,7 @@ class _RegistrationWithoutScanScreen
         return AlertDialog(
           title: new Text("You are about to register a new account"),
           content: new Text(
-              "If you continue, you won't be abel to login with the current account again"),
+              "If you continue, you won't be able to login with the current account again"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(

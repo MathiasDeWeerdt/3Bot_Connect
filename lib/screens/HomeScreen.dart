@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       checkIfThereAreLoginAttempts(dn);
       if (dn != null || dn != '') {
         getEmail().then((emailMap) async {
-          if (!emailMap['verified']) {
+          if (emailMap['verified'] != null && !emailMap['verified']) {
             checkVerificationStatus(dn).then((newEmailMap) async {
               print(newEmailMap.body);
               var body = jsonDecode(newEmailMap.body);

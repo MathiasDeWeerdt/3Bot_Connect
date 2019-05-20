@@ -33,22 +33,17 @@ void initFirebaseMessagingListener(context) async {
 }
 
 void openLogin(context, message) {
-  print('OpenLogin');
-
   var data = message['data'];
   if (Platform.isIOS) data = message;
 
-  print(data['type']);
   if (data['type'] == 'login') {
     Navigator.popUntil(context, ModalRoute.withName('/'));
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
   } else if (data['type'] == 'email_verification') {
-    print('email_verification');
     getEmail().then((emailMap) async {
       if (!emailMap['verified']) {
         checkVerificationStatus(await getDoubleName()).then((newEmailMap) async {
-          print(newEmailMap.body);
           var body = jsonDecode(newEmailMap.body);
           saveEmailVerified(body['verified'] == 1);
         });

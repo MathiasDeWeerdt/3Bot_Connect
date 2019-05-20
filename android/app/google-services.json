@@ -10,7 +10,7 @@
         "client_info": {
           "mobilesdk_app_id": "1:399226968341:android:95eb1acf46b3e9e6",
           "android_client_info": {
-            "package_name": "org.jimber.threebotlogin"
+            "package_name": "org.jimber.threebotlogin.staging"
           }
         },
         "oauth_client": [

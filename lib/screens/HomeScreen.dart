@@ -7,6 +7,7 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:uni_links/uni_links.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
@@ -23,17 +24,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttemt = true;
   String doubleName = '';
-  String version = '0.0.0';
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    PackageInfo.fromPlatform().then((packageInfo) => {
-          setState(() {
-            version = packageInfo.version;
-          })
-        });
     onActivate(true);
   }
 
@@ -148,34 +143,32 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             height: double.infinity,
             color: Theme.of(context).primaryColor,
             child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0))),
                 child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0))),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                            child: Center(
-                          child: FutureBuilder(
-                              future: getDoubleName(),
-                              builder: (BuildContext context,AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return alreadyRegistered(context, snapshot.data);
-                                } else
-                                  return notRegistered(context);
-                              }),
-                        )),
-                        Text('v ' + version + (isInDebugMode ? '-DEBUG' : '')),
-                      ],
-                    )))));
+                    child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                    ),
+                  child: FutureBuilder(
+                      future: getDoubleName(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          return AppSelector();
+                        } else
+                          return notRegistered(context);
+                      }),
+                )))));
   }
 
   Column notRegistered(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text('You are not registered yet.'),
         SizedBox(
@@ -194,34 +187,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             Navigator.pushNamed(context, '/scan');
           },
         )
-      ],
-    );
-  }
-
-  Column alreadyRegistered(BuildContext context, String data) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Icon(
-          Icons.check_circle,
-          size: 42.0,
-          color: Theme.of(context).accentColor,
-        ),
-        SizedBox(
-          height: 20.0,
-        ),
-        Text(
-          'Hi ' + data,
-          style: TextStyle(fontSize: 24.0),
-        ),
-        SizedBox(
-          height: 24.0,
-        ),
-        Text('You are already registered.'),
-        Text('If you need to login you\'ll get a notification.'),
-        SizedBox(
-          height: 20,
-        ),
       ],
     );
   }

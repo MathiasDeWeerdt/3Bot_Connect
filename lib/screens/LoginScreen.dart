@@ -65,20 +65,18 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Container(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20.0),
                             topRight: Radius.circular(20.0))),
                     child: SingleChildScrollView(
                         child: Container(
                             padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
-                            child: Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
+                            child:  Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                                       children: <Widget>[
                                         ImageButton(
                                             imageList[0],
@@ -97,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             selectedImageId,
                                             imageSelectedCallback),
                                       ]),
+                                  SizedBox(height: 20,),
                                   Container(
                                       width: double.infinity,
                                       padding: EdgeInsets.only(
@@ -109,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   PinField(callback: (p) => pinFilledIn(p))
                                 ],
                               ),
-                            )))))));
+                            ))))));
   }
 
   imageSelectedCallback(imageId) {

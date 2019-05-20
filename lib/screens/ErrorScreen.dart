@@ -36,7 +36,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
             child: Container(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20.0),
                             topRight: Radius.circular(20.0))),

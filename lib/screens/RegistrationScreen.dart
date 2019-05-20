@@ -65,7 +65,7 @@ class _ScanScreenState extends State<RegistrationScreen>
                 color: Colors.transparent,
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(20.0),
                           topRight: Radius.circular(20.0))),

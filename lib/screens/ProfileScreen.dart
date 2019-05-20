@@ -30,7 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20.0),
                             topRight: Radius.circular(20.0))),
@@ -50,6 +50,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 height: 20.0,
                               ),
                               Text('Hi ' + doubleName),
+
+                              Text('If you need to login you\'ll get a notification.'),
                               SizedBox(
                                 height: 24.0,
                               ),
@@ -153,7 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return AlertDialog(
           title: new Text("Are you sure?"),
           content: new Text(
-              "If you continue, you won't be abel to login with the current account again"),
+              "If you continue, you won't be able to login with the current account again"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(

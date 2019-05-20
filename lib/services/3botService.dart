@@ -10,7 +10,7 @@ sendScannedFlag(String hash, String deviceId) async {
   http
       .post('$threeBotApiUrl/flag',
           body: json.encode({'hash': hash, 'deviceId': deviceId}),
-          headers: requestHeaders)
+          headers: requestHeaders,)
       .catchError((onError) => print(onError));
 }
 

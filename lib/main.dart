@@ -17,18 +17,11 @@ Config config;
 Future<void> main() async {
   config = Config(
       threeBotApiUrl: isInDebugMode
-<<<<<<< HEAD
-          ? 'http://192.168.2.60:5000/api'
+          ? 'https://login.staging-01.jimber.lan/api'
           : 'https://login.threefold.me/api',
       openKycApiUrl: isInDebugMode
-          ? 'http://192.168.2.60:5005'
-=======
-          ? 'http://192.168.2.80:5000/api'
-          : 'https://login.threefold.me/api',
-      openKycApiUrl: isInDebugMode
-          ? 'http://192.168.2.80:5005'
->>>>>>> d1edee06ba3519776a6762c244e601ba2029af9f
-          : 'https://openkyc.live/', // TODO: change me to a real open KYC url
+          ? 'https://openkyc.staging-01.jimber.lan'
+          : 'https://openkyc.live/',
   );
 
   pk = await getPrivateKey();

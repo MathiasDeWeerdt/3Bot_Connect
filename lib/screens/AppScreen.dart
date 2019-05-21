@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:threebotlogin/services/userService.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class AppScreen extends StatefulWidget {
@@ -10,6 +14,13 @@ class AppScreen extends StatefulWidget {
 }
 
 class _AppScreenState extends State<AppScreen> {
+  WebViewController controller;
+  @override
+  void dispose() {
+    print("SAVE STATE");
+    widget.app['callback'](widget.app);
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +42,10 @@ class _AppScreenState extends State<AppScreen> {
                     child: Container(
                         width: double.infinity,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0),
-                          ),
-                          child: WebView(
-                            initialUrl: widget.app['url'],
-                            javascriptMode: JavascriptMode.unrestricted,
-                          ),
-                        ))))));
-  }
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
+                            ),
+                            child: widget.app['webview']))))));
+  }  
 }

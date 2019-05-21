@@ -33,9 +33,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     var generated = 1;
     var rng = new Random();
-    print(widget.message);
-    print(widget.message['randomImageId']);
-    correctImage = int.parse(widget.message['randomImageId']);
+    if (isNumeric(widget.message['randomImageId']))
+      correctImage = int.parse(widget.message['randomImageId']);
+    else
+      correctImage = 1;
 
     imageList.add(correctImage);
 
@@ -71,44 +72,37 @@ class _LoginScreenState extends State<LoginScreen> {
                             topRight: Radius.circular(20.0))),
                     child: SingleChildScrollView(
                         child: Container(
-                            padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
-                            child:  Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: <Widget>[
-                                        ImageButton(
-                                            imageList[0],
-                                            selectedImageId,
-                                            imageSelectedCallback),
-                                        ImageButton(
-                                            imageList[1],
-                                            selectedImageId,
-                                            imageSelectedCallback),
-                                        ImageButton(
-                                            imageList[2],
-                                            selectedImageId,
-                                            imageSelectedCallback),
-                                        ImageButton(
-                                            imageList[3],
-                                            selectedImageId,
-                                            imageSelectedCallback),
-                                      ]),
-                                  SizedBox(height: 20,),
-                                  Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.only(
-                                          top: 24.0, bottom: 24.0),
-                                      child: Center(
-                                          child: Text(
-                                        helperText,
-                                        style: TextStyle(fontSize: 16.0),
-                                      ))),
-                                  PinField(callback: (p) => pinFilledIn(p))
-                                ],
-                              ),
-                            ))))));
+                      padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                ImageButton(imageList[0], selectedImageId,
+                                    imageSelectedCallback),
+                                ImageButton(imageList[1], selectedImageId,
+                                    imageSelectedCallback),
+                                ImageButton(imageList[2], selectedImageId,
+                                    imageSelectedCallback),
+                                ImageButton(imageList[3], selectedImageId,
+                                    imageSelectedCallback),
+                              ]),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
+                              child: Center(
+                                  child: Text(
+                                helperText,
+                                style: TextStyle(fontSize: 16.0),
+                              ))),
+                          PinField(callback: (p) => pinFilledIn(p))
+                        ],
+                      ),
+                    ))))));
   }
 
   imageSelectedCallback(imageId) {
@@ -159,7 +153,6 @@ class _LoginScreenState extends State<LoginScreen> {
       data = await encrypt(jsonEncode(scope), publicKey, await privateKey);
     }
     sendData(state, await signedHash, data, selectedImageId);
-
     if (widget.closeWhenLoggedIn) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
@@ -167,5 +160,12 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       Navigator.of(context).pushNamed('/success');
     }
+  }
+
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return double.parse(s, (e) => null) != null;
   }
 }

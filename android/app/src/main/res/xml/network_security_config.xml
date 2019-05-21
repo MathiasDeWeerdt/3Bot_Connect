@@ -5,5 +5,8 @@
             <!-- Trust user added CAs while debuggable only -->
             <certificates src="user" /> 
         </trust-anchors>    
-    <!-- </debug-overrides>   -->
+    <!-- </debug-overrides>  -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">192.168.2.7</domain>
+    </domain-config>
 </network-security-config>

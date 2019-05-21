@@ -50,6 +50,16 @@ Future<Map<String, Object>> getEmail () async {
   };
 }
 
+Future saveLoginToken(loginToken) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('loginToken');
+  prefs.setString('loginToken', loginToken);
+}
+Future<String> getLoginToken () async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('loginToken');
+}
+
 void clearData() async{
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('pin');

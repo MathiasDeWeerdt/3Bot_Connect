@@ -17,10 +17,10 @@ Config config;
 Future<void> main() async {
   config = Config(
       threeBotApiUrl: isInDebugMode
-          ? 'https://login.staging-01.jimber.lan/api'
+          ? 'http://192.168.0.135:5000/api'
           : 'https://login.threefold.me/api',
       openKycApiUrl: isInDebugMode
-          ? 'https://openkyc.staging-01.jimber.lan'
+          ? 'http://192.168.0.135:5005'
           : 'https://openkyc.live/',
   );
 

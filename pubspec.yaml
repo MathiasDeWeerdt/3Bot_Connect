@@ -19,7 +19,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  webview_flutter:
   fast_qr_reader_view:
     git:
       url: https://github.com/coeneivan/fast_qr_reader_view

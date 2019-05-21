@@ -25,12 +25,11 @@ class _SingleAppState extends State<SingleApp> {
               image: AssetImage("assets/" + widget.app['bg']),
               fit: BoxFit.cover,
               alignment: Alignment.centerRight,
-              colorFilter: ColorFilter.mode(Theme.of(context).primaryColor, BlendMode.hue)
+              colorFilter: widget.app['disabled']? ColorFilter.mode(Colors.black.withAlpha(200), BlendMode.darken) : ColorFilter.mode(Theme.of(context).primaryColor.withAlpha(200), BlendMode.multiply)
             ),
             borderRadius: BorderRadius.all(Radius.circular(20.0)),
             boxShadow: [
-              new BoxShadow(
-                  color: Colors.black, offset: Offset(1, 1), blurRadius: 2.0)
+              new BoxShadow(color: Colors.black, offset: Offset(1, 1), blurRadius: 2.0)
             ],
           ),
           child: Column(
@@ -43,7 +42,13 @@ class _SingleAppState extends State<SingleApp> {
           ),
         ),
         onPressed: () {
-          Navigator.push(context,MaterialPageRoute(builder: (context) => AppScreen(widget.app)));
+          if (!widget.app['disabled']) {
+            Navigator.push(context,MaterialPageRoute(builder: (context) => AppScreen(widget.app)));
+          } else {
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text('This will be available soon.'),
+            ));
+          }
         },
       ),
     );

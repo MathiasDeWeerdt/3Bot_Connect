@@ -14,17 +14,9 @@ String pk;
 String deviceId;
 Config config;
 
-Future<void> main() async {
-  config = Config(
-      threeBotApiUrl: isInDebugMode
-          ? 'http://192.168.0.135:5000/api'
-          : 'https://login.threefold.me/api',
-      openKycApiUrl: isInDebugMode
-          ? 'http://192.168.0.135:5005'
-          : 'https://openkyc.live/',
-  );
-
+void init() async {
   pk = await getPrivateKey();
+
   try {
     cameras = await availableCameras();
   } on QRReaderException catch (e) {
@@ -32,12 +24,12 @@ Future<void> main() async {
   }
 
   FirebaseMessaging messaging = FirebaseMessaging();
+
   messaging.requestNotificationPermissions();
-      messaging.getToken().then((t) {
-        deviceId = t;
-        print('Got device id $deviceId');
-      });
-  runApp(MyApp());
+  messaging.getToken().then((t) {
+    deviceId = t;
+    print('Got device id $deviceId');
+  });
 }
 
 bool get isInDebugMode {
@@ -49,8 +41,10 @@ bool get isInDebugMode {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    config = Config.of(context);
+
     return MaterialApp(
-      title: '3bot',
+      title: config.name,
       theme: ThemeData(
           primaryColor: Color(0xff0f296a), accentColor: Color(0xff16a085)),
       routes: {

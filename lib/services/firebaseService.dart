@@ -43,24 +43,25 @@ Future openLogin(context, message) async {
     print('---------------');
     print('Got loginToken');
     if (data['logintoken'] == await getLoginToken()) {
-        print('sendIt');
-        var state = data['state'];
-        var publicKey = data['appPublicKey'];
-        var privateKey = getPrivateKey();
-        var email = getEmail();
+      print('sendIt');
+      var state = data['state'];
+      var publicKey = data['appPublicKey'];
+      var privateKey = getPrivateKey();
+      var email = getEmail();
 
-        var signedHash = signHash(state, await privateKey);
-        var scope = {};
-        var dataToSend;
-        if (data['scope'] != null) {
-          if (data['scope'].split(",").contains('user:email'))
-            scope['email'] = await email;
-        }
-        if (scope.isNotEmpty) {
-          print(scope.isEmpty);
-          dataToSend = await encrypt(jsonEncode(scope), publicKey, await privateKey);
-        }
-        sendData(state, await signedHash, dataToSend, null);
+      var signedHash = signHash(state, await privateKey);
+      var scope = {};
+      var dataToSend;
+      if (data['scope'] != null) {
+        if (data['scope'].split(",").contains('user:email'))
+          scope['email'] = await email;
+      }
+      if (scope.isNotEmpty) {
+        print(scope.isEmpty);
+        dataToSend =
+            await encrypt(jsonEncode(scope), publicKey, await privateKey);
+      }
+      sendData(state, await signedHash, dataToSend, null);
     }
   } else {
     print(data['type']);
@@ -69,12 +70,10 @@ Future openLogin(context, message) async {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
     } else if (data['type'] == 'email_verification') {
-      print('email_verification');
       getEmail().then((emailMap) async {
         if (!emailMap['verified']) {
           checkVerificationStatus(await getDoubleName())
               .then((newEmailMap) async {
-            print(newEmailMap.body);
             var body = jsonDecode(newEmailMap.body);
             saveEmailVerified(body['verified'] == 1);
           });

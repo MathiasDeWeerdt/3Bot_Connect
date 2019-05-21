@@ -6,7 +6,6 @@ String threeBotApiUrl = config.threeBotApiUrl;
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
 sendScannedFlag(String hash, String deviceId) async {
-  print('$threeBotApiUrl/flag');
   http
       .post('$threeBotApiUrl/flag',
           body: json.encode({'hash': hash, 'deviceId': deviceId}),
@@ -15,7 +14,6 @@ sendScannedFlag(String hash, String deviceId) async {
 }
 
 Future sendData(String hash, String signedHash, data, selectedImageId) {
-  print('$threeBotApiUrl/sign');
   return http
       .post('$threeBotApiUrl/sign',
           body: json.encode({'hash': hash, 'signedHash': signedHash, 'data': data, 'selectedImageId': selectedImageId}),
@@ -28,18 +26,11 @@ Future checkLoginAttempts(String doubleName) {
 }
 
 Future<bool> checkVersionNumber(String version) async {
-  print('$threeBotApiUrl/minversion');
   var minVersion = (await http.get('$threeBotApiUrl/minversion', headers: requestHeaders)).body;
-
-  print('min ' + minVersion);
-  print('current ' + version);
 
   try {
     var min = int.parse(minVersion);
     var current = int.parse(version);
-    print('checkVersionNumber');
-    print('min ' + min.toString());
-    print('current ' + current.toString());
     print((min <= current).toString());
     return min <= current;
 

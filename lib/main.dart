@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'config.dart';
 import 'package:threebotlogin/screens/HomeScreen.dart';
 import 'package:threebotlogin/screens/RegistrationScreen.dart';
@@ -13,6 +14,9 @@ List<CameraDescription> cameras;
 String pk;
 String deviceId;
 Config config;
+// final flutterWebViewPlugin = FlutterWebviewPlugin();
+List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(4);
+
 
 void init() async {
   pk = await getPrivateKey();
@@ -38,7 +42,10 @@ bool get isInDebugMode {
   return inDebugMode;
 }
 
+String kAndroidUserAgent =
+      'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     config = Config.of(context);

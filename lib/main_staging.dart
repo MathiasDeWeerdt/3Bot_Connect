@@ -6,8 +6,8 @@ import 'main.dart';
 void main() {
   var config = Config(
       name: '3bot staging',
-      threeBotApiUrl: 'https://login.staging-01.jimber.lan/api',
-      openKycApiUrl: 'https://openkyc.staging-01.jimber.lan',
+      threeBotApiUrl: 'https://login.staging.jimber.org/api',
+      openKycApiUrl: 'https://openkyc.staging.jimber.org',
       child: new MyApp()
   );
 

@@ -35,14 +35,14 @@ then
 
     if [ $1 == "--run" ]
     then
-        echo "flutter run -t lib/main_local.dart"
-        flutter run -t lib/main_local.dart
+        echo "flutter run -t lib/main_local_mathias.dart"
+        flutter run -t lib/main_local_mathias.dart
     elif [ $1 == "--switch" ]
     then
         echo "Switched configs local."
     else
-        echo "flutter build apk -t lib/main_local.dart"
-        flutter build apk -t lib/main_local.dart
+        echo "flutter build apk -t lib/main_local_mathias.dart"
+        flutter build apk -t lib/main_local_mathias.dart
     fi
 
     exit 1

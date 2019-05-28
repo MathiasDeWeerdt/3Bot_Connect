@@ -77,16 +77,6 @@ class _AppSelectorState extends State<AppSelector> {
 
   Future<List> createList() async {
     apps = [
-      // {
-      //   "name": 'Example',
-      //   "subheading": 'Nothing special',
-      //   "bg": 'example.jpg',
-      //   "disabled": false,
-      //   "initialUrl": await createInitialLogin('http://192.168.1.109:8081'),
-      //   "callback": updateApp,
-      //   "visible": false,
-      //   "id": 0
-      // },
       {
         "name": 'FreeFlowPages',
         "subheading": 'Where privacy and social media co-exist.',

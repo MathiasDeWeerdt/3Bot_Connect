@@ -8,10 +8,10 @@ showScopeDialog(context, Map<dynamic, dynamic> scope, String appId, callback) {
     builder: (BuildContext context) => CustomDialog(
           title: appId + "\n would like to access",
           description: scopeList(context, scope),
-          btn: FlatButton(
+          actions: <Widget>[FlatButton(
             child: Text("Ok"),
             onPressed: callback,
-          ),
+          )],
         ),
   );
 }

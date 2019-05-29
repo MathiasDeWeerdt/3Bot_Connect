@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'config.dart';
 import 'main.dart';
@@ -12,7 +13,9 @@ void main() {
   );
 
   init();
-  
-  runApp(config);
-  print("running main_prod.dart");
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+    .then((_) {
+      runApp(config);
+      print("running main_prod.dart");
+    });
 }

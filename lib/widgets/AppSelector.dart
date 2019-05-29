@@ -51,7 +51,7 @@ class _AppSelectorState extends State<AppSelector> {
         "disabled": false,
         "webview": WebView(
           key: ValueKey('Example'),
-          initialUrl: await createInitialLogin('http://192.168.0.135:8081'),
+          initialUrl: await createInitialLogin("https://example.staging.jimber.org"),
           javascriptMode: JavascriptMode.unrestricted,
         ),
         "callback": updateApp
@@ -63,7 +63,7 @@ class _AppSelectorState extends State<AppSelector> {
         "disabled": false,
         "webview": WebView(
           key: ValueKey('FreeFlowPages'),
-          initialUrl: await createInitialLogin('https://freeflowpages.com/user/auth/external?authclient=3bot'),
+          initialUrl: await createInitialLogin('https://staging.freeflowpages.com/user/auth/external?authclient=3bot'),
           javascriptMode: JavascriptMode.unrestricted,
         ),
         "callback": updateApp
@@ -95,12 +95,12 @@ class _AppSelectorState extends State<AppSelector> {
     apps.firstWhere((a) => a['name'] == app['name'])['webview'] = app['webview'];
   }
   Future<String> createInitialLogin(url) async {
-    String initalUrl = url;
+    String initialUrl = url;
     var union = '?';
-    if (initalUrl.indexOf('?') > -1) union = '&';
-    initalUrl += union + 'logintoken=' + _randomString(20);
-    initalUrl += '&doublename=' + await getDoubleName();
-    return initalUrl;
+    if (initialUrl.indexOf('?') > -1) union = '&';
+    initialUrl += union + 'logintoken=' + _randomString(20);
+    initialUrl += '&doublename=' + await getDoubleName();
+    return initialUrl;
   }
 
   String _randomString(int length) {

@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:threebotlogin/services/loggingService.dart';
 import 'config.dart';
 import 'package:threebotlogin/screens/HomeScreen.dart';
 import 'package:threebotlogin/screens/RegistrationScreen.dart';
@@ -14,11 +15,13 @@ List<CameraDescription> cameras;
 String pk;
 String deviceId;
 Config config;
-// final flutterWebViewPlugin = FlutterWebviewPlugin();
-List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(4);
-
+LoggingService logger;
+List<FlutterWebviewPlugin> flutterWebViewPlugins;
 
 void init() async {
+  logger = new LoggingService();
+  flutterWebViewPlugins = new List(4);
+  
   pk = await getPrivateKey();
 
   try {
@@ -32,7 +35,7 @@ void init() async {
   messaging.requestNotificationPermissions();
   messaging.getToken().then((t) {
     deviceId = t;
-    print('Got device id $deviceId');
+    logger.log('Got device id $deviceId');
   });
 }
 

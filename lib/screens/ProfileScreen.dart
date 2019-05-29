@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:threebotlogin/services/userService.dart';
+import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);
@@ -152,12 +153,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // flutter defined function
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Are you sure?"),
-          content: new Text(
-              "If you continue, you won't be able to login with the current account again"),
+      builder: (BuildContext context) => CustomDialog(
+          image: Icons.error,
+          title: "Are you sure?",
+          description: new Text("If you continue, you won't be able to login with the current account again."),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(
@@ -174,8 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
           ],
-        );
-      },
-    );
+      ));
+      
   }
 }

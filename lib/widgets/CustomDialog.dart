@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class CustomDialog extends StatelessWidget {
-  final Widget description, btn;
+  final Widget description;
+  final List<Widget> actions;
   final String title;
-  final Image image;
+  final IconData image;
 
   CustomDialog({
     @required this.title,
     @required this.description,
-    @required this.btn,
-    this.image,
+    @required this.actions,
+    this.image = Icons.person,
   });
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Consts.padding),
+        borderRadius: BorderRadius.circular(20.0),
       ),
       elevation: 0.0,
       backgroundColor: Colors.transparent,
@@ -33,13 +34,13 @@ class CustomDialog extends StatelessWidget {
 
   circularImage(context) {
     return Positioned(
-      left: Consts.padding,
-      right: Consts.padding,
+      left: 20.0,
+      right: 20.0,
       child: CircleAvatar(
         backgroundColor: Theme.of(context).primaryColor,
-        radius: Consts.avatarRadius,
+        radius: 30.0,
         child: Icon(
-          Icons.person,
+          image,
           size: 42.0,
           color: Colors.white,
         ),
@@ -50,16 +51,13 @@ class CustomDialog extends StatelessWidget {
   card(context) {
     return Container(
       padding: EdgeInsets.only(
-        top: Consts.avatarRadius + Consts.padding,
-        bottom: Consts.padding,
-        left: Consts.padding,
-        right: Consts.padding,
+        top: 30.0 + 20.0
       ),
-      margin: EdgeInsets.only(top: Consts.avatarRadius),
+      margin: EdgeInsets.only(top: 30.0),
       decoration: new BoxDecoration(
         color: Colors.white,
         shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(Consts.padding),
+        borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
@@ -71,27 +69,45 @@ class CustomDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min, // To make the card compact
         children: <Widget>[
-          Text(title,
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Text(
+              title,
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,
               ),
-              textAlign: TextAlign.center,),
+              textAlign: TextAlign.center,
+            ),
+          ),
           SizedBox(height: 16.0),
-          description,
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: description
+          ),
           SizedBox(height: 24.0),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: btn,
+          Container(
+            decoration: new BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(20)
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10.0,
+                  offset: const Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: actions,
+            ),
           ),
         ],
       ),
     );
   }
-}
-
-class Consts {
-  Consts._();
-  static const double padding = 16.0;
-  static const double avatarRadius = 30.0;
 }

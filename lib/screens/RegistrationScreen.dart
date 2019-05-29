@@ -111,7 +111,7 @@ class _ScanScreenState extends State<RegistrationScreen>
         ]));
   }
 
-  void gotQrData(value) {
+   gotQrData(value) async {
     setState(() {
       qrData = jsonDecode(value);
     });
@@ -123,7 +123,8 @@ class _ScanScreenState extends State<RegistrationScreen>
     if (hash == null || privateKey == null || doubleName == null || email == null) {
       showError();
     } else {
-      sendScannedFlag(hash, deviceId).then((response) {
+      var signedDeviceId = signHash(deviceId, privateKey);
+      sendScannedFlag(hash, await signedDeviceId).then((response) {
         sliderAnimationController.forward();
         setState(() {
           helperText = "Choose new pin";
@@ -141,7 +142,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     ));
   }
 
-  Future pinFilledIn(String value) async {
+  pinFilledIn(String value) {
     if (pin == null) {
       setState(() {
         pin = value;
@@ -165,7 +166,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     }
   }
 
-  Future saveValues() async {
+  saveValues() async { 
     logger.log('save values');
     var hash = qrData['hash'];
     var privateKey = qrData['privateKey'];

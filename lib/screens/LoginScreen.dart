@@ -15,9 +15,9 @@ class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
   final message;
   final bool closeWhenLoggedIn;
-  LoginScreen(this.message,
-      {Key key, this.loginScreen, this.closeWhenLoggedIn = false})
-      : super(key: key);
+  // data: {appPublicKey: xKHlaIyza5dSxswOmvuYV7MDreIbLllK9T0n3c1tu0g=, appId: ExampleAppId, scope: ["user:email"], state: gk4NFmIrrEZiSjv6J0tl9mDBSZTP3Dah, doubleName: ol.d}}
+
+  LoginScreen(this.message, {Key key, this.loginScreen, this.closeWhenLoggedIn=false}) : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -127,9 +127,9 @@ class _LoginScreenState extends State<LoginScreen> {
           sendIt();
         }
       } else {
-        setState(() {
-          helperText = "Pin code not ok";
-        });
+         _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Oops... you entered the wrong pin'),
+        ));
       }
     } else {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -139,13 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   sendIt() async {
-    if (selectedImageId == correctImage) {
-      logger.log("We selected the correct image!");
-    } else {
-      logger.log("We selected the wrong image!");
-    }
-
-    logger.log('sendIt');
+    print('sendIt');
     var state = widget.message['state'];
     var publicKey = widget.message['appPublicKey'];
 
@@ -167,13 +161,20 @@ class _LoginScreenState extends State<LoginScreen> {
       logger.log(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, await privateKey);
     }
+
     sendData(state, await signedHash, data, selectedImageId);
-    if (widget.closeWhenLoggedIn) {
-      Navigator.popUntil(context, ModalRoute.withName('/'));
-      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    if (selectedImageId == correctImage) {
+      if (widget.closeWhenLoggedIn) {
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      } else {
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.of(context).pushNamed('/success');
+      }
     } else {
-      Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.of(context).pushNamed('/success');
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('Oops... you selected the wrong emoji'),
+      ));
     }
   }
 

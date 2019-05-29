@@ -4,22 +4,22 @@ import 'package:threebotlogin/main.dart';
 
 class ErrorScreen extends StatefulWidget {
   final Widget errorScreen;
-
-  ErrorScreen({Key key, this.errorScreen}) : super(key: key);
-
+  final String errorMessage;
+  ErrorScreen({Key key, this.errorScreen, this.errorMessage = ''}) : super(key: key);
   _ErrorScreenState createState() => _ErrorScreenState();
 }
 
 class _ErrorScreenState extends State<ErrorScreen> {
   var version = '0.0.0';
+
   @override
   void initState() {
     super.initState();
     PackageInfo.fromPlatform().then((packageInfo) => {
-      setState(() {
-        version = packageInfo.version;
-      })
-    });
+          setState(() {
+            version = packageInfo.version;
+          })
+        });
   }
 
   @override
@@ -46,7 +46,9 @@ class _ErrorScreenState extends State<ErrorScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Expanded(child: Container(),),
+                              Expanded(
+                                child: Container(),
+                              ),
                               Icon(
                                 Icons.warning,
                                 size: 42.0,
@@ -55,12 +57,16 @@ class _ErrorScreenState extends State<ErrorScreen> {
                               SizedBox(
                                 height: 20.0,
                               ),
-                              Text('Please update the app before continuing'),
+                              Text(widget.errorMessage.isEmpty ? 'Please update the app before continuing' : widget.errorMessage),
                               SizedBox(
                                 height: 60.0,
                               ),
-                              Expanded(child: Container(),),
-                              Text('v ' + version + (isInDebugMode ? '-DEBUG' : '')),
+                              Expanded(
+                                child: Container(),
+                              ),
+                              Text('v ' +
+                                  version +
+                                  (isInDebugMode ? '-DEBUG' : '')),
                             ],
                           ),
                         ))))));

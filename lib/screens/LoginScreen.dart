@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     print('sendIt');
     var state = widget.message['state'];
-    var publicKey = widget.message['appPublicKey'];
+    var publicKey = widget.message['appPublicKey'].replaceAll(" ", "+");
     var privateKey = getPrivateKey();
     var email = getEmail();
 

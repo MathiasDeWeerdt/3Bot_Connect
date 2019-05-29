@@ -22,6 +22,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   Animation<double> offset;
   dynamic qrData = '';
   String pin;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -100,22 +101,44 @@ class _ScanScreenState extends State<RegistrationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         body: Stack(children: [
-      Scanner(
-        callback: (qr) => gotQrData(qr),
-        context: context,
-      ),
-      Align(alignment: Alignment.bottomCenter, child: content())
-    ]));
+          Scanner(
+            callback: (qr) => gotQrData(qr),
+            context: context,
+          ),
+          Align(alignment: Alignment.bottomCenter, child: content())
+        ]));
   }
 
   void gotQrData(value) {
     setState(() {
       qrData = jsonDecode(value);
-      helperText = "Choose new pin";
     });
-    sliderAnimationController.forward();
-    sendScannedFlag(qrData['hash'], deviceId);
+
+    var hash = qrData['hash'];
+    var privateKey = qrData['privateKey'];
+    var doubleName = qrData['doubleName'];
+    var email = qrData['email'];
+    if (hash == null || privateKey == null || doubleName == null || email == null) {
+      showError();
+    } else {
+      sendScannedFlag(hash, deviceId).then((response) {
+        sliderAnimationController.forward();
+        setState(() {
+          helperText = "Choose new pin";
+        });
+      }).catchError((e) {
+        print(e);
+        showError();
+      });
+    }
+  }
+
+  showError() {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text('Something went wrong, please try again later.'),
+    ));
   }
 
   Future pinFilledIn(String value) async {
@@ -130,9 +153,12 @@ class _ScanScreenState extends State<RegistrationScreen>
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
+
+      var scope = {};
       if (qrData['scope'] != null) {
-        showScopeDialog(
-            context, qrData['scope'].split(","), qrData['appId'], saveValues);
+        if (qrData['scope'].split(",").contains('user:email'))
+        scope['email'] = {'email': qrData['email'], 'verified': false};
+        showScopeDialog(context, scope, qrData['appId'], saveValues);
       } else {
         saveValues();
       }
@@ -159,7 +185,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       if (qrData['scope'].split(",").contains('user:email'))
         scope['email'] = await getEmail();
     }
-    if (scope.isNotEmpty) {
+    if (scope.isNotEmpty && publicKey != null) {
       logger.log(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, privateKey);
     }

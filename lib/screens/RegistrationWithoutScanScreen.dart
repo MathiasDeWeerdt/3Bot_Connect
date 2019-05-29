@@ -86,8 +86,10 @@ class _RegistrationWithoutScanScreen
       logger.log(widget.initialData['scope']);
       logger.log('pin OK');
       if (widget.initialData['scope'] != null) {
-        showScopeDialog(context, widget.initialData['scope'].split(","),
-            widget.initialData['appId'], sendIt);
+        var scope = {};
+        if (widget.initialData['scope'].split(",").contains('user:email'))
+          scope['email'] = await getEmail();
+        showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
       } else {
         sendIt();
       }

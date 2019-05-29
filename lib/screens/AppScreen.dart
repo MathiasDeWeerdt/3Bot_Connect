@@ -21,31 +21,58 @@ class _AppScreenState extends State<AppScreen> {
     widget.app['callback'](widget.app);
     super.dispose();
   }
+
+  bool isVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.app['name']),
-          elevation: 0.0,
-        ),
+        appBar: AppBar(title: Text(widget.app['name']), elevation: 0.0),
         body: Container(
             width: double.infinity,
             height: double.infinity,
             color: Theme.of(context).primaryColor,
-            child: Container(
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).accentColor,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0))),
+            child: Column(
+              children: <Widget>[
+                Container(
+                    child: new RaisedButton(
+                  child: const Text('Connect with Twitter'),
+                  color: Theme.of(context).accentColor,
+                  elevation: 4.0,
+                  splashColor: Colors.blueGrey,
+                  onPressed: () {
+                    print("Lets hide the browser webview");
+                    // isVisible = !isVisible;
+                    setState(() {
+                      isVisible = !isVisible;
+                      print("Setting le state: " + isVisible.toString());
+                    });
+                  },
+                )),
+                Container(
                     child: Container(
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).accentColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0))),
+                  child: Visibility(
+                    child: Container(
+                        height: 650,
                         width: double.infinity,
                         child: ClipRRect(
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(20.0),
                               topRight: Radius.circular(20.0),
                             ),
-                            child: widget.app['webview']))))));
-  }  
+                            child: widget.app['webview'])),
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    visible: isVisible,
+                  ),
+                ))
+              ],
+            )));
+  }
 }

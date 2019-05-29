@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -129,15 +130,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
   sendIt() async {
     if (selectedImageId == correctImage) {
-      // Correct image selected
-      print("We selected the CORRECT image!");
+      logger.log("We selected the correct image!");
     } else {
-      // Wrong image
-      print("We selected the WRONG image!");
+      logger.log("We selected the wrong image!");
     }
-    print('sendIt');
+
+    logger.log('sendIt');
     var state = widget.message['state'];
-    var publicKey = widget.message['appPublicKey'].replaceAll(" ", "+");
+    var publicKey = widget.message['appPublicKey'];
+
+    if (publicKey != null) {
+      publicKey = publicKey.replaceAll(" ", "+");
+    }
+
     var privateKey = getPrivateKey();
     var email = getEmail();
 
@@ -149,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
         scope['email'] = await email;
     }
     if (scope.isNotEmpty) {
-      print(scope.isEmpty);
+      logger.log(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, await privateKey);
     }
     sendData(state, await signedHash, data, selectedImageId);

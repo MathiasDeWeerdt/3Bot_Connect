@@ -81,29 +81,8 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
             ? Center(
                 child: Container(
                 alignment: Alignment.topCenter,
-                padding: EdgeInsets.only(top: 100),
-                child: Stack(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 200.0,
-                      width: 300.0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white, width: 2.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0))),
-                      ),
-                    ),
-                    Positioned(
-                      top: verticalPosition.value,
-                      child: Container(
-                        width: 300.0,
-                        height: 2.0,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
-                ),
+                padding: EdgeInsets.all(100),
+                child: Image.asset('assets/qr.png')
               ))
             : BackdropFilter(
                 child: new AnimatedContainer(

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -16,9 +15,7 @@ import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
-
   HomeScreen({Key key, this.homeScreen}) : super(key: key);
-
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -33,8 +30,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
     selector = AppSelector();
-
-    
   }
 
   Future<Null> initUniLinks() async {
@@ -49,17 +44,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   checkWhatPageToOpen(Uri link) {
-    print(link.queryParameters);
     setState(() {
       openPendingLoginAttemt = false;
     });
+
     if (link.host == 'register') {
-      print('Register via link');
+      logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
       ));
     } else if (link.host == 'login') {
-      print('Login via link');
+      logger.log('Login via link');
       openPage(LoginScreen(
         link.queryParameters,
         closeWhenLoggedIn: true,
@@ -74,22 +69,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void checkIfThereAreLoginAttempts(dn) async {
     if (await getPrivateKey() != null && deviceId != null) {
       checkLoginAttempts(dn).then((attempt) {
-        print('-----=====------');
-        print(deviceId);
-        print(attempt.body);
+        logger.log('-----=====------');
+        logger.log(deviceId);
+        logger.log(attempt.body);
         if (attempt.body != '' && openPendingLoginAttemt)
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => LoginScreen(jsonDecode(attempt.body))));
-        print('-----=====------');
+        logger.log('-----=====------');
       });
     }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print(state);
     if (state == AppLifecycleState.resumed) {
       onActivate(false);
     }
@@ -97,8 +91,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Future onActivate(bool initFirebase) async {
     var buildNr = (await PackageInfo.fromPlatform()).buildNumber;
-    print('Current buildnr is ' + buildNr);
-    if (await checkVersionNumber(buildNr)) {
+    logger.log('Current buildnumber: ' + buildNr);
+    if (await checkVersionNumber(context, buildNr)) {
       if (initFirebase) {
         initFirebaseMessagingListener(context);
       }
@@ -109,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         getEmail().then((emailMap) async {
           if (emailMap['verified'] != null && !emailMap['verified']) {
             checkVerificationStatus(dn).then((newEmailMap) async {
-              print(newEmailMap.body);
+              logger.log(newEmailMap.body);
               var body = jsonDecode(newEmailMap.body);
               saveEmailVerified(body['verified'] == 1);
             });
@@ -126,33 +120,35 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        appBar: AppBar(title: Text('3Bot'), leading: IconButton(
-            tooltip: 'Apps',
-            icon: const Icon(Icons.apps),
-            onPressed: () {
-              flutterWebViewPlugins[0].hide();
-              flutterWebViewPlugins[1].hide();
-              flutterWebViewPlugins[2].hide();
-              flutterWebViewPlugins[3].hide();
-              // selector.showMenu();
-            }), elevation: 0.0, actions: <Widget>[
-          FutureBuilder(
-              future: getDoubleName(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return IconButton(
-                    icon: Icon(Icons.person),
-                    tooltip: 'Your profile',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/profile');
-                    },
-                  );
-                } else
-                  return Container();
-              }),
-        ]),
+        appBar: AppBar(
+            title: Text('3Bot'),
+            leading: IconButton(
+                tooltip: 'Apps',
+                icon: const Icon(Icons.apps),
+                onPressed: () {
+                  flutterWebViewPlugins[0].hide();
+                  flutterWebViewPlugins[1].hide();
+                  flutterWebViewPlugins[2].hide();
+                  flutterWebViewPlugins[3].hide();
+                }),
+            elevation: 0.0,
+            actions: <Widget>[
+              FutureBuilder(
+                  future: getDoubleName(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return IconButton(
+                        icon: Icon(Icons.person),
+                        tooltip: 'Your profile',
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/profile');
+                        },
+                      );
+                    } else
+                      return Container();
+                  }),
+            ]),
         body: Container(
             width: double.infinity,
             height: double.infinity,
@@ -165,10 +161,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         topRight: Radius.circular(20.0))),
                 child: Container(
                     child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
                   child: FutureBuilder(
                       future: getDoubleName(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -181,8 +177,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       }),
                 )))));
   }
-
-
 
   Column notRegistered(BuildContext context) {
     return Column(

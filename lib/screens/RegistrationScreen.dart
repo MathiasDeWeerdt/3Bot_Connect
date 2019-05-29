@@ -111,7 +111,7 @@ class _ScanScreenState extends State<RegistrationScreen>
         ]));
   }
 
-  void gotQrData(value) {
+   gotQrData(value) {
     setState(() {
       qrData = jsonDecode(value);
     });
@@ -141,7 +141,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     ));
   }
 
-  Future pinFilledIn(String value) async {
+  pinFilledIn(String value) {
     if (pin == null) {
       setState(() {
         pin = value;
@@ -165,7 +165,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     }
   }
 
-  Future saveValues() async { 
+  saveValues() async { 
     print('save values');
     var hash = qrData['hash'];
     var privateKey = qrData['privateKey'];

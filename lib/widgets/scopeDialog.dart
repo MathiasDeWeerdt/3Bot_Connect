@@ -1,38 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:threebotlogin/widgets/CustomDialog.dart';
 
-showScopeDialog(context, List<dynamic> scope, String appId, callback) {
-  var stringScope = List<String>.from(scope).join(', ');
+showScopeDialog(context, Map<dynamic, dynamic> scope, String appId, callback) {
   // flutter defined function
   showDialog(
     context: context,
-    builder: (BuildContext context) {
-      // return object of type Dialog
-      return AlertDialog(
-        title: Text("Do you want to share following information with " + appId + "?"),
-        content: Text(stringScope),
-        actions: <Widget>[
-          // usually buttons at the bottom of the dialog
-          FlatButton(
+    builder: (BuildContext context) => CustomDialog(
+          title: appId + "\n would like to access",
+          description: scopeList(context, scope),
+          btn: FlatButton(
             child: Text("Ok"),
             onPressed: callback,
           ),
-        ],
-      );
-    },
+        ),
   );
 }
 
-// class ScopeDialog extends StatefulWidget {
-//   ScopeDialog({Key key}) : super(key: key);
+Widget scopeList(context, Map<dynamic, dynamic> scope) {
+  print(scope);
+  print(scope.length);
+  var keys = scope.keys.toList();
 
-//   _ScopeDialogState createState() => _ScopeDialogState();
-// }
-
-// class _ScopeDialogState extends State<ScopeDialog> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//        child: child,
-//     );
-//   }
-// }
+  return ListView.builder(
+      itemCount: scope.length,
+      shrinkWrap: true,
+      itemBuilder: (BuildContext ctxt, index) {
+        var val = scope[keys[index]];
+        print(keys[index]);
+        print(val);
+        if (keys[index] == 'email') val = scope[keys[index]]['email'];
+        return Row(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              child: Icon(
+                Icons.keyboard_arrow_right,
+                size: 32.0,
+                color: Colors.black,
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  keys[index]?.toUpperCase(),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(val,
+                  textAlign: TextAlign.left,
+                )
+              ],
+            )
+          ],
+        );
+      });
+}

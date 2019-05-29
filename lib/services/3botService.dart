@@ -5,20 +5,18 @@ import 'dart:convert';
 String threeBotApiUrl = config.threeBotApiUrl;
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
-sendScannedFlag(String hash, String deviceId) async {
-  http
+Future sendScannedFlag(String hash, String deviceId) async {
+  return http
       .post('$threeBotApiUrl/flag',
           body: json.encode({'hash': hash, 'deviceId': deviceId}),
-          headers: requestHeaders,)
-      .catchError((onError) => print(onError));
+          headers: requestHeaders,);
 }
 
 Future sendData(String hash, String signedHash, data, selectedImageId) {
   return http
       .post('$threeBotApiUrl/sign',
           body: json.encode({'hash': hash, 'signedHash': signedHash, 'data': data, 'selectedImageId': selectedImageId}),
-          headers: requestHeaders)
-      .catchError((onError) => print(onError));
+          headers: requestHeaders);
 }
 
 Future checkLoginAttempts(String doubleName) {

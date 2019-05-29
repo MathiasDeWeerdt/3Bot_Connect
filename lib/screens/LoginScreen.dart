@@ -14,14 +14,23 @@ class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
   final message;
   final bool closeWhenLoggedIn;
+  // data: {appPublicKey: xKHlaIyza5dSxswOmvuYV7MDreIbLllK9T0n3c1tu0g=, appId: ExampleAppId, scope: ["user:email"], state: gk4NFmIrrEZiSjv6J0tl9mDBSZTP3Dah, doubleName: ol.d}}
+
   LoginScreen(this.message,
-      {Key key, this.loginScreen, this.closeWhenLoggedIn = false})
+      {Key key, this.loginScreen})
       : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  @override
+  void initState() { 
+    super.initState();
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`');
+    print(widget.message);
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`');
+  }
   String helperText = 'Give in your pincode to log in';
   List<int> imageList = new List();
   var selectedImageId = -1;

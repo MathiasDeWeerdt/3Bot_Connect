@@ -67,8 +67,7 @@ Future openLogin(context, message) async {
     print(data['type']);
     if (data['type'] == 'login') {
       Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
     } else if (data['type'] == 'email_verification') {
       getEmail().then((emailMap) async {
         if (!emailMap['verified']) {

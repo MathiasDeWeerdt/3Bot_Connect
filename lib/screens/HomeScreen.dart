@@ -7,7 +7,6 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:uni_links/uni_links.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
@@ -22,14 +21,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttemt = true;
   String doubleName = '';
-  AppSelector selector;
+  var email;
 
   @override
   void initState() {
+    getEmail().then((e) {
+      setState(() {
+        email = e;
+      });
+    });
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
-    selector = AppSelector();
   }
 
   Future<Null> initUniLinks() async {
@@ -55,11 +58,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ));
     } else if (link.host == 'login') {
       logger.log('Login via link');
-      openPage(LoginScreen(
-        link.queryParameters,
-        closeWhenLoggedIn: true,
-      ));
+      openPage(LoginScreen(link.queryParameters));
     }
+    print('==============');
   }
 
   openPage(page) {
@@ -121,34 +122,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: Text('3Bot'),
-            leading: IconButton(
-                tooltip: 'Apps',
-                icon: const Icon(Icons.apps),
-                onPressed: () {
-                  flutterWebViewPlugins[0].hide();
-                  flutterWebViewPlugins[1].hide();
-                  flutterWebViewPlugins[2].hide();
-                  flutterWebViewPlugins[3].hide();
-                }),
-            elevation: 0.0,
-            actions: <Widget>[
-              FutureBuilder(
-                  future: getDoubleName(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      return IconButton(
-                        icon: Icon(Icons.person),
-                        tooltip: 'Your profile',
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/profile');
-                        },
-                      );
-                    } else
-                      return Container();
-                  }),
-            ]),
+        appBar: AppBar(title: Text('3Bot'), elevation: 0.0, actions: <Widget>[
+          FutureBuilder(
+              future: getDoubleName(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return IconButton(
+                    icon: Icon(Icons.person),
+                    tooltip: 'Your profile',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/profile');
+                    },
+                  );
+                } else
+                  return Container();
+              }),
+        ]),
         body: Container(
             width: double.infinity,
             height: double.infinity,
@@ -169,13 +158,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       future: getDoubleName(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
-                          selector = AppSelector();
-
-                          return selector;
+                          return registered(context);
                         } else
                           return notRegistered(context);
                       }),
                 )))));
+  }
+
+  Column registered(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(
+          Icons.person,
+          size: 42.0,
+          color: Theme.of(context).accentColor,
+        ),
+        SizedBox(height: 20.0,),
+        Text('Hi ' + (doubleName !=null ? doubleName : '')),
+        SizedBox(height: 12.0,),
+        Text('If you need to login you\'ll get a notification.'),
+        SizedBox(
+          height: 24.0,
+        )
+      ],
+    );
   }
 
   Column notRegistered(BuildContext context) {

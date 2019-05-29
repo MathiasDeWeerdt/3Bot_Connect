@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/screens/AppScreen.dart';
 
 class SingleApp extends StatefulWidget {
   final Map app;
@@ -45,14 +44,6 @@ class _SingleAppState extends State<SingleApp> {
         ),
         onPressed: () {
           widget.updateAppCallback(widget.app);
-
-          // if (!widget.app['disabled']) {
-          //   Navigator.push(context,MaterialPageRoute(builder: (context) => AppScreen(widget.app)));
-          // } else {
-          //   Scaffold.of(context).showSnackBar(SnackBar(
-          //     content: Text('This will be available soon.'),
-          //   ));
-          // }
         },
       ),
     );

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -24,12 +25,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttemt = true;
   String doubleName = '';
+  AppSelector selector;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
+    selector = AppSelector();
+
+    
   }
 
   Future<Null> initUniLinks() async {
@@ -121,8 +126,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-        appBar: AppBar(title: Text('3Bot'), elevation: 0.0, actions: <Widget>[
+        appBar: AppBar(title: Text('3Bot'), leading: IconButton(
+            tooltip: 'Apps',
+            icon: const Icon(Icons.apps),
+            onPressed: () {
+              flutterWebViewPlugins[0].hide();
+              flutterWebViewPlugins[1].hide();
+              flutterWebViewPlugins[2].hide();
+              flutterWebViewPlugins[3].hide();
+              // selector.showMenu();
+            }), elevation: 0.0, actions: <Widget>[
           FutureBuilder(
               future: getDoubleName(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -158,12 +173,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       future: getDoubleName(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
-                          return AppSelector();
+                          selector = AppSelector();
+
+                          return selector;
                         } else
                           return notRegistered(context);
                       }),
                 )))));
   }
+
+
 
   Column notRegistered(BuildContext context) {
     return Column(

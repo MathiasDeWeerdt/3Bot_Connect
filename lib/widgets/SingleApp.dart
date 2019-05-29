@@ -3,7 +3,9 @@ import 'package:threebotlogin/screens/AppScreen.dart';
 
 class SingleApp extends StatefulWidget {
   final Map app;
-  SingleApp(this.app, {Key key}) : super(key: key);
+  final updateAppCallback;
+
+  SingleApp(this.app, this.updateAppCallback, {Key key}) : super(key: key);
 
   _SingleAppState createState() => _SingleAppState();
 }
@@ -42,13 +44,15 @@ class _SingleAppState extends State<SingleApp> {
           ),
         ),
         onPressed: () {
-          if (!widget.app['disabled']) {
-            Navigator.push(context,MaterialPageRoute(builder: (context) => AppScreen(widget.app)));
-          } else {
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text('This will be available soon.'),
-            ));
-          }
+          widget.updateAppCallback(widget.app);
+
+          // if (!widget.app['disabled']) {
+          //   Navigator.push(context,MaterialPageRoute(builder: (context) => AppScreen(widget.app)));
+          // } else {
+          //   Scaffold.of(context).showSnackBar(SnackBar(
+          //     content: Text('This will be available soon.'),
+          //   ));
+          // }
         },
       ),
     );

@@ -5,8 +5,10 @@ import 'dart:convert';
 String threeBotApiUrl = config.threeBotApiUrl;
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
-Future sendScannedFlag(String hash, String deviceId) async {
-  return http
+sendScannedFlag(String hash, String deviceId) async {
+  print('$threeBotApiUrl/flag');
+  print(deviceId);
+  http
       .post('$threeBotApiUrl/flag',
           body: json.encode({'hash': hash, 'deviceId': deviceId}),
           headers: requestHeaders,);

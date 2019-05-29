@@ -1,40 +1,65 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 import 'package:threebotlogin/main.dart';
 import 'dart:convert';
+
+import 'package:threebotlogin/screens/ErrorScreen.dart';
 
 String threeBotApiUrl = config.threeBotApiUrl;
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
 sendScannedFlag(String hash, String deviceId) async {
   http
-      .post('$threeBotApiUrl/flag',
-          body: json.encode({'hash': hash, 'deviceId': deviceId}),
-          headers: requestHeaders,)
+      .post(
+        '$threeBotApiUrl/flag',
+        body: json.encode({'hash': hash, 'deviceId': deviceId}),
+        headers: requestHeaders,
+      )
       .catchError((onError) => print(onError));
 }
 
 Future sendData(String hash, String signedHash, data, selectedImageId) {
   return http
       .post('$threeBotApiUrl/sign',
-          body: json.encode({'hash': hash, 'signedHash': signedHash, 'data': data, 'selectedImageId': selectedImageId}),
+          body: json.encode({
+            'hash': hash,
+            'signedHash': signedHash,
+            'data': data,
+            'selectedImageId': selectedImageId
+          }),
           headers: requestHeaders)
       .catchError((onError) => print(onError));
 }
 
 Future checkLoginAttempts(String doubleName) {
-  return http.get('$threeBotApiUrl/attempts/$doubleName', headers: requestHeaders);
+  return http.get('$threeBotApiUrl/attempts/$doubleName',
+      headers: requestHeaders);
 }
 
-Future<bool> checkVersionNumber(String version) async {
-  var minVersion = (await http.get('$threeBotApiUrl/minversion', headers: requestHeaders)).body;
+Future<bool> checkVersionNumber(BuildContext context, String version) async {
+  var minVersion;
+  
+  try {
+    minVersion =
+          (await http.get('$threeBotApiUrl/minversion', headers: requestHeaders)).body;
+  } on SocketException catch(error) {
+    logger.log("Can't connect to server: " + error.toString());
+  }
+
+  if(minVersion == null) {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: "Can't connect to server.")));
+    return false;
+  }
 
   try {
     var min = int.parse(minVersion);
     var current = int.parse(version);
     print((min <= current).toString());
     return min <= current;
-
-  } on Exception catch (e)  {
+  } on Exception catch (e) {
     print(e);
     return false;
   }

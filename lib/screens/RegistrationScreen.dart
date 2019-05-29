@@ -140,7 +140,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   }
 
   Future saveValues() async {
-    print('save values');
+    logger.log('save values');
     var hash = qrData['hash'];
     var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
@@ -160,7 +160,7 @@ class _ScanScreenState extends State<RegistrationScreen>
         scope['email'] = await getEmail();
     }
     if (scope.isNotEmpty) {
-      print(scope.isEmpty);
+      logger.log(scope.isEmpty);
       data = await encrypt(jsonEncode(scope), publicKey, privateKey);
     }
     sendData(hash, await signedHash, data, null).then((x) {

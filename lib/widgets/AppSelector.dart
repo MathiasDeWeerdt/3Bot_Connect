@@ -153,14 +153,14 @@ class _AppSelectorState extends State<AppSelector> {
   }
 
   Future<String> createInitialLogin(url) async {
-    String initalUrl = url;
+    String initialUrl = url;
     var union = '?';
-    if (initalUrl.indexOf('?') > -1) union = '&';
-    initalUrl += union + 'logintoken=' + _randomString(20);
-    initalUrl += '&doublename=' + await getDoubleName();
+    if (initialUrl.indexOf('?') > -1) union = '&';
+    initialUrl += union + 'logintoken=' + _randomString(20);
+    initialUrl += '&doublename=' + await getDoubleName();
 
-    logger.log(initalUrl);
-    return initalUrl;
+    logger.log(initialUrl);
+    return initialUrl;
   }
 
   String _randomString(int length) {

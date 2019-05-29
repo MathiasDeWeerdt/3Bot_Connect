@@ -1,42 +1,42 @@
 {
-  "project_info": {
-    "project_number": "399226968341",
-    "firebase_url": "https://threebotlogin.firebaseio.com",
-    "project_id": "threebotlogin",
-    "storage_bucket": "threebotlogin.appspot.com"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:399226968341:android:95eb1acf46b3e9e6",
-        "android_client_info": {
-          "package_name": "org.jimber.threebotlogin"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "399226968341-7tlrt0lvjuqc62jd2idetkl0e27fq6a7.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCxEU23Xb-vgZdODqC2-wwluZ2TlAGj2Wg"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
+    "project_info": {
+      "project_number": "399226968341",
+      "firebase_url": "https://threebotlogin.firebaseio.com",
+      "project_id": "threebotlogin",
+      "storage_bucket": "threebotlogin.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:399226968341:android:95eb1acf46b3e9e6",
+          "android_client_info": {
+            "package_name": "org.jimber.threebotlogin"
+          }
         },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+        "oauth_client": [
+          {
+            "client_id": "399226968341-7tlrt0lvjuqc62jd2idetkl0e27fq6a7.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyCxEU23Xb-vgZdODqC2-wwluZ2TlAGj2Wg"
+          }
+        ],
+        "services": {
+          "analytics_service": {
+            "status": 1
+          },
+          "appinvite_service": {
+            "status": 1,
+            "other_platform_oauth_client": []
+          },
+          "ads_service": {
+            "status": 2
+          }
         }
       }
-    }
-  ],
-  "configuration_version": "1"
-}
+    ],
+    "configuration_version": "1"
+  }

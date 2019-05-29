@@ -27,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   List<int> imageList = new List();
   var selectedImageId = -1;
   var correctImage = -1;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text('Login'),
           elevation: 0.0,
@@ -113,18 +115,26 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   pinFilledIn(p) async {
-    final pin = await getPin();
-    if (pin == p) {
-      if (widget.message != null && widget.message['scope'] != null) {
-        showScopeDialog(context, widget.message['scope'].split(","),
-            widget.message['appId'], sendIt);
+    if (selectedImageId != -1) {
+      final pin = await getPin();
+      if (pin == p) {
+        if (widget.message != null && widget.message['scope'] != null) {
+          var scope = {};
+          if (widget.message['scope'].split(",").contains('user:email'))
+            scope['email'] = await getEmail();
+          showScopeDialog(context, scope, widget.message['appId'], sendIt);
+        } else {
+          sendIt();
+        }
       } else {
-        sendIt();
+        setState(() {
+          helperText = "Pin code not ok";
+        });
       }
     } else {
-      setState(() {
-        helperText = "Pin code not ok";
-      });
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('Please select an emoji'),
+      ));
     }
   }
 

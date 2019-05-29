@@ -14,5 +14,5 @@ void main() {
   init();
   
   runApp(config);
-  print("running main_prod.dart");
+  logger.log("running main_prod.dart");
 }

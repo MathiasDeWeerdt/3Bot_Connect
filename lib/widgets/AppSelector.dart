@@ -26,6 +26,7 @@ class _AppSelectorState extends State<AppSelector> {
   bool isVisible = true;
   bool hasBrowserBeenInitialized = false;
   bool hasFFPBeenInitialized = false;
+  String kAndroidUserAgent = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
   @override
   void initState() {
@@ -113,8 +114,6 @@ class _AppSelectorState extends State<AppSelector> {
     return apps;
   }
 
-  String kAndroidUserAgent =
-      'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
   void appsCallback() {
     // print("Has been called!");
@@ -160,7 +159,7 @@ class _AppSelectorState extends State<AppSelector> {
     initalUrl += union + 'logintoken=' + _randomString(20);
     initalUrl += '&doublename=' + await getDoubleName();
 
-    print(initalUrl);
+    logger.log(initalUrl);
     return initalUrl;
   }
 

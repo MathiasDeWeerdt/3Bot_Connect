@@ -83,8 +83,8 @@ class _RegistrationWithoutScanScreen
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-    print(widget.initialData['scope']);
-      print('pin OK');
+      logger.log(widget.initialData['scope']);
+      logger.log('pin OK');
       if (widget.initialData['scope'] != null) {
         showScopeDialog(context, widget.initialData['scope'].split(","),
             widget.initialData['appId'], sendIt);

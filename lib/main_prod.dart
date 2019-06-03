@@ -13,9 +13,10 @@ void main() {
   );
 
   init();
+  
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
     .then((_) {
       runApp(config);
-      print("running main_prod.dart");
+      logger.log("running main_prod.dart");
     });
 }

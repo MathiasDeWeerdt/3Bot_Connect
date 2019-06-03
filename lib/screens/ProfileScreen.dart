@@ -16,6 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     getUserValues();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +41,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Expanded(child: Container(),),
+                              Expanded(
+                                child: Container(),
+                              ),
                               Icon(
                                 Icons.person,
                                 size: 42.0,
@@ -50,8 +53,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 height: 20.0,
                               ),
                               Text('Hi ' + doubleName),
-
-                              Text('If you need to login you\'ll get a notification.'),
+                              Text(
+                                  'If you need to login you\'ll get a notification.'),
                               SizedBox(
                                 height: 24.0,
                               ),
@@ -165,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             FlatButton(
               child: new Text("Continue"),
               onPressed: () {
-                clearData();                
+                clearData();
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               },
             ),

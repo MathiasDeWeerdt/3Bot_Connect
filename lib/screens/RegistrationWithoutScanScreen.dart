@@ -83,8 +83,8 @@ class _RegistrationWithoutScanScreen
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-    print(widget.initialData['scope']);
-      print('pin OK');
+      logger.log(widget.initialData['scope']);
+      logger.log('pin OK');
       if (widget.initialData['scope'] != null) {
         var scope = {};
         if (widget.initialData['scope'].split(",").contains('user:email'))

@@ -10,11 +10,12 @@ sendScannedFlag(String hash, String deviceId) async {
   print(deviceId);
   http
       .post('$threeBotApiUrl/flag',
-          body: json.encode({'hash': hash, 'deviceId': deviceId}),
+          body: json.encode({'hash': hash, 'deviceId': deviceId, 'isSigned': true}),
           headers: requestHeaders,);
 }
 
 Future sendData(String hash, String signedHash, data, selectedImageId) {
+  print(data);
   return http
       .post('$threeBotApiUrl/sign',
           body: json.encode({'hash': hash, 'signedHash': signedHash, 'data': data, 'selectedImageId': selectedImageId}),

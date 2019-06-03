@@ -8,15 +8,14 @@ import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:uni_links/uni_links.dart';
+import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
-
   HomeScreen({Key key, this.homeScreen}) : super(key: key);
-
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -49,21 +48,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   checkWhatPageToOpen(Uri link) {
-    print('==============');
-    print(link.queryParameters);
     setState(() {
       openPendingLoginAttemt = false;
     });
+
     if (link.host == 'register') {
-      print('Register via link');
+      logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
       ));
     } else if (link.host == 'login') {
-      print('Login via link');
+      logger.log('Login via link');
       openPage(LoginScreen(link.queryParameters));
     }
-    print('==============');
+    logger.log('==============');
   }
 
   openPage(page) {
@@ -73,22 +71,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void checkIfThereAreLoginAttempts(dn) async {
     if (await getPrivateKey() != null && deviceId != null) {
       checkLoginAttempts(dn).then((attempt) {
-        print('-----=====------');
-        print(deviceId);
-        print(attempt.body);
+        logger.log('-----=====------');
+        logger.log(deviceId);
+        logger.log(attempt.body);
         if (attempt.body != '' && openPendingLoginAttemt)
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => LoginScreen(jsonDecode(attempt.body))));
-        print('-----=====------');
+        logger.log('-----=====------');
       });
     }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print(state);
     if (state == AppLifecycleState.resumed) {
       onActivate(false);
     }
@@ -96,8 +93,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Future onActivate(bool initFirebase) async {
     var buildNr = (await PackageInfo.fromPlatform()).buildNumber;
-    print('Current buildnr is ' + buildNr);
-    if (await checkVersionNumber(buildNr)) {
+    logger.log('Current buildnumber: ' + buildNr);
+
+    int response = await checkVersionNumber(context, buildNr);
+
+    if (response == 1) {
       if (initFirebase) {
         initFirebaseMessagingListener(context);
       }
@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         getEmail().then((emailMap) async {
           if (emailMap['verified'] != null && !emailMap['verified']) {
             checkVerificationStatus(dn).then((newEmailMap) async {
-              print(newEmailMap.body);
+              logger.log(newEmailMap.body);
               var body = jsonDecode(newEmailMap.body);
               saveEmailVerified(body['verified'] == 1);
             });
@@ -118,8 +118,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           doubleName = dn;
         });
       }
-    } else {
+    } else if(response == 0) {
       Navigator.pushReplacementNamed(context, '/error');
+    } else if(response == -1) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: "Can't connect to server.")));
     }
   }
 

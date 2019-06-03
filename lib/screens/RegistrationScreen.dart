@@ -165,7 +165,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   }
 
   saveValues() async { 
-    print('save values');
+    logger.log('save values');
     var hash = qrData['hash'];
     var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];

@@ -14,7 +14,6 @@ class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
   final message;
   final bool closeWhenLoggedIn;
-  // data: {appPublicKey: xKHlaIyza5dSxswOmvuYV7MDreIbLllK9T0n3c1tu0g=, appId: ExampleAppId, scope: ["user:email"], state: gk4NFmIrrEZiSjv6J0tl9mDBSZTP3Dah, doubleName: ol.d}}
 
   LoginScreen(this.message, {Key key, this.loginScreen, this.closeWhenLoggedIn=false}) : super(key: key);
 
@@ -27,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var selectedImageId = -1;
   var correctImage = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var scope = Map();
 
   @override
   void initState() {
@@ -117,14 +117,11 @@ class _LoginScreenState extends State<LoginScreen> {
     if (selectedImageId != -1) {
       final pin = await getPin();
       if (pin == p) {
-        if (widget.message != null && widget.message['scope'] != null) {
-          var scope = {};
-          if (widget.message['scope'].split(",").contains('user:email'))
-            scope['email'] = await getEmail();
-          showScopeDialog(context, scope, widget.message['appId'], sendIt);
-        } else {
-          sendIt();
-        }
+        scope['doubleName'] = widget.message['doubleName'];
+        if (widget.message['scope'].contains('user:email'))
+          scope['email'] = await getEmail();
+        showScopeDialog(context, scope, widget.message['appId'], sendIt);
+
       } else {
          _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('Oops... you entered the wrong pin'),
@@ -140,23 +137,12 @@ class _LoginScreenState extends State<LoginScreen> {
   sendIt() async {
     print('sendIt');
     var state = widget.message['state'];
-    var publicKey = widget.message['appPublicKey'].replaceAll(" ", "+");
-    var privateKey = getPrivateKey();
-    var email = getEmail();
+    var publicKey = widget.message['appPublicKey']?.replaceAll(" ", "+");
 
-    var signedHash = signHash(state, await privateKey);
-    var scope = {};
-    var data;
-    if (widget.message['scope'] != null) {
-      if (widget.message['scope'].split(",").contains('user:email'))
-        scope['email'] = await email;
-    }
-    if (scope.isNotEmpty) {
-      print(scope.isEmpty);
-      data = await encrypt(jsonEncode(scope), publicKey, await privateKey);
-    }
+    var signedHash = signHash(state, await getPrivateKey());
+    var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
-    sendData(state, await signedHash, data, selectedImageId);
+    sendData(state, await signedHash, await data, selectedImageId);
     if (selectedImageId == correctImage) {
       if (widget.closeWhenLoggedIn) {
         Navigator.popUntil(context, ModalRoute.withName('/'));

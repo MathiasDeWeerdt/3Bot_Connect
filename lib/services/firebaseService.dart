@@ -7,21 +7,23 @@ import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
+import 'package:threebotlogin/main.dart';
+
 
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 void initFirebaseMessagingListener(context) async {
   _firebaseMessaging.configure(
     onMessage: (Map<String, dynamic> message) async {
-      print('On message $message');
+      logger.log('On message $message');
       openLogin(context, message);
     },
     onLaunch: (Map<String, dynamic> message) async {
-      print('On launch $message');
+      logger.log('On launch $message');
       openLogin(context, message);
     },
     onResume: (Map<String, dynamic> message) async {
-      print('On resume $message');
+      logger.log('On resume $message');
       openLogin(context, message);
     },
   );
@@ -30,20 +32,20 @@ void initFirebaseMessagingListener(context) async {
       const IosNotificationSettings(sound: true, badge: true, alert: true));
   _firebaseMessaging.onIosSettingsRegistered
       .listen((IosNotificationSettings settings) {
-    print("Settings registered: $settings");
+    logger.log("Settings registered: $settings");
   });
 }
 
 Future openLogin(context, message) async {
-  print('OpenLogin');
+  logger.log('OpenLogin');
 
   var data = message['data'];
   if (Platform.isIOS) data = message;
   if (data['logintoken'] != null) {
-    print('---------------');
-    print('Got loginToken');
+    logger.log('---------------');
+    logger.log('Got loginToken');
     if (data['logintoken'] == await getLoginToken()) {
-      print('sendIt');
+      logger.log('sendIt');
       var state = data['state'];
       var publicKey = data['appPublicKey'];
       var privateKey = getPrivateKey();
@@ -57,14 +59,14 @@ Future openLogin(context, message) async {
           scope['email'] = await email;
       }
       if (scope.isNotEmpty) {
-        print(scope.isEmpty);
+        logger.log(scope.isEmpty);
         dataToSend =
             await encrypt(jsonEncode(scope), publicKey, await privateKey);
       }
       sendData(state, await signedHash, dataToSend, null);
     }
   } else {
-    print(data['type']);
+    logger.log(data['type']);
     if (data['type'] == 'login') {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(data)));

@@ -23,6 +23,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   dynamic qrData = '';
   String pin;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var scope = Map();
 
   @override
   void initState() {
@@ -154,15 +155,12 @@ class _ScanScreenState extends State<RegistrationScreen>
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
+      scope['doubleName'] = qrData['doubleName'];
 
-      var scope = {};
-      if (qrData['scope'] != null) {
-        if (qrData['scope'].split(",").contains('user:email'))
+      if (qrData['scope'].contains('user:email'))
         scope['email'] = {'email': qrData['email'], 'verified': false};
-        showScopeDialog(context, scope, qrData['appId'], saveValues);
-      } else {
-        saveValues();
-      }
+      
+      showScopeDialog(context, scope, qrData['appId'], saveValues);
     }
   }
 
@@ -180,17 +178,9 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveDoubleName(doubleName);
 
     var signedHash = signHash(hash, privateKey);
-    var scope = {};
-    var data;
-    if (qrData['scope'] != null) {
-      if (qrData['scope'].split(",").contains('user:email'))
-        scope['email'] = await getEmail();
-    }
-    if (scope.isNotEmpty && publicKey != null) {
-      print(scope.isEmpty);
-      data = await encrypt(jsonEncode(scope), publicKey, privateKey);
-    }
-    sendData(hash, await signedHash, data, null).then((x) {
+    var data = encrypt(jsonEncode(scope), publicKey, privateKey);
+
+    sendData(hash, await signedHash, await data, null).then((x) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       Navigator.of(context).pushNamed('/success');
     });

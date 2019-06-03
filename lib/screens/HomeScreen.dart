@@ -8,6 +8,7 @@ import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:uni_links/uni_links.dart';
+import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
@@ -60,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       logger.log('Login via link');
       openPage(LoginScreen(link.queryParameters));
     }
-    print('==============');
+    logger.log('==============');
   }
 
   openPage(page) {
@@ -93,7 +94,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future onActivate(bool initFirebase) async {
     var buildNr = (await PackageInfo.fromPlatform()).buildNumber;
     logger.log('Current buildnumber: ' + buildNr);
-    if (await checkVersionNumber(context, buildNr)) {
+
+    int response = await checkVersionNumber(context, buildNr);
+
+    if (response == 1) {
       if (initFirebase) {
         initFirebaseMessagingListener(context);
       }
@@ -114,8 +118,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           doubleName = dn;
         });
       }
-    } else {
+    } else if(response == 0) {
       Navigator.pushReplacementNamed(context, '/error');
+    } else if(response == -1) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: "Can't connect to server.")));
     }
   }
 

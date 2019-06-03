@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Icon(
-          Icons.person,
+          Icons.check_circle,
           size: 42.0,
           color: Theme.of(context).accentColor,
         ),

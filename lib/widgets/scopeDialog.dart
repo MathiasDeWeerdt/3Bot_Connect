@@ -29,7 +29,9 @@ Widget scopeList(context, Map<dynamic, dynamic> scope) {
         print(keys[index]);
         print(val);
         if (keys[index] == 'email') val = scope[keys[index]]['email'];
-        return Row(
+        return Container(
+          margin: EdgeInsets.only(bottom: 20.0),
+          child: Row(
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(right: 10),
@@ -53,6 +55,7 @@ Widget scopeList(context, Map<dynamic, dynamic> scope) {
               ],
             )
           ],
+        ),
         );
       });
 }

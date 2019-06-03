@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../main.dart';
+
 class PinField extends StatefulWidget {
   final Widget pinField;
   final int pinLength = 4;
@@ -129,7 +131,7 @@ class _PinFieldState extends State<PinField> {
     HapticFeedback.mediumImpact();
     String pin = "";
     input.forEach((char) => pin += char);
-    print(pin);
+    logger.log(pin);
     widget.callback(pin);
     setState(() {
       input = List();

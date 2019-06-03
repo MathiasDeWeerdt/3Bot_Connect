@@ -32,7 +32,7 @@ Future checkLoginAttempts(String doubleName) {
       headers: requestHeaders);
 }
 
-Future<bool> checkVersionNumber(BuildContext context, String version) async {
+Future<int> checkVersionNumber(BuildContext context, String version) async {
   var minVersion;
   
   try {
@@ -44,16 +44,21 @@ Future<bool> checkVersionNumber(BuildContext context, String version) async {
 
   if(minVersion == null) {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: "Can't connect to server.")));
-    return false;
+    return -1;
+  } else {
+    try {
+      var min = int.parse(minVersion);
+      var current = int.parse(version);
+      print((min <= current).toString());
+
+      if(min <= current) {
+        return 1;
+      }
+    } on Exception catch (e) {
+      print(e);
+      return 0;
+    }
   }
 
-  try {
-    var min = int.parse(minVersion);
-    var current = int.parse(version);
-    print((min <= current).toString());
-    return min <= current;
-  } on Exception catch (e) {
-    print(e);
-    return false;
-  }
+  return 0;
 }

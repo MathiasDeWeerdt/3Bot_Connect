@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:threebotlogin/main.dart';
 
 class AppScreen extends StatefulWidget {
   final Map app;
@@ -11,13 +12,6 @@ class AppScreen extends StatefulWidget {
 
 class _AppScreenState extends State<AppScreen> {
   WebViewController controller;
-  @override
-  void dispose() {
-    print("SAVE STATE");
-    widget.app['callback'](widget.app);
-    super.dispose();
-  }
-
   bool isVisible = false;
 
   @override
@@ -30,21 +24,6 @@ class _AppScreenState extends State<AppScreen> {
             color: Theme.of(context).primaryColor,
             child: Column(
               children: <Widget>[
-                Container(
-                    child: new RaisedButton(
-                  child: const Text('Connect with Twitter'),
-                  color: Theme.of(context).accentColor,
-                  elevation: 4.0,
-                  splashColor: Colors.blueGrey,
-                  onPressed: () {
-                    print("Lets hide the browser webview");
-                    // isVisible = !isVisible;
-                    setState(() {
-                      isVisible = !isVisible;
-                      print("Setting le state: " + isVisible.toString());
-                    });
-                  },
-                )),
                 Container(
                     child: Container(
                   decoration: BoxDecoration(

@@ -112,7 +112,7 @@ class _ScanScreenState extends State<RegistrationScreen>
         ]));
   }
 
-   gotQrData(value) async {
+  gotQrData(value) async {
     setState(() {
       qrData = jsonDecode(value);
     });
@@ -121,7 +121,10 @@ class _ScanScreenState extends State<RegistrationScreen>
     var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
-    if (hash == null || privateKey == null || doubleName == null || email == null) {
+    if (hash == null ||
+        privateKey == null ||
+        doubleName == null ||
+        email == null) {
       showError();
     } else {
       var signedDeviceId = signHash(deviceId, privateKey);
@@ -157,14 +160,16 @@ class _ScanScreenState extends State<RegistrationScreen>
     } else if (pin == value) {
       scope['doubleName'] = qrData['doubleName'];
 
-      if (qrData['scope'].contains('user:email'))
-        scope['email'] = {'email': qrData['email'], 'verified': false};
-      
+      if (qrData['scope'] != null) {
+        if (qrData['scope'].contains('user:email'))
+          scope['email'] = {'email': qrData['email'], 'verified': false};
+      }
+
       showScopeDialog(context, scope, qrData['appId'], saveValues);
     }
   }
 
-  saveValues() async { 
+  saveValues() async {
     logger.log('save values');
     var hash = qrData['hash'];
     var privateKey = qrData['privateKey'];

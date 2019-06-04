@@ -45,7 +45,7 @@ then
         flutter build apk -t lib/main_local_mathias.dart
     fi
 
-    exit 1
+    exit 0
 fi
 
 if [ $2 == "--staging" ]
@@ -86,7 +86,7 @@ then
         flutter build apk -t lib/main_staging.dart
     fi
 
-    exit 1
+    exit 0
 fi
 
 if [ $2 == "--production" ]
@@ -127,7 +127,7 @@ then
         flutter build apk -t lib/main_prod.dart
     fi
 
-    exit 1
+    exit 0
 fi
 
 echo "Syntax error."

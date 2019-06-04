@@ -72,3 +72,7 @@
 android/app-key\.keystore
 
 android/key\.properties
+android/app/google-services-prod.json
+android/app/google-services-staging.json
+android/app/google-services-local.json
+android/app/google-services.json

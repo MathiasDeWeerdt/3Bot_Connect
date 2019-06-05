@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:threebotlogin/main.dart';
 
 class AppScreen extends StatefulWidget {
   final Map app;
@@ -11,7 +9,6 @@ class AppScreen extends StatefulWidget {
 }
 
 class _AppScreenState extends State<AppScreen> {
-  WebViewController controller;
   bool isVisible = false;
 
   @override

@@ -16,6 +16,7 @@ import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 
+
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
 
@@ -25,7 +26,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
-  bool openPendingLoginAttemt = true;
+  bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
   AppSelector selector;
@@ -99,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   checkWhatPageToOpen(Uri link) {
     setState(() {
-      openPendingLoginAttemt = false;
+      openPendingLoginAttempt = false;
     });
 
     if (link.host == 'register') {
@@ -118,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   openPage(page) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => page));
   }
 
   void checkIfThereAreLoginAttempts(dn) async {
@@ -127,8 +128,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         logger.log('-----=====------');
         logger.log(deviceId);
         logger.log(attempt.body);
-        if (attempt.body != '' && openPendingLoginAttemt)
-          Navigator.push(
+        if (attempt.body != '' && openPendingLoginAttempt)
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => LoginScreen(jsonDecode(attempt.body))));
@@ -279,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               borderRadius: new BorderRadius.circular(10)),
           padding: EdgeInsets.all(12),
           child: Text(
-            "Register now",
+            "Scan QR code",
             style: TextStyle(color: Colors.white),
           ),
           color: Theme.of(context).accentColor,

@@ -1,16 +1,16 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/userService.dart';
+import 'package:http/http.dart' as http;
 import 'package:threebotlogin/widgets/SingleApp.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class AppSelector extends StatefulWidget {
-  // AppSelector({Key key}) : super(key: key);
-
-  _AppSelectorState instance = _AppSelectorState();
+  final _AppSelectorState instance = _AppSelectorState();
 
   void appsCallback() {
     instance.appsCallback();
@@ -25,36 +25,71 @@ class _AppSelectorState extends State<AppSelector> {
   bool isVisible = true;
   bool hasBrowserBeenInitialized = false;
   bool hasFFPBeenInitialized = false;
-  String kAndroidUserAgent = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
+  String kAndroidUserAgent =
+      'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
+  bool isLaunched = false;
   @override
   void initState() {
     super.initState();
-     flutterWebViewPlugins[0] = new FlutterWebviewPlugin();
-     flutterWebViewPlugins[1] = new FlutterWebviewPlugin();
-     flutterWebViewPlugins[2] = new FlutterWebviewPlugin();
-     flutterWebViewPlugins[3] = new FlutterWebviewPlugin();
+    flutterWebViewPlugins[1] = new FlutterWebviewPlugin();
+  }
+
+  Future launchFfp(size) async {
+    final url =
+        'https://staging.freeflowpages.com/user/auth/external?authclient=3bot';
+    final client = http.Client();
+    final request = new http.Request('GET', Uri.parse(url))
+      ..followRedirects = false;
+    final response = await client.send(request);
+
+    final state =
+        Uri.decodeFull(response.headers['location'].split("&state=")[1]);
+    final privateKey = await getPrivateKey();
+    final signedHash = signHash(state, privateKey);
+
+    final redirecturl = Uri.decodeFull(
+        response.headers['location'].split("&redirecturl=")[1].split("&")[0]);
+    final appid = Uri.decodeFull(
+        response.headers['location'].split("appid=")[1].split("&")[0]);
+    final scope = Uri.decodeFull(
+        response.headers['location'].split("&scope=")[1].split("&")[0]);
+    final publickey = Uri.decodeFull(
+        response.headers['location'].split("&publickey=")[1].split("&")[0]);
+    final cookies = response.headers['set-cookie'];
+    final union = '?';
+
+    final scopeData = {};
+
+    if (scope != null && scope.contains("user:email")) {
+      scopeData['email'] = await getEmail();
+    }
+
+    var jsonData = jsonEncode(
+        (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
+    var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
+    var newRedirectUrl =
+        '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+
+    flutterWebViewPlugins[1].launch(newRedirectUrl,
+        rect: Rect.fromLTWH(0.0, 75, size.width, size.height),
+        userAgent: kAndroidUserAgent,
+        hidden: true);
+    flutterWebViewPlugins[1].setCookies(cookies);
+
+    logger.log(appid);
+    logger.log(newRedirectUrl);
+    logger.log(cookies);
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // createInitialLogin('https://freeflowpages.com/user/auth/external?authclient=3bot').then((url) {
-    //   flutterWebViewPlugins[1].launch(url,
-    //     rect: Rect.fromLTWH(0.0, 75, size.width, size.height),
-    //     userAgent: kAndroidUserAgent,
-    //     hidden: true);
-
-    //     flutterWebViewPlugins[1].onUrlChanged.listen((String url) {
-    //       print("CHANGED: " + url);
-    //     });
-    // });
-
-    flutterWebViewPlugins[1].launch("https://freeflowpages.com",
-        rect: Rect.fromLTWH(0.0, 75, size.width, size.height),
-         userAgent: kAndroidUserAgent,
-        hidden: true);
+    if (!isLaunched) {
+      isLaunched = true;
+      launchFfp(size);
+    }
 
     return Stack(children: <Widget>[
       Container(
@@ -82,15 +117,14 @@ class _AppSelectorState extends State<AppSelector> {
         "subheading": 'Where privacy and social media co-exist.',
         "bg": 'ffp.jpg',
         "disabled": false,
-        "initialUrl":
-            'https://freeflowpages.com/',
+        "initialUrl": 'https://freeflowpages.com/',
         "callback": updateApp,
         "visible": false,
         "id": 1
       },
       {
-        "name": 'OpenBrowser',
-        "subheading": 'By Jimber',
+        "name": 'OpenBrowser (Coming soon)',
+        "subheading": 'By Jimber (Coming soon)',
         "url": 'https://broker.jimber.org',
         "bg": 'jimber.png',
         "disabled": false,
@@ -99,72 +133,18 @@ class _AppSelectorState extends State<AppSelector> {
         "visible": false,
         "id": 2
       }
-      // {
-      //   "name": 'OpenMeetings',
-      //   "subheading": 'Coming soon',
-      //   "bg": 'om.jpg',
-      //   "disabled": true,
-      //   "initialUrl": 'https://google.be',
-      //   "callback": updateApp,
-      //   "visible": false,
-      //   "id": 3
-      // }
     ];
+
     return apps;
   }
 
-
-  void appsCallback() {
-    // print("Has been called!");
-    // flutterWebViewPlugins[0].hide();
-  }
+  void appsCallback() {}
 
   void updateApp(app) {
-    // if(!hasBeenInitialized) {
-    //   flutterWebViewPlugins[0] = new FlutterWebviewPlugin();
-    //   flutterWebViewPlugins[0].launch(app['initialUrl'],
-    //   rect:
-    //       Rect.fromLTWH(0.0, 100, MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - 100),
-    //   userAgent: kAndroidUserAgent);
-    //   hasBeenInitialized = true;
-    // }
-    final size = MediaQuery.of(context).size;
-
     if(app['id'] == 1) {
-      // if(!hasFFPBeenInitialized) {
-      //   flutterWebViewPlugins[1].launch("https://freeflowpages.com/user/auth/external?authclient=3bot",
-      //       rect: Rect.fromLTWH(0.0, 100, size.width, size.height),
-      //       userAgent: kAndroidUserAgent,
-      //       hidden: true);
-      //    hasFFPBeenInitialized = true;
-      // }
-    } else if(app['id'] == 2) {
-        if(!hasBrowserBeenInitialized) {
-            flutterWebViewPlugins[2].launch("https://broker.jimber.org",
-                rect: Rect.fromLTWH(0.0, 75, size.width, size.height),
-                userAgent: kAndroidUserAgent,
-                hidden: true);
-          hasBrowserBeenInitialized = true;
-        }
+      flutterWebViewPlugins[app['id']].show();
+    } else {
+      logger.log("has not been implemented yet.");
     }
-
-    flutterWebViewPlugins[app['id']].show();
-  }
-
-  Future<String> createInitialLogin(url) async {
-    String initialUrl = url;
-    var union = '?';
-    if (initialUrl.indexOf('?') > -1) union = '&';
-    initialUrl += union + 'logintoken=' + _randomString(20);
-    initialUrl += '&doublename=' + await getDoubleName();
-
-    logger.log(initialUrl);
-    return initialUrl;
-  }
-
-  String _randomString(int length) {
-    var rand = 'abc123';
-    saveLoginToken(rand);
-    return rand;
   }
 }

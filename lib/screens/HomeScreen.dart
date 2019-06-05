@@ -20,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
-  bool openPendingLoginAttemt = true;
+  bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
 
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   checkWhatPageToOpen(Uri link) {
     setState(() {
-      openPendingLoginAttemt = false;
+      openPendingLoginAttempt = false;
     });
 
     if (link.host == 'register') {
@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   openPage(page) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => page));
   }
 
   void checkIfThereAreLoginAttempts(dn) async {
@@ -74,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         logger.log('-----=====------');
         logger.log(deviceId);
         logger.log(attempt.body);
-        if (attempt.body != '' && openPendingLoginAttemt)
-          Navigator.push(
+        if (attempt.body != '' && openPendingLoginAttempt)
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => LoginScreen(jsonDecode(attempt.body))));

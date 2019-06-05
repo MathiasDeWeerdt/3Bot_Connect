@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ));
     } else if (link.host == 'login') {
       logger.log('Login via link');
-      openPage(LoginScreen(link.queryParameters));
+      openPage(LoginScreen(link.queryParameters, closeWhenLoggedIn: true,));
     }
     logger.log('==============');
   }

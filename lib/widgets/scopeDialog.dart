@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 showScopeDialog(context, Map<dynamic, dynamic> scope, String appId, callback) {
   // flutter defined function
+  print('scope is    '  + jsonEncode(scope));
   showDialog(
     context: context,
     builder: (BuildContext context) => CustomDialog(

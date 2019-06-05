@@ -16,7 +16,9 @@ class LoginScreen extends StatefulWidget {
   final message;
   final bool closeWhenLoggedIn;
 
-  LoginScreen(this.message, {Key key, this.loginScreen, this.closeWhenLoggedIn=false}) : super(key: key);
+  LoginScreen(this.message,
+      {Key key, this.loginScreen, this.closeWhenLoggedIn = false})
+      : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -79,18 +81,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                ImageButton(imageList[0], selectedImageId,
-                                    imageSelectedCallback),
-                                ImageButton(imageList[1], selectedImageId,
-                                    imageSelectedCallback),
-                                ImageButton(imageList[2], selectedImageId,
-                                    imageSelectedCallback),
-                                ImageButton(imageList[3], selectedImageId,
-                                    imageSelectedCallback),
-                              ]),
+                          !isMobile()
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                      ImageButton(imageList[0], selectedImageId,
+                                          imageSelectedCallback),
+                                      ImageButton(imageList[1], selectedImageId,
+                                          imageSelectedCallback),
+                                      ImageButton(imageList[2], selectedImageId,
+                                          imageSelectedCallback),
+                                      ImageButton(imageList[3], selectedImageId,
+                                          imageSelectedCallback),
+                                    ])
+                              : Container(),
                           SizedBox(
                             height: 20,
                           ),
@@ -112,19 +117,20 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       selectedImageId = imageId;
     });
-  }
+  } 
 
   pinFilledIn(p) async {
-    if (selectedImageId != -1) {
+    if (selectedImageId != -1 || isMobile()) {
       final pin = await getPin();
       if (pin == p) {
-        scope['doubleName'] = widget.message['doubleName'];
-        if (widget.message['scope'].contains('user:email'))
-          scope['email'] = await getEmail();
+        scope['doubleName'] = await getDoubleName();
+        if (widget.message['scope'] != null) {
+          if (widget.message['scope'].contains('user:email'))
+            scope['email'] = await getEmail();
+        }
         showScopeDialog(context, scope, widget.message['appId'], sendIt);
-
       } else {
-         _scaffoldKey.currentState.showSnackBar(SnackBar(
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('Oops... you entered the wrong pin'),
         ));
       }
@@ -144,10 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);
-    if (selectedImageId == correctImage) {
+    if (selectedImageId == correctImage || isMobile()) {
       if (widget.closeWhenLoggedIn) {
-        Navigator.popUntil(context, ModalRoute.withName('/'));
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        Navigator.popUntil(context, ModalRoute.withName('/'));
       } else {
         Navigator.popUntil(context, ModalRoute.withName('/'));
         Navigator.of(context).pushNamed('/success');
@@ -158,7 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
       ));
     }
   }
-
+  bool isMobile() {
+    return widget.message['mobile'] == 'true';
+  }
   bool isNumeric(String s) {
     if (s == null) {
       return false;

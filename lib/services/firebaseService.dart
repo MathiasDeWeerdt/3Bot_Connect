@@ -67,7 +67,7 @@ Future openLogin(context, message) async {
     }
   } else {
     logger.log(data['type']);
-    if (data['type'] == 'login') {
+    if (data['type'] == 'login' && data['mobile'] != 'true') {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
     } else if (data['type'] == 'email_verification') {

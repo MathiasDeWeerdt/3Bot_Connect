@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
@@ -24,14 +25,17 @@ class _RegistrationWithoutScanScreen
     extends State<RegistrationWithoutScanScreen> {
   String helperText = 'Choose new pin';
   String pin;
+  var scope = {};
   @override
   void initState() {
     super.initState();
     getPrivateKey().then((pk) => pk != null
         ? _showDialog()
-        : sendScannedFlag(widget.initialData['hash'], deviceId));
+        : sendFlag(pk));
   }
-
+  Future sendFlag(pk) async {
+    sendScannedFlag(widget.initialData['state'], await signHash(deviceId, pk));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,21 +87,19 @@ class _RegistrationWithoutScanScreen
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-      logger.log(widget.initialData['scope']);
-      logger.log('pin OK');
+      scope['doubleName'] = widget.initialData['doubleName'];
+
       if (widget.initialData['scope'] != null) {
-        var scope = {};
-        if (widget.initialData['scope'].split(",").contains('user:email'))
-          scope['email'] = await getEmail();
-        showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
-      } else {
-        sendIt();
+        if (widget.initialData['scope'].contains('user:email'))
+          scope['email'] = {'email': widget.initialData['email'], 'verified': false};
       }
+
+      showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
     }
   }
 
   sendIt() async {
-    var hash = widget.initialData['hash'];
+    var hash = widget.initialData['state'];
     var privateKey = widget.initialData['privateKey'];
     var doubleName = widget.initialData['doubleName'];
     var email = widget.initialData['email'];
@@ -109,50 +111,38 @@ class _RegistrationWithoutScanScreen
     saveDoubleName(doubleName);
 
     var signedHash = signHash(hash, privateKey);
-    var scope = {};
-    var data;
-    if (widget.initialData['scope'] != null) {
-      if (widget.initialData['scope'].split(",").contains('user:email')) scope['email'] = await getEmail();
-    }
-    if (scope.isNotEmpty) {
-      print(scope.isEmpty);
-      data = await encrypt(jsonEncode(scope), publicKey, privateKey);
-    }
-    sendData(hash, await signedHash, data, null);
-
-    SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-    Navigator.popUntil(context, ModalRoute.withName('/'));
-    Navigator.of(context).pushNamed('/success');
+    var data = encrypt(jsonEncode(scope), publicKey, privateKey);
+    
+    sendData(hash, await signedHash, await data, null).then((x) {
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      Navigator.popUntil(context, ModalRoute.withName('/'));
+      Navigator.of(context).pushNamed('/success');
+    });
   }
 
   void _showDialog() {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("You are about to register a new account"),
-          content: new Text(
-              "If you continue, you won't be able to login with the current account again"),
+    context: context,
+    builder: (BuildContext context) => CustomDialog(
+          title: "You are about to register a new account",
+          description: new Text("If you continue, you won't be able to login with the current account again"),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             FlatButton(
               child: new Text("Cancel"),
               onPressed: () {
-                Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/');
               },
             ),
             FlatButton(
               child: new Text("Continue"),
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context);
                 clearData();
-                sendScannedFlag(widget.initialData['hash'], deviceId);
+                sendScannedFlag(widget.initialData['state'],  await signHash(deviceId, widget.initialData['privateKey']));
               },
             ),
           ],
-        );
-      },
-    );
+        ),
+  );
   }
 }

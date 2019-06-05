@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/SingleApp.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class AppSelector extends StatefulWidget {
   // AppSelector({Key key}) : super(key: key);

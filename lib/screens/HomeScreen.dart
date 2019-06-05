@@ -13,6 +13,7 @@ import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 
+
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
   HomeScreen({Key key, this.homeScreen}) : super(key: key);
@@ -205,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               borderRadius: new BorderRadius.circular(10)),
           padding: EdgeInsets.all(12),
           child: Text(
-            "Register now",
+            "Scan QR code",
             style: TextStyle(color: Colors.white),
           ),
           color: Theme.of(context).accentColor,

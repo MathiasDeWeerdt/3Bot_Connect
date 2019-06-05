@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               new BorderRadius.circular(10)),
                                       padding: EdgeInsets.all(12),
                                       child: Text(
-                                        "Register an other user",
+                                        "Delete account",
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       color: Theme.of(context).errorColor,
@@ -156,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (BuildContext context) => CustomDialog(
           image: Icons.error,
           title: "Are you sure?",
-          description: new Text("If you continue, you won't be able to login with the current account again."),
+          description: new Text("If you continue, you won't be able to login with the current account again (for now). However, this acccount still exists."),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             FlatButton(

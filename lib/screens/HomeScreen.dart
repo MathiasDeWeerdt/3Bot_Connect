@@ -13,7 +13,6 @@ import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 
-
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
   HomeScreen({Key key, this.homeScreen}) : super(key: key);
@@ -60,13 +59,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ));
     } else if (link.host == 'login') {
       logger.log('Login via link');
-      openPage(LoginScreen(link.queryParameters, closeWhenLoggedIn: true,));
+      openPage(LoginScreen(
+        link.queryParameters,
+        closeWhenLoggedIn: true,
+      ));
     }
     logger.log('==============');
   }
 
   openPage(page) {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => page));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => page));
   }
 
   void checkIfThereAreLoginAttempts(dn) async {
@@ -115,14 +118,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             });
           }
         });
-        setState(() {
-          doubleName = dn;
-        });
+        if (mounted) {
+          setState(() {
+            doubleName = dn;
+          });
+        }
       }
-    } else if(response == 0) {
+    } else if (response == 0) {
       Navigator.pushReplacementNamed(context, '/error');
-    } else if(response == -1) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: "Can't connect to server.")));
+    } else if (response == -1) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ErrorScreen(errorMessage: "Can't connect to server.")));
     }
   }
 
@@ -181,9 +190,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           size: 42.0,
           color: Theme.of(context).accentColor,
         ),
-        SizedBox(height: 20.0,),
-        Text('Hi ' + (doubleName !=null ? doubleName : '')),
-        SizedBox(height: 12.0,),
+        SizedBox(
+          height: 20.0,
+        ),
+        Text('Hi ' + (doubleName != null ? doubleName : '')),
+        SizedBox(
+          height: 12.0,
+        ),
         Text('If you need to login you\'ll get a notification.'),
         SizedBox(
           height: 24.0,

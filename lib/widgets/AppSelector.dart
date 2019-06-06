@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:http/http.dart' as http;
@@ -73,7 +74,7 @@ class _AppSelectorState extends State<AppSelector> {
         '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
 
     flutterWebViewPlugins[1].launch(newRedirectUrl,
-        rect: Rect.fromLTWH(0.0, 75, size.width, size.height),
+        rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
         userAgent: kAndroidUserAgent,
         hidden: true);
     flutterWebViewPlugins[1].setCookies(cookies);
@@ -87,10 +88,14 @@ class _AppSelectorState extends State<AppSelector> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    if (!isLaunched) {
-      isLaunched = true;
-      launchFfp(size);
-    }
+    final prefsF =  SharedPreferences.getInstance();
+
+    prefsF.then((pres) {
+      if (!isLaunched && pres.containsKey('firstvalidation')) {
+        isLaunched = true;
+        launchFfp(size);
+      }
+    });
 
     return Stack(children: <Widget>[
       Container(
@@ -143,8 +148,17 @@ class _AppSelectorState extends State<AppSelector> {
 
   Future updateApp(app) async {
     if (app['id'] == 1) {
-      if ((await getEmail())['verified']) {
-        flutterWebViewPlugins[app['id']].show();
+      final emailVer = await getEmail();
+      if (emailVer['verified']) {
+        final prefs = await SharedPreferences.getInstance();
+
+        if (!prefs.containsKey('firstvalidation')) {
+          final size = MediaQuery.of(context).size;
+          isLaunched = true;
+          launchFfp(size);
+          prefs.setBool('firstvalidation', true);
+        }
+         flutterWebViewPlugins[app['id']].show();
       } else {
         showDialog(
           context: context,

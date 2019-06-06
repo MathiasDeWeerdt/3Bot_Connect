@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:threebotlogin/widgets/SingleApp.dart';
 import 'package:threebotlogin/main.dart';
 
+import 'CustomDialog.dart';
+
 class AppSelector extends StatefulWidget {
   final _AppSelectorState instance = _AppSelectorState();
 
@@ -36,8 +38,7 @@ class _AppSelectorState extends State<AppSelector> {
   }
 
   Future launchFfp(size) async {
-    final url =
-        'https://freeflowpages.com/user/auth/external?authclient=3bot';
+    final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
     final client = http.Client();
     final request = new http.Request('GET', Uri.parse(url))
       ..followRedirects = false;
@@ -141,10 +142,47 @@ class _AppSelectorState extends State<AppSelector> {
   void appsCallback() {}
 
   Future updateApp(app) async {
-    if(app['id'] == 1 && (await getEmail())['verified']) {
-      flutterWebViewPlugins[app['id']].show();
+    if (app['id'] == 1) {
+      if ((await getEmail())['verified']) {
+        flutterWebViewPlugins[app['id']].show();
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => CustomDialog(
+                image: Icons.error,
+                title: "Please verify email",
+                description:
+                    new Text("Please verify email before using this app"),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  FlatButton(
+                    child: new Text("Ok"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+        );
+      }
     } else {
-      logger.log("has not been implemented yet.");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => CustomDialog(
+              image: Icons.error,
+              title: "Coming soon",
+              description: new Text("This will be available soon."),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  child: new Text("Ok"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+      );
     }
   }
 }

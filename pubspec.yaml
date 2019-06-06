@@ -26,7 +26,6 @@ dependencies:
   shared_preferences:
   http:
   firebase_messaging:
-  crypto: ^2.0.6
   flutter_sodium:
     git:
       url: https://github.com/rmtmckenzie/flutter_sodium
@@ -35,9 +34,6 @@ dependencies:
   flutter_webview_plugin:
     git:
       url: https://github.com/jdelrue/flutter_webview_plugin
-  webview_flutter:
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
 
 dev_dependencies:

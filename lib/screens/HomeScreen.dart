@@ -124,20 +124,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void checkIfThereAreLoginAttempts(dn) async {
     if (await getPrivateKey() != null && deviceId != null) {
       checkLoginAttempts(dn).then((attempt) {
+        logger.log("attempt: ");
+        logger.log(attempt);
         logger.log('-----=====------');
         logger.log(deviceId);
         logger.log(attempt.body);
-        if (attempt.body != '' && openPendingLoginAttempt) {
-          Navigator.popUntil(context, ModalRoute.withName('/'));
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginScreen(
-                    jsonDecode(attempt.body),
-                  ),
-            ),
-          );
+        try {
+          if (attempt.body != '' && openPendingLoginAttempt) {
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoginScreen(
+                      jsonDecode(attempt.body),
+                    ),
+              ),
+            );
+          }
+        } catch (exception) {
+          logger.log(exception);
         }
+
         logger.log('-----=====------');
       });
     }

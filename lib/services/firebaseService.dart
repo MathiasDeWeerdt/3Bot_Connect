@@ -75,6 +75,8 @@ Future openLogin(context, message) async {
         if (!emailMap['verified']) {
           checkVerificationStatus(await getDoubleName())
               .then((newEmailMap) async {
+            logger.log("newEmailMap.body: ");
+            logger.log( newEmailMap.body);
             var body = jsonDecode(newEmailMap.body);
             saveEmailVerified(body['verified'] == 1);
           });

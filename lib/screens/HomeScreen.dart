@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Future testing() async {
     final url =
-        'https://staging.freeflowpages.com/user/auth/external?authclient=3bot';
+        'https://freeflowpages.com/user/auth/external?authclient=3bot';
     final client = http.Client();
     final request = new http.Request('GET', Uri.parse(url))
       ..followRedirects = false;

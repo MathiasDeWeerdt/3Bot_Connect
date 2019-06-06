@@ -37,7 +37,7 @@ class _AppSelectorState extends State<AppSelector> {
 
   Future launchFfp(size) async {
     final url =
-        'https://staging.freeflowpages.com/user/auth/external?authclient=3bot';
+        'https://freeflowpages.com/user/auth/external?authclient=3bot';
     final client = http.Client();
     final request = new http.Request('GET', Uri.parse(url))
       ..followRedirects = false;
@@ -123,7 +123,7 @@ class _AppSelectorState extends State<AppSelector> {
         "id": 1
       },
       {
-        "name": 'OpenBrowser (Coming soon)',
+        "name": 'OpenBrowser',
         "subheading": 'By Jimber (Coming soon)',
         "url": 'https://broker.jimber.org',
         "bg": 'jimber.png',

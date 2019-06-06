@@ -129,8 +129,9 @@ class _RegistrationWithoutScanScreen
           actions: <Widget>[
             FlatButton(
               child: new Text("Cancel"),
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/');
+              onPressed: () { 
+                // Navigator.popUntil(context, ModalRoute.withName('/'));
+                Navigator.pushReplacementNamed(context, '/profile');
               },
             ),
             FlatButton(

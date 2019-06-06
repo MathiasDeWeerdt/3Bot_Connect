@@ -234,9 +234,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
-                            selector = AppSelector();
-
-                            return selector;
+                            return registered(context);
                           } else
                             return notRegistered(context);
                         }),
@@ -248,22 +246,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Icon(
-          Icons.check_circle,
-          size: 42.0,
-          color: Theme.of(context).accentColor,
-        ),
-        SizedBox(
-          height: 20.0,
-        ),
-        Text('Hi ' + (doubleName != null ? doubleName : '')),
-        SizedBox(
-          height: 12.0,
-        ),
-        Text('If you need to login you\'ll get a notification.'),
-        SizedBox(
-          height: 24.0,
-        )
+        AppSelector()
       ],
     );
   }

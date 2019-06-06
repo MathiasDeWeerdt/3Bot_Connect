@@ -130,7 +130,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         logger.log(deviceId);
         logger.log(attempt.body);
         try {
+          logger.log("Inside the try");
           if (attempt.body != '' && openPendingLoginAttempt) {
+            logger.log("We passed the IF!");
             Navigator.popUntil(context, ModalRoute.withName('/'));
             Navigator.push(
               context,
@@ -142,6 +144,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             );
           }
         } catch (exception) {
+          logger.log("We caught the exception!");
           logger.log(exception);
         }
 

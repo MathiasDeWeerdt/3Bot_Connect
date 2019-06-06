@@ -127,12 +127,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         logger.log('-----=====------');
         logger.log(deviceId);
         logger.log(attempt.body);
-        if (attempt.body != '' && openPendingLoginAttempt)
+        if (attempt.body != '' && openPendingLoginAttempt) {
           Navigator.popUntil(context, ModalRoute.withName('/'));
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => LoginScreen(jsonDecode(attempt.body))));
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(
+                    jsonDecode(attempt.body),
+                  ),
+            ),
+          );
+        }
         logger.log('-----=====------');
       });
     }

@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
+import 'package:http/http.dart' as http;
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:uni_links/uni_links.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
@@ -15,7 +18,9 @@ import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
+
   HomeScreen({Key key, this.homeScreen}) : super(key: key);
+
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -23,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
+  AppSelector selector;
 
   @override
   void initState() {
@@ -34,6 +40,50 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
+    selector = AppSelector();
+    
+    // testing();
+  }
+
+  Future testing() async {
+    final url =
+        'https://staging.freeflowpages.com/user/auth/external?authclient=3bot';
+    final client = http.Client();
+    final request = new http.Request('GET', Uri.parse(url))
+      ..followRedirects = false;
+    final response = await client.send(request);
+
+    final state =
+        Uri.decodeFull(response.headers['location'].split("&state=")[1]);
+    final privateKey = await getPrivateKey();
+    final signedHash = signHash(state, privateKey);
+
+    final redirecturl = Uri.decodeFull(
+        response.headers['location'].split("&redirecturl=")[1].split("&")[0]);
+    final appid = Uri.decodeFull(
+        response.headers['location'].split("appid=")[1].split("&")[0]);
+    final scope = Uri.decodeFull(
+        response.headers['location'].split("&scope=")[1].split("&")[0]);
+    final publickey = Uri.decodeFull(
+        response.headers['location'].split("&publickey=")[1].split("&")[0]);
+    final cookies = response.headers['set-cookie'];
+    final union = '?';
+
+    final scopeData = {};
+
+    if (scope != null && scope.contains("user:email")) {
+      scopeData['email'] = await getEmail();
+    }
+
+    var jsonData = jsonEncode(
+        (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
+    var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
+    var newRedirectUrl =
+        '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+
+    logger.log(appid);
+    logger.log(newRedirectUrl);
+    logger.log(cookies);
   }
 
   Future<Null> initUniLinks() async {
@@ -138,22 +188,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('3Bot'), elevation: 0.0, actions: <Widget>[
-          FutureBuilder(
-              future: getDoubleName(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return IconButton(
-                    icon: Icon(Icons.person),
-                    tooltip: 'Your profile',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/profile');
-                    },
-                  );
-                } else
-                  return Container();
-              }),
-        ]),
+        appBar: AppBar(
+            title: Text('3Bot'),
+            leading: IconButton(
+                tooltip: 'Apps',
+                icon: const Icon(Icons.apps),
+                onPressed: () {
+                  flutterWebViewPlugins[1].hide();
+                }),
+            elevation: 0.0,
+            actions: <Widget>[
+              FutureBuilder(
+                  future: getDoubleName(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return IconButton(
+                        icon: Icon(Icons.person),
+                        tooltip: 'Your profile',
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/profile');
+                        },
+                      );
+                    } else
+                      return Container();
+                  }),
+            ]),
         body: Container(
             width: double.infinity,
             height: double.infinity,
@@ -165,20 +224,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         topLeft: Radius.circular(20.0),
                         topRight: Radius.circular(20.0))),
                 child: Container(
-                    child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                    ),
+                    child: FutureBuilder(
+                        future: getDoubleName(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            selector = AppSelector();
+
+                            return selector;
+                          } else
+                            return notRegistered(context);
+                        }),
                   ),
-                  child: FutureBuilder(
-                      future: getDoubleName(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          return registered(context);
-                        } else
-                          return notRegistered(context);
-                      }),
-                )))));
+                ))));
   }
 
   Column registered(BuildContext context) {

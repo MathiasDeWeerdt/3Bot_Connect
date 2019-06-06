@@ -140,8 +140,8 @@ class _AppSelectorState extends State<AppSelector> {
 
   void appsCallback() {}
 
-  void updateApp(app) {
-    if(app['id'] == 1) {
+  Future updateApp(app) async {
+    if(app['id'] == 1 && (await getEmail())['verified']) {
       flutterWebViewPlugins[app['id']].show();
     } else {
       logger.log("has not been implemented yet.");

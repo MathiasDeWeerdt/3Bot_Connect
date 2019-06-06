@@ -41,13 +41,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
     selector = AppSelector();
-    
+
     // testing();
   }
 
   Future testing() async {
+<<<<<<< HEAD
     final url =
         'https://freeflowpages.com/user/auth/external?authclient=3bot';
+=======
+    final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
+>>>>>>> 6ddae8c1270d634e15f2714b14266b38409276c3
     final client = http.Client();
     final request = new http.Request('GET', Uri.parse(url))
       ..followRedirects = false;
@@ -118,8 +122,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   openPage(page) {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => page));
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
   void checkIfThereAreLoginAttempts(dn) async {
@@ -129,7 +133,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         logger.log(deviceId);
         logger.log(attempt.body);
         if (attempt.body != '' && openPendingLoginAttempt)
-          Navigator.pushReplacement(
+          Navigator.popUntil(context, ModalRoute.withName('/'));
+          Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => LoginScreen(jsonDecode(attempt.body))));
@@ -188,66 +193,75 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: Text('3Bot'),
-            leading: IconButton(
-                tooltip: 'Apps',
-                icon: const Icon(Icons.apps),
-                onPressed: () {
-                  flutterWebViewPlugins[1].hide();
+      appBar: AppBar(
+          title: Text('3Bot'),
+          leading: FutureBuilder(
+              future: getDoubleName(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return IconButton(
+                      tooltip: 'Apps',
+                      icon: const Icon(Icons.apps),
+                      onPressed: () {
+                        flutterWebViewPlugins[1].hide();
+                      });
+                } else
+                  return Container();
+              }),
+          elevation: 0.0,
+          actions: <Widget>[
+            FutureBuilder(
+                future: getDoubleName(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    return IconButton(
+                      icon: Icon(Icons.person),
+                      tooltip: 'Your profile',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                    );
+                  } else
+                    return Container();
                 }),
-            elevation: 0.0,
-            actions: <Widget>[
-              FutureBuilder(
+          ]),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Theme.of(context).primaryColor,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Container(
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+              child: FutureBuilder(
                   future: getDoubleName(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
-                      return IconButton(
-                        icon: Icon(Icons.person),
-                        tooltip: 'Your profile',
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/profile');
-                        },
-                      );
+                      return registered(context);
                     } else
-                      return Container();
+                      return notRegistered(context);
                   }),
-            ]),
-        body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).primaryColor,
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0))),
-                child: Container(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
-                    child: FutureBuilder(
-                        future: getDoubleName(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            return registered(context);
-                          } else
-                            return notRegistered(context);
-                        }),
-                  ),
-                ))));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Column registered(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        AppSelector()
-      ],
+      children: <Widget>[AppSelector()],
     );
   }
 

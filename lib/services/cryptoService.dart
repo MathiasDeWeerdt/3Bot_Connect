@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_sodium/flutter_sodium.dart';
+import 'package:threebotlogin/main.dart';
 
 Future<String> signHash(String stateHash, String pk) async {
+  logger.log('stateHash' + stateHash);
   var private = base64.decode(pk);
   var signedHash = await Sodium.cryptoSign(Uint8List.fromList(stateHash.codeUnits), private);
   var base64EncryptedSignedHash = base64.encode(signedHash);

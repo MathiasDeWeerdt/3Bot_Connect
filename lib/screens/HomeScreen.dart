@@ -41,48 +41,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
     selector = AppSelector();
-
-    // testing();
-  }
-
-  Future testing() async {
-    final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
-    final client = http.Client();
-    final request = new http.Request('GET', Uri.parse(url))
-      ..followRedirects = false;
-    final response = await client.send(request);
-
-    final state =
-        Uri.decodeFull(response.headers['location'].split("&state=")[1]);
-    final privateKey = await getPrivateKey();
-    final signedHash = signHash(state, privateKey);
-
-    final redirecturl = Uri.decodeFull(
-        response.headers['location'].split("&redirecturl=")[1].split("&")[0]);
-    final appid = Uri.decodeFull(
-        response.headers['location'].split("appid=")[1].split("&")[0]);
-    final scope = Uri.decodeFull(
-        response.headers['location'].split("&scope=")[1].split("&")[0]);
-    final publickey = Uri.decodeFull(
-        response.headers['location'].split("&publickey=")[1].split("&")[0]);
-    final cookies = response.headers['set-cookie'];
-    final union = '?';
-
-    final scopeData = {};
-
-    if (scope != null && scope.contains("user:email")) {
-      scopeData['email'] = await getEmail();
-    }
-
-    var jsonData = jsonEncode(
-        (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
-    var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
-    var newRedirectUrl =
-        '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
-
-    logger.log(appid);
-    logger.log(newRedirectUrl);
-    logger.log(cookies);
   }
 
   Future<Null> initUniLinks() async {
@@ -193,10 +151,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       Navigator.pushReplacementNamed(context, '/error');
     } else if (response == -1) {
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ErrorScreen(errorMessage: "Can't connect to server.")));
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              ErrorScreen(errorMessage: "Can't connect to server."),
+        ),
+      );
     }
   }
 

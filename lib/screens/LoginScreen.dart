@@ -24,7 +24,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String helperText = 'Give in your pincode to log in';
+  String helperText = 'Enter your pincode to log in';
   List<int> imageList = new List();
   var selectedImageId = -1;
   var correctImage = -1;

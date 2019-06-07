@@ -188,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       icon: Icon(Icons.person),
                       tooltip: 'Your profile',
                       onPressed: () {
+                         flutterWebViewPlugins[1].hide();
                         Navigator.pushNamed(context, '/profile');
                       },
                     );

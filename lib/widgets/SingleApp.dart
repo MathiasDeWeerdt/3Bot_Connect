@@ -26,7 +26,7 @@ class _SingleAppState extends State<SingleApp> {
               image: AssetImage("assets/" + widget.app['bg']),
               fit: BoxFit.cover,
               alignment: Alignment.centerRight,
-              colorFilter: widget.app['disabled']? ColorFilter.mode(Colors.black.withAlpha(200), BlendMode.darken) : ColorFilter.mode(Theme.of(context).primaryColor.withAlpha(200), BlendMode.multiply)
+              colorFilter: ColorFilter.mode(Theme.of(context).primaryColor.withAlpha(200), BlendMode.multiply)
             ),
             borderRadius: BorderRadius.all(Radius.circular(20.0)),
             boxShadow: [

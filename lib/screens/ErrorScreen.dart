@@ -5,7 +5,8 @@ import 'package:threebotlogin/main.dart';
 class ErrorScreen extends StatefulWidget {
   final Widget errorScreen;
   final String errorMessage;
-  ErrorScreen({Key key, this.errorScreen, this.errorMessage = ''}) : super(key: key);
+  ErrorScreen({Key key, this.errorScreen, this.errorMessage = ''})
+      : super(key: key);
   _ErrorScreenState createState() => _ErrorScreenState();
 }
 
@@ -25,50 +26,55 @@ class _ErrorScreenState extends State<ErrorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Update required'),
-          elevation: 0.0,
-        ),
-        body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).primaryColor,
+      appBar: AppBar(
+        title: Text('Update required'),
+        elevation: 0.0,
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Theme.of(context).primaryColor,
+        child: Container(
+          child: Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0))),
             child: Container(
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0))),
-                    child: Container(
-                        padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(),
-                              ),
-                              Icon(
-                                Icons.warning,
-                                size: 42.0,
-                                color: Theme.of(context).errorColor,
-                              ),
-                              SizedBox(
-                                height: 20.0,
-                              ),
-                              Text(widget.errorMessage.isEmpty ? 'Please update the app before continuing' : widget.errorMessage),
-                              SizedBox(
-                                height: 60.0,
-                              ),
-                              Expanded(
-                                child: Container(),
-                              ),
-                              Text('v ' +
-                                  version +
-                                  (isInDebugMode ? '-DEBUG' : '')),
-                            ],
-                          ),
-                        ))))));
+              padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Icon(
+                      Icons.warning,
+                      size: 42.0,
+                      color: Theme.of(context).errorColor,
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    Text(widget.errorMessage.isEmpty
+                        ? 'Please update the app before continuing'
+                        : widget.errorMessage),
+                    SizedBox(
+                      height: 60.0,
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Text('vs' + version + (isInDebugMode ? '-DEBUG' : '')),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

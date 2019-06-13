@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:http/http.dart' as http;
@@ -14,10 +14,6 @@ import 'CustomDialog.dart';
 
 class AppSelector extends StatefulWidget {
   final _AppSelectorState instance = _AppSelectorState();
-
-  void appsCallback() {
-    instance.appsCallback();
-  }
 
   @override
   _AppSelectorState createState() => instance;
@@ -44,9 +40,10 @@ class _AppSelectorState extends State<AppSelector> {
     final request = new http.Request('GET', Uri.parse(url))
       ..followRedirects = false;
     final response = await client.send(request);
-
+    logger.log(jsonEncode(response.headers));
     final state =
         Uri.decodeFull(response.headers['location'].split("&state=")[1]);
+    logger.log('state ' + state);
     final privateKey = await getPrivateKey();
     final signedHash = signHash(state, privateKey);
 
@@ -59,7 +56,8 @@ class _AppSelectorState extends State<AppSelector> {
     final publickey = Uri.decodeFull(
         response.headers['location'].split("&publickey=")[1].split("&")[0]);
     final cookies = response.headers['set-cookie'];
-    final union = '?';
+    String union = '?';
+    if (redirecturl.contains('?')) union = '&';
 
     final scopeData = {};
 
@@ -67,18 +65,19 @@ class _AppSelectorState extends State<AppSelector> {
       scopeData['email'] = await getEmail();
     }
 
-    var jsonData = jsonEncode(
-        (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
+    var jsonData = jsonEncode((await encrypt(jsonEncode(scopeData), publickey, privateKey)));
     var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
-    var newRedirectUrl =
-        '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
-
+    var newRedirectUrl = '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+    newRedirectUrl = newRedirectUrl.replaceAll("http://", "https://");
+    var cookieList = List<Cookie>();
+    cookieList.add(Cookie.fromSetCookieValue(cookies));
+    logger.log(newRedirectUrl);
     flutterWebViewPlugins[1].launch(newRedirectUrl,
-        rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+        rect: Rect.fromLTWH(0.0, 75, size.width, size.height),
         userAgent: kAndroidUserAgent,
-        hidden: true);
-    flutterWebViewPlugins[1].setCookies(cookies);
-
+        hidden: true,
+        cookies: cookieList);
+    // flutterWebViewPlugins[1].reloadUrl('https://www.freeflowpages.com/dashboard');
     logger.log(appid);
     logger.log(newRedirectUrl);
     logger.log(cookies);
@@ -88,14 +87,10 @@ class _AppSelectorState extends State<AppSelector> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final prefsF =  SharedPreferences.getInstance();
-
-    prefsF.then((pres) {
-      if (!isLaunched && pres.containsKey('firstvalidation')) {
-        isLaunched = true;
-        launchFfp(size);
-      }
-    });
+    if (!isLaunched) {
+      isLaunched = true;
+      launchFfp(size);
+    }
 
     return Stack(children: <Widget>[
       Container(
@@ -122,10 +117,8 @@ class _AppSelectorState extends State<AppSelector> {
         "name": 'FreeFlowPages',
         "subheading": 'Where privacy and social media co-exist.',
         "bg": 'ffp.jpg',
-        "disabled": false,
         "initialUrl": 'https://freeflowpages.com/',
         "callback": updateApp,
-        "visible": false,
         "id": 1
       },
       {
@@ -133,10 +126,8 @@ class _AppSelectorState extends State<AppSelector> {
         "subheading": 'By Jimber (Coming soon)',
         "url": 'https://broker.jimber.org',
         "bg": 'jimber.png',
-        "disabled": false,
         "initialUrl": 'https://broker.jimber.org',
         "callback": updateApp,
-        "visible": false,
         "id": 2
       }
     ];
@@ -144,21 +135,12 @@ class _AppSelectorState extends State<AppSelector> {
     return apps;
   }
 
-  void appsCallback() {}
-
   Future updateApp(app) async {
     if (app['id'] == 1) {
-      final emailVer = await getEmail();
-      if (emailVer['verified']) {
-        final prefs = await SharedPreferences.getInstance();
+      if ((await getEmail())['verified']) {
+        logger.log('Showing app ' + jsonEncode(app['id']));
 
-        if (!prefs.containsKey('firstvalidation')) {
-          final size = MediaQuery.of(context).size;
-          isLaunched = true;
-          launchFfp(size);
-          prefs.setBool('firstvalidation', true);
-        }
-         flutterWebViewPlugins[app['id']].show();
+        flutterWebViewPlugins[app['id']].show();
       } else {
         showDialog(
           context: context,
@@ -181,22 +163,23 @@ class _AppSelectorState extends State<AppSelector> {
       }
     } else {
       showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
-              image: Icons.error,
-              title: "Coming soon",
-              description: new Text("This will be available soon."),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                FlatButton(
-                  child: new Text("Ok"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-      );
+          context: context,
+          builder: (BuildContext context) => CustomDialog(
+                image: Icons.error,
+                title: "Coming soon",
+                description:
+                    new Text("This will be available soon."),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  FlatButton(
+                    child: new Text("Ok"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+        );
     }
   }
 }

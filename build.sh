@@ -124,7 +124,7 @@ then
         echo "Switched configs to production."
     else
         echo "flutter build apk -t lib/main_prod.dart"
-        flutter build apk -t lib/main_prod.dart
+        flutter build ios -t lib/main_prod.dart
     fi
 
     exit 0

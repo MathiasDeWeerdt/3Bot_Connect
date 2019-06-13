@@ -12,7 +12,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="3bot_local"
+        android:label="3bot"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
         <activity

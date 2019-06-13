@@ -18,6 +18,7 @@ Config config;
 LoggingService logger;
 List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(4);
 
+
 void init() async {
   logger = new LoggingService();
   

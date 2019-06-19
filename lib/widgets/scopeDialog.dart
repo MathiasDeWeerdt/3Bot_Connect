@@ -31,7 +31,14 @@ Widget scopeList(context, Map<dynamic, dynamic> scope) {
         var val = scope[keys[index]];
         print(keys[index]);
         print(val);
-        if (keys[index] == 'email') val = scope[keys[index]]['email'];
+        if (keys[index] == 'email') {
+          val = scope[keys[index]]['email'];
+        } else if(keys[index] == 'keys') {
+          val = scope[keys[index]]['keys'];
+          if(val == null) {
+            val = 'No keys found.';
+          }
+        }
         return Container(
           margin: EdgeInsets.only(bottom: 20.0),
           child: Row(

@@ -161,8 +161,15 @@ class _ScanScreenState extends State<RegistrationScreen>
       scope['doubleName'] = qrData['doubleName'];
 
       if (qrData['scope'] != null) {
-        if (qrData['scope'].contains('user:email'))
+
+        if (qrData['scope'].contains('user:email')) {
           scope['email'] = {'email': qrData['email'], 'verified': false};
+        }
+
+        if (qrData['scope'].contains('user:keys')) {
+          scope['keys'] = {'keys': qrData['keys']};
+        }
+
       }
 
       showScopeDialog(context, scope, qrData['appId'], saveValues);

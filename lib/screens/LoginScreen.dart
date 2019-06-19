@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -125,8 +124,15 @@ class _LoginScreenState extends State<LoginScreen> {
       if (pin == p) {
         scope['doubleName'] = await getDoubleName();
         if (widget.message['scope'] != null) {
-          if (widget.message['scope'].contains('user:email'))
+
+          if (widget.message['scope'].contains('user:email')) {
             scope['email'] = await getEmail();
+          }
+
+          if (widget.message['scope'].contains('user:keys')) {
+            scope['keys'] = await getKeys();
+          }
+          
         }
         showScopeDialog(context, scope, widget.message['appId'], sendIt);
       } else {

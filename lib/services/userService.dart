@@ -57,6 +57,15 @@ Future<Map<String, Object>> getEmail() async {
   };
 }
 
+Future<Map<String, Object>> getKeys() async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('keys', '{ "public_key":"SuperSpecialPublicKey", "private_key":"SuperSpecialPrivateKey" }');
+  
+  return {
+    'keys': prefs.getString('keys')
+  };
+}
+
 Future saveLoginToken(loginToken) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('loginToken');

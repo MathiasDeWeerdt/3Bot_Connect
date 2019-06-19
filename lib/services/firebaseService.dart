@@ -50,13 +50,21 @@ Future openLogin(context, message) async {
       var publicKey = data['appPublicKey'];
       var privateKey = getPrivateKey();
       var email = getEmail();
+      var keys = getKeys();
 
       var signedHash = signHash(state, await privateKey);
       var scope = {};
       var dataToSend;
       if (data['scope'] != null) {
-        if (data['scope'].split(",").contains('user:email'))
+
+        if (data['scope'].split(",").contains('user:email')) {
           scope['email'] = await email;
+        }
+
+        if (data['scope'].split(",").contains('user:keys')) {
+          scope['keys'] = await keys;
+        }
+        
       }
       if (scope.isNotEmpty) {
         logger.log(scope.isEmpty);

@@ -39,7 +39,7 @@ class _AppSelectorState extends State<AppSelector> {
   }
 
   Future launchFfp(size) async {
-    final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
+    final url = 'https://staging.freeflowpages.com/user/auth/external?authclient=3bot';
     final client = http.Client();
     final request = new http.Request('GET', Uri.parse(url))
       ..followRedirects = false;
@@ -65,6 +65,10 @@ class _AppSelectorState extends State<AppSelector> {
 
     if (scope != null && scope.contains("user:email")) {
       scopeData['email'] = await getEmail();
+    }
+
+    if (scope != null && scope.contains("user:keys")) {
+      scopeData['keys'] = await getKeys();
     }
 
     var jsonData = jsonEncode(

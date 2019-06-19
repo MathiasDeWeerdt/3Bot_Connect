@@ -90,8 +90,15 @@ class _RegistrationWithoutScanScreen
       scope['doubleName'] = widget.initialData['doubleName'];
 
       if (widget.initialData['scope'] != null) {
-        if (widget.initialData['scope'].contains('user:email'))
+        
+        if (widget.initialData['scope'].contains('user:email')) {
           scope['email'] = {'email': widget.initialData['email'], 'verified': false};
+        }
+
+        if (widget.initialData['scope'].contains('user:keys')) {
+          scope['keys'] = {'keys': widget.initialData['keys']};
+        }
+
       }
 
       showScopeDialog(context, scope, widget.initialData['appId'], sendIt);

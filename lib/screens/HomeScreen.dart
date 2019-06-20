@@ -173,7 +173,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       tooltip: 'Apps',
                       icon: const Icon(Icons.apps),
                       onPressed: () {
-                        flutterWebViewPlugins[1].hide();
+                        for (var flutterWebViewPlugin
+                            in flutterWebViewPlugins) {
+                          if (flutterWebViewPlugin != null) {
+                            flutterWebViewPlugin.hide();
+                          }
+                        }
                       });
                 } else
                   return Container();
@@ -188,7 +193,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       icon: Icon(Icons.person),
                       tooltip: 'Your profile',
                       onPressed: () {
-                         flutterWebViewPlugins[1].hide();
+                        for (var flutterWebViewPlugin
+                            in flutterWebViewPlugins) {
+                          if (flutterWebViewPlugin != null) {
+                            flutterWebViewPlugin.hide();
+                          }
+                        }
                         Navigator.pushNamed(context, '/profile');
                       },
                     );

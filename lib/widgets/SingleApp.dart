@@ -23,22 +23,36 @@ class _SingleAppState extends State<SingleApp> {
           height: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("assets/" + widget.app['bg']),
-              fit: BoxFit.cover,
-              alignment: Alignment.centerRight,
-              colorFilter: widget.app['disabled']? ColorFilter.mode(Colors.black.withAlpha(200), BlendMode.darken) : ColorFilter.mode(Theme.of(context).primaryColor.withAlpha(200), BlendMode.multiply)
-            ),
+                image: AssetImage("assets/" + widget.app['bg']),
+                fit: BoxFit.cover,
+                alignment: Alignment.centerRight,
+                colorFilter: widget.app['disabled']
+                    ? ColorFilter.mode(
+                        Colors.black.withAlpha(100), BlendMode.darken)
+                    : ColorFilter.mode(
+                        Theme.of(context).primaryColor.withAlpha(200),
+                        BlendMode.multiply)),
             borderRadius: BorderRadius.all(Radius.circular(20.0)),
             boxShadow: [
-              new BoxShadow(color: Colors.black, offset: Offset(1, 1), blurRadius: 2.0)
+              new BoxShadow(
+                  color: Colors.black, offset: Offset(1, 1), blurRadius: 2.0)
             ],
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(widget.app['name'], style: TextStyle(color: Colors.white, fontSize: 20,),textAlign: TextAlign.center,),
-              SizedBox(height: 10,),
-              Text(widget.app['subheading'], style: TextStyle(color: Colors.white, fontSize: 13,),textAlign: TextAlign.center,),
+              widget.app['content'],
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                widget.app['subheading'],
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),

@@ -164,7 +164,8 @@ class _ScanScreenState extends State<RegistrationScreen>
         if (qrData['scope'].contains('user:email'))
           scope['email'] = {'email': qrData['email'], 'verified': false};
       }
-
+      // Debug
+      print('Registration: \n $qrData ');
       showScopeDialog(context, scope, qrData['appId'], saveValues);
     }
   }

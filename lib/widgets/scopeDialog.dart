@@ -5,16 +5,18 @@ import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 showScopeDialog(context, Map<dynamic, dynamic> scope, String appId, callback) {
   // flutter defined function
-  print('scope is    '  + jsonEncode(scope));
+  print('scope is    ' + jsonEncode(scope));
   showDialog(
     context: context,
     builder: (BuildContext context) => CustomDialog(
-          title: appId + "\n would like to access",
+          title: '$appId \n would like to access',
           description: scopeList(context, scope),
-          actions: <Widget>[FlatButton(
-            child: Text("Ok"),
-            onPressed: callback,
-          )],
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Ok"),
+              onPressed: callback,
+            )
+          ],
         ),
   );
 }
@@ -35,30 +37,31 @@ Widget scopeList(context, Map<dynamic, dynamic> scope) {
         return Container(
           margin: EdgeInsets.only(bottom: 20.0),
           child: Row(
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.keyboard_arrow_right,
-                size: 32.0,
-                color: Colors.black,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  keys[index]?.toUpperCase(),
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                child: Icon(
+                  Icons.keyboard_arrow_right,
+                  size: 32.0,
+                  color: Colors.black,
                 ),
-                Text(val,
-                  textAlign: TextAlign.left,
-                )
-              ],
-            )
-          ],
-        ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    keys[index]?.toUpperCase(),
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    val,
+                    textAlign: TextAlign.left,
+                  )
+                ],
+              )
+            ],
+          ),
         );
       });
 }

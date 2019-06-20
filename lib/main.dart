@@ -16,11 +16,35 @@ String pk;
 String deviceId;
 Config config;
 LoggingService logger;
-List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(4);
+List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
+
+List<Map<String, dynamic>> apps = [
+  {
+    "name": 'FreeFlowPages',
+    "subheading": 'Where privacy and social media co-exist.',
+    "bg": 'ffp.jpg',
+    "disabled": false,
+    "initialUrl": 'https://freeflowpages.com/',
+    "visible": false,
+    "id": 0,
+    'cookieUrl': 'https://freeflowpages.com/user/auth/external?authclient=3bot'
+  },
+  {
+    "name": 'OpenBrowser',
+    "subheading": 'By Jimber (Coming soon)',
+    "url": 'https://broker.jimber.org',
+    "bg": 'jimber.png',
+    "disabled": false,
+    "initialUrl": 'https://broker.jimber.org',
+    "visible": false,
+    "id": 1,
+    'cookieUrl': ''
+  }
+];
 
 void init() async {
   logger = new LoggingService();
-  
+
   pk = await getPrivateKey();
 
   try {
@@ -44,10 +68,11 @@ bool get isInDebugMode {
   return inDebugMode;
 }
 
-String kAndroidUserAgent = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
+String kAndroidUserAgent =
+    //'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36';
+    'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     config = Config.of(context);

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 
 Future savePin(pin) async {
   final prefs = await SharedPreferences.getInstance();
@@ -60,7 +63,9 @@ Future<Map<String, Object>> getEmail() async {
 Future<Map<String, Object>> getKeys() async {
   final prefs = await SharedPreferences.getInstance();
   
-  prefs.setString('keys', '{ "public_key":"SuperSpecialPublicKey", "private_key":"SuperSpecialPrivateKey" }');
+  var keyPair = await generateKeypair("appId");
+
+  prefs.setString('keys', json.encode(keyPair));
   
   return {
     'keys': prefs.getString('keys')

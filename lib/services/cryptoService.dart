@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_sodium/flutter_sodium.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String> signHash(String stateHash, String pk) async {
   logger.log('stateHash' + stateHash);
@@ -25,12 +26,27 @@ Future<Map<String, String>> encrypt(String data, String publicKey, String pk) as
 }
 
 Future<Map<String, String>> generateKeypair(String appId) async {
+
+  final prefs = await SharedPreferences.getInstance();
+
+  String appPublicKey = prefs.getString("${appId.toString()}.pk");
+  String appPrivateKey = prefs.getString("${appId.toString()}.sk");
+
   Map<String, Uint8List> key = await Sodium.cryptoBoxKeypair();
+
+  if(appPublicKey == null || appPublicKey == "") {
+    appPublicKey = base64.encode(key['pk']);
+    prefs.setString("${appId.toString()}.pk", appPublicKey);
+  }
+
+  if(appPrivateKey == null || appPrivateKey == "") {
+    appPrivateKey = base64.encode(key['sk']);
+    prefs.setString("${appId.toString()}.sk", appPrivateKey);
+  }
 
   return {
     'appId': appId,
-    'publicKey': base64.encode(key['pk']),
-    'privateKey': base64.encode(key['sk']),
-    'seed': ''
+    'publicKey': appPublicKey,
+    'privateKey': appPrivateKey
   };
 }

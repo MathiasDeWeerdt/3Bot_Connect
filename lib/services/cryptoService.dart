@@ -25,7 +25,7 @@ Future<Map<String, String>> encrypt(String data, String publicKey, String pk) as
   };
 }
 
-Future<Map<String, String>> generateKeypair(String appId) async {
+Future<Map<String, Object>> generateKeypair(String appId) async {
 
   final prefs = await SharedPreferences.getInstance();
 

@@ -68,7 +68,7 @@ class _AppSelectorState extends State<AppSelector> {
     }
 
     if (scope != null && scope.contains("user:keys")) {
-      scopeData['keys'] = await getKeys();
+      scopeData['keys'] = await getKeys(appid);
     }
 
     var jsonData = jsonEncode(

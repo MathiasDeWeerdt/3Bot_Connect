@@ -60,16 +60,10 @@ Future<Map<String, Object>> getEmail() async {
   };
 }
 
-Future<Map<String, Object>> getKeys() async {
-  final prefs = await SharedPreferences.getInstance();
-  
-  var keyPair = await generateKeypair("appId");
+Future<Map<String, Object>> getKeys(appId) async {
+  var keyPair = await generateKeypair(appId);
 
-  prefs.setString('keys', json.encode(keyPair));
-  
-  return {
-    'keys': prefs.getString('keys')
-  };
+  return keyPair;
 }
 
 Future saveLoginToken(loginToken) async {

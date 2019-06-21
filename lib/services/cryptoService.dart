@@ -23,3 +23,14 @@ Future<Map<String, String>> encrypt(String data, String publicKey, String pk) as
     'ciphertext': base64.encode(await encryptedData)
   };
 }
+
+Future<Map<String, String>> generateKeypair(String appId) async {
+  Map<String, Uint8List> key = await Sodium.cryptoBoxKeypair();
+
+  return {
+    'appId': appId,
+    'publicKey': base64.encode(key['pk']),
+    'privateKey': base64.encode(key['sk']),
+    'seed': ''
+  };
+}

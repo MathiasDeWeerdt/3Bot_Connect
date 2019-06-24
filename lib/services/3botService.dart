@@ -6,6 +6,8 @@ import 'package:threebotlogin/main.dart';
 import 'dart:convert';
 
 import 'package:threebotlogin/screens/ErrorScreen.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
+import 'package:threebotlogin/services/userService.dart';
 
 String threeBotApiUrl = config.threeBotApiUrl;
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
@@ -27,9 +29,19 @@ Future sendData(String hash, String signedHash, data, selectedImageId) {
           headers: requestHeaders);
 }
 
-Future checkLoginAttempts(String doubleName) {
+Future checkLoginAttempts(String doubleName) async {
+
+  String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
+  String privatekey = await getPrivateKey();
+  String signedTimestamp = await signTimestamp(timestamp, privatekey);
+
+  Map<String, String> loginRequestHeaders = {
+    'Content-type': 'application/json', 
+    'Jimber-Authorization': signedTimestamp
+  };
+
   return http.get('$threeBotApiUrl/attempts/$doubleName',
-      headers: requestHeaders);
+      headers: loginRequestHeaders);
 }
 
 Future<int> checkVersionNumber(BuildContext context, String version) async {

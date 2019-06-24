@@ -12,6 +12,15 @@ Future<String> signHash(String stateHash, String pk) async {
 
   return base64EncryptedSignedHash;
 }
+
+Future<String> signTimestamp(String timestamp, String pk) async {
+  logger.log('timestamp' + timestamp);
+  var private = base64.decode(pk);
+  var signedTimestamp = await Sodium.cryptoSign(Uint8List.fromList(timestamp.codeUnits), private);
+
+  return base64.encode(signedTimestamp);
+}
+
 Future<Map<String, String>> encrypt(String data, String publicKey, String pk) async {
   var nonce = CryptoBox.generateNonce();
   var private = Sodium.cryptoSignEd25519SkToCurve25519(base64.decode(pk));

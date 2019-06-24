@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -117,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       selectedImageId = imageId;
     });
-  } 
+  }
 
   pinFilledIn(p) async {
     if (selectedImageId != -1 || isMobile()) {
@@ -166,9 +164,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ));
     }
   }
+
   bool isMobile() {
     return widget.message['mobile'] == 'true';
   }
+
   bool isNumeric(String s) {
     if (s == null) {
       return false;

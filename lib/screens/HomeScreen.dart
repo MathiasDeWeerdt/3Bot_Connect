@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
-import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
-import 'package:http/http.dart' as http;
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:uni_links/uni_links.dart';
@@ -28,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
-  AppSelector selector;
+  Color hexColor = Color(0xff0f296a);
 
   @override
   void initState() {
@@ -40,7 +38,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
-    selector = AppSelector();
+  }
+
+  refresh(colorData) {
+    setState(() {
+      this.hexColor = Color(colorData);
+    });
   }
 
   Future<Null> initUniLinks() async {
@@ -164,7 +167,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('3Bot'),
+          title: Text('3bot'),
+          backgroundColor: hexColor,
           leading: FutureBuilder(
               future: getDoubleName(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -179,6 +183,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             flutterWebViewPlugin.hide();
                           }
                         }
+
+                        setState(() {
+                          hexColor = Color(0xFF0f296a);
+                        });
                       });
                 } else
                   return Container();
@@ -242,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Column registered(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[AppSelector()],
+      children: <Widget>[AppSelector(notifyParent: refresh)],
     );
   }
 

@@ -32,7 +32,7 @@ void main() {
       "id": 0,
       'cookieUrl':
           'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
-      'color': '0xff708fa'
+      'color': 0xFF708faa
     },
     {
       "content": Text(
@@ -44,14 +44,14 @@ void main() {
         textAlign: TextAlign.center,
       ),
       "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org',
+      "url": 'https://broker.jimber.org/',
       "bg": 'jimber.png',
       "disabled": false,
-      "initialUrl": 'https://broker.jimber.org',
+      "initialUrl": 'https://broker.jimber.org/',
       "visible": false,
       "id": 1,
       'cookieUrl': '',
-      'color': ''
+      'color': 0xFF0f296a
     },
     {
       "content": Text(
@@ -70,7 +70,7 @@ void main() {
       "visible": false,
       "id": 2,
       'cookieUrl': '',
-      'color': ''
+      'color': 0xFF0f296a
     },
     {
       "content": Text(
@@ -89,7 +89,7 @@ void main() {
       "visible": false,
       "id": 3,
       'cookieUrl': '',
-      'color': '0xff34495e'
+      'color': 0xFF34495e
     },
     {
       "content": Icon(
@@ -105,7 +105,7 @@ void main() {
       "visible": false,
       "id": 4,
       'cookieUrl': '',
-      'color': ''
+      'color': 0xFF0f296a
     }
   ];
 

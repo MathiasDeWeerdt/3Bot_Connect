@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -13,11 +13,10 @@ import 'package:threebotlogin/main.dart';
 import 'CustomDialog.dart';
 
 class AppSelector extends StatefulWidget {
+  final Function(int colorData) notifyParent;
   final _AppSelectorState instance = _AppSelectorState();
 
-  void appsCallback() {
-    instance.appsCallback();
-  }
+  AppSelector({Key key, this.notifyParent}) : super(key: key);
 
   @override
   _AppSelectorState createState() => instance;
@@ -41,6 +40,7 @@ class _AppSelectorState extends State<AppSelector> {
     //final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
     var url = apps[appId]['cookieUrl'];
     var loadUrl = apps[appId]['url'];
+
     var cookies = '';
     if (url != '') {
       final client = http.Client();
@@ -77,10 +77,12 @@ class _AppSelectorState extends State<AppSelector> {
       loadUrl =
           '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
     }
+
     flutterWebViewPlugins[appId].launch(loadUrl,
         rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
         userAgent: kAndroidUserAgent,
         hidden: true);
+
     if (cookies != '') {
       flutterWebViewPlugins[appId].setCookies(cookies);
     }
@@ -120,8 +122,6 @@ class _AppSelectorState extends State<AppSelector> {
     ]);
   }
 
-  void appsCallback() {}
-
   Future updateApp(app) async {
     if (!app['disabled']) {
       final emailVer = await getEmail();
@@ -134,6 +134,8 @@ class _AppSelectorState extends State<AppSelector> {
           launchApp(size, app['id']);
           prefs.setBool('firstvalidation', true);
         }
+
+        widget.notifyParent(app['color']);
         flutterWebViewPlugins[app['id']].show();
       } else {
         showDialog(

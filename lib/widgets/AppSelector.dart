@@ -59,6 +59,7 @@ class _AppSelectorState extends State<AppSelector> {
     final publickey = Uri.decodeFull(
         response.headers['location'].split("&publickey=")[1].split("&")[0]);
     final cookies = response.headers['set-cookie'];
+    var doubleName = await getDoubleName();
     final union = '?';
 
     final scopeData = {};
@@ -68,14 +69,14 @@ class _AppSelectorState extends State<AppSelector> {
     }
 
     if (scope != null && scope.contains("user:keys")) {
-      scopeData['keys'] = await getKeys(appid);
+      scopeData['keys'] = await getKeys(appid, doubleName);
     }
 
     var jsonData = jsonEncode(
         (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
     var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
     var newRedirectUrl =
-        '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+        '$redirecturl${union}username=$doubleName&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
 
     flutterWebViewPlugins[1].launch(newRedirectUrl,
         rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),

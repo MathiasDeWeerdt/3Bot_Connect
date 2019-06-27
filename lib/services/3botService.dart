@@ -29,8 +29,15 @@ Future sendData(String hash, String signedHash, data, selectedImageId) {
           headers: requestHeaders);
 }
 
-Future checkLoginAttempts(String doubleName) async {
+Future sendPublicKey(Map<String, Object> data) {
+  logger.log('Sending appPublicKey to backend with appId: ' + json.encode(data));
+  return http
+      .post('$threeBotApiUrl/apppublickey', 
+          body: json.encode(data), 
+          headers: requestHeaders);
+}
 
+Future checkLoginAttempts(String doubleName) async {
   String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
   String privatekey = await getPrivateKey();
   String signedTimestamp = await signTimestamp(timestamp, privatekey);

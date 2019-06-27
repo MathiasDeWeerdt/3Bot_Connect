@@ -50,7 +50,7 @@ Future openLogin(context, message) async {
       var publicKey = data['appPublicKey'];
       var privateKey = getPrivateKey();
       var email = getEmail();
-      var keys = getKeys(data['appId']);
+      var keys = getKeys(data['appId'], await getDoubleName());
 
       var signedHash = signHash(state, await privateKey);
       var scope = {};

@@ -60,10 +60,9 @@ Future<Map<String, Object>> getEmail() async {
   };
 }
 
-Future<Map<String, Object>> getKeys(appId) async {
-  var keyPair = await generateKeypair(appId);
-
-  return keyPair;
+Future<Map<String, Object>> getKeys(String appId, String doubleName) async {
+  print("##################### Getkeys #############################");
+  return await generateKeypair(appId, doubleName);
 }
 
 Future saveLoginToken(loginToken) async {

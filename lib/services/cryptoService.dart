@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter_sodium/flutter_sodium.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threebotlogin/services/3botService.dart';
+import 'package:threebotlogin/services/userService.dart';
 
 Future<String> signHash(String stateHash, String pk) async {
   logger.log('stateHash' + stateHash);
@@ -21,6 +23,13 @@ Future<String> signTimestamp(String timestamp, String pk) async {
   return base64.encode(signedTimestamp);
 }
 
+Future<String> sign(String other, String pk) async {
+  var private = base64.decode(pk);
+  var signed = await Sodium.cryptoSign(Uint8List.fromList(other.codeUnits), private);
+
+  return base64.encode(signed);
+}
+
 Future<Map<String, String>> encrypt(String data, String publicKey, String pk) async {
   var nonce = CryptoBox.generateNonce();
   var private = Sodium.cryptoSignEd25519SkToCurve25519(base64.decode(pk));
@@ -34,8 +43,7 @@ Future<Map<String, String>> encrypt(String data, String publicKey, String pk) as
   };
 }
 
-Future<Map<String, Object>> generateKeypair(String appId) async {
-
+Future<Map<String, Object>> generateKeypair(String appId, String doubleName) async {
   final prefs = await SharedPreferences.getInstance();
 
   String appPublicKey = prefs.getString("${appId.toString()}.pk");
@@ -43,9 +51,22 @@ Future<Map<String, Object>> generateKeypair(String appId) async {
 
   Map<String, Uint8List> key = await Sodium.cryptoBoxKeypair();
 
+  appPublicKey = null;
+  appPrivateKey = null;
+
   if(appPublicKey == null || appPublicKey == "") {
     appPublicKey = base64.encode(key['pk']);
     prefs.setString("${appId.toString()}.pk", appPublicKey);
+
+    String privateKey = await getPrivateKey();
+
+    var data = {
+      'doubleName': doubleName,
+      'signedAppPublicKey': await sign(appPublicKey, privateKey), 
+      'signedAppId': await sign(appId, privateKey)
+    };
+
+    sendPublicKey(data);
   }
 
   if(appPrivateKey == null || appPrivateKey == "") {

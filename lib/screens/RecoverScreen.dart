@@ -189,7 +189,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
       return null;
     } on FormatException catch (e) {
       logger.log(e);
-      return userNotFound = "User does not exist";
+      userNotFound = "User does not exist";
+      return userNotFound;
     }
   }
 
@@ -206,7 +207,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
       return null;
     } catch (e) {
       logger.log(e);
-      return userNotFound = "Email not corresponding with Double name";
+      userNotFound = "Email not corresponding with Double name";
+      return userNotFound;
     }
   }
 
@@ -225,7 +227,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
       return null;
     } catch (e) {
       logger.log(e);
-      return entropy = "Invalid mnenomic";
+      entropy = "Invalid mnenomic";
+      return entropy;
     }
   }
 }

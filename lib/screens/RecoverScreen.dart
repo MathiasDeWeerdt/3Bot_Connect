@@ -1,12 +1,16 @@
+import 'dart:typed_data';
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_sodium/flutter_sodium.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:intl/intl.dart';
 import 'package:crypto/crypto.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 
 class RecoverScreen extends StatefulWidget {
   final Widget recoverScreen;
@@ -42,10 +46,10 @@ class _RecoverScreenState extends State<RecoverScreen> {
     super.initState();
 
     // Testing purposes
-    doubleNameController.text = "laika15";
-    emailController.text = "anthony.debock@jimber.org";
+    doubleNameController.text = "crypto";
+    emailController.text = "mathiasdeweerdt@gmail.com";
     keyPhraseController.text =
-        "mammal elephant opera mutual silk unit ensure better lottery donkey coach access swear require memory physical flip general smile glue tribe mesh tumble kangaroo";
+        "sweet calm example fan attract quote swamp innocent light come eye mushroom emerge pluck future buyer exact initial again share helmet eagle habit chapter";
   }
 
   @override
@@ -150,6 +154,20 @@ class _RecoverScreenState extends State<RecoverScreen> {
         headers: requestHeaders);
   }
 
+  Uint8List toHex(String input) {
+    double length = input.length / 2;
+    Uint8List bytes = new Uint8List(length.ceil());
+
+    for (var i = 0; i < bytes.length; i++) {
+      var x = input.substring(i * 2, i * 2 + 2);
+      logger.log(x);
+
+      bytes[i] = int.parse(x, radix: 16);
+    }
+
+    return bytes;
+  }
+
   // Recovering account
   Future<int> recoveringAccount() async {
     doubleName = doubleNameController.text;
@@ -163,14 +181,25 @@ class _RecoverScreenState extends State<RecoverScreen> {
     String emailGrabData = await grabEmail(doubleName);
     entropy = await getPrivatekey(emailGrabData);
 
+    Map<String, Uint8List> key =
+        await Sodium.cryptoSignSeedKeypair(toHex(entropy));
+
+    logger.log("=============|Keypairs|===============");
+    logger.log("publickey: " + base64.encode(key['pk']).toString());
+    logger.log("secretkey: " + base64.encode(key['sk']).toString());
+    logger.log("======================================");
+
     // hash email from user
     String data = generateMd5(emailUser);
+
+    // var signedHash = signTimestamp(timeStamp.toString(), entropy);
 
     logger.log("=============|Recovery|============== ");
     logger.log("publicKeyData: " + publicKeyData);
     logger.log("emailGrabData: " + emailGrabData);
     logger.log("email Hash: " + data);
     logger.log("entropy: " + entropy);
+    // logger.log("signedHash: " + signedHash.toString());
     logger.log("======================================");
 
     return 1;
@@ -217,18 +246,15 @@ class _RecoverScreenState extends State<RecoverScreen> {
     try {
       if (emailGrabData != null) {
         userNotFound = "User has been found.";
-        entropy = bip39.mnemonicToEntropy(keyPhrase);
 
-        return entropy;
+        return bip39.mnemonicToEntropy(keyPhrase);
       } else {
         userNotFound = "User not found.";
       }
-
-      return null;
     } catch (e) {
       logger.log(e);
-      entropy = "Invalid mnenomic";
-      return entropy;
     }
+
+    return null;
   }
 }

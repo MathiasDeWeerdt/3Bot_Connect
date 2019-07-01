@@ -39,8 +39,8 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
       });
 
     animationController.forward();
-    animationController.addListener(() {	
-      this.setState(() {});	
+    animationController.addListener(() {
+      this.setState(() {});
     });
     onNewCameraSelected(cameras[0]);
   }
@@ -80,10 +80,9 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
         animationController.isAnimating
             ? Center(
                 child: Container(
-                alignment: Alignment.topCenter,
-                padding: EdgeInsets.all(100),
-                child: Image.asset('assets/qr.png')
-              ))
+                    alignment: Alignment.topCenter,
+                    padding: EdgeInsets.all(100),
+                    child: Image.asset('assets/qr.png')))
             : BackdropFilter(
                 child: new AnimatedContainer(
                   duration: Duration(milliseconds: 100),
@@ -109,8 +108,8 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
     if (controller != null) {
       await controller.dispose();
     }
-    controller = new QRReaderController(cameraDescription, ResolutionPreset.high,
-        [CodeFormat.qr, CodeFormat.pdf417], onCodeRead);
+    controller = new QRReaderController(cameraDescription,
+        ResolutionPreset.high, [CodeFormat.qr, CodeFormat.pdf417], onCodeRead);
     controller.addListener(() {
       if (mounted) setState(() {});
     });
@@ -119,11 +118,15 @@ class _ScannerState extends State<Scanner> with TickerProviderStateMixin {
       await controller.initialize();
       initiated = true;
     } on Exception catch (e) {
-      logger.log('-------------------------------------------------------------');
-      logger.log('-------------------------------------------------------------');
+      logger
+          .log('-------------------------------------------------------------');
+      logger
+          .log('-------------------------------------------------------------');
       logger.log(e);
-      logger.log('-------------------------------------------------------------');
-      logger.log('-------------------------------------------------------------');
+      logger
+          .log('-------------------------------------------------------------');
+      logger
+          .log('-------------------------------------------------------------');
     }
 
     if (mounted && initiated) {

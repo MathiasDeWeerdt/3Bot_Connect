@@ -55,7 +55,6 @@ Future openLogin(context, message) async {
       var scope = {};
       var dataToSend;
       if (data['scope'] != null) {
-
         if (data['scope'].split(",").contains('user:email')) {
           scope['email'] = await email;
         }
@@ -63,7 +62,6 @@ Future openLogin(context, message) async {
         if (data['scope'].split(",").contains('user:keys')) {
           scope['keys'] = await keys;
         }
-        
       }
       if (scope.isNotEmpty) {
         logger.log(scope.isEmpty);

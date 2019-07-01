@@ -20,19 +20,22 @@ Future<String> signHash(String stateHash, String pk) async {
 Future<String> signTimestamp(String timestamp, String pk) async {
   logger.log('timestamp' + timestamp);
   var private = base64.decode(pk);
-  var signedTimestamp = await Sodium.cryptoSign(Uint8List.fromList(timestamp.codeUnits), private);
+  var signedTimestamp =
+      await Sodium.cryptoSign(Uint8List.fromList(timestamp.codeUnits), private);
 
   return base64.encode(signedTimestamp);
 }
 
 Future<String> sign(String other, String pk) async {
   var private = base64.decode(pk);
-  var signed = await Sodium.cryptoSign(Uint8List.fromList(other.codeUnits), private);
+  var signed =
+      await Sodium.cryptoSign(Uint8List.fromList(other.codeUnits), private);
 
   return base64.encode(signed);
 }
 
-Future<Map<String, String>> encrypt(String data, String publicKey, String pk) async {
+Future<Map<String, String>> encrypt(
+    String data, String publicKey, String pk) async {
   var nonce = CryptoBox.generateNonce();
   var private = Sodium.cryptoSignEd25519SkToCurve25519(base64.decode(pk));
   var public = base64.decode(publicKey);
@@ -48,14 +51,15 @@ Future<Map<String, String>> encrypt(String data, String publicKey, String pk) as
 
 /// sk = SecretKey
 /// pk = PublicKey
-Future<Map<String, Object>> generateDerivativeKeypair(String appId, String doubleName) async {
-
+Future<Map<String, Object>> generateDerivativeKeypair(
+    String appId, String doubleName) async {
   String privateKey = await getPrivateKey();
 
   PBKDF2 generator = new PBKDF2();
   List<int> hashKey = generator.generateKey(privateKey, appId, 1000, 32);
 
-  Map<String, Uint8List> key = await Sodium.cryptoBoxSeedKeypair(new Uint8List.fromList(hashKey));
+  Map<String, Uint8List> key =
+      await Sodium.cryptoBoxSeedKeypair(new Uint8List.fromList(hashKey));
 
   print("Public key: " + key['pk'].toString());
   print("Private key: " + key['sk'].toString());
@@ -63,18 +67,19 @@ Future<Map<String, Object>> generateDerivativeKeypair(String appId, String doubl
   return null;
 }
 
-Future<Map<String, Object>> generateKeypair(String appId, String doubleName) async {
+Future<Map<String, Object>> generateKeypair(
+    String appId, String doubleName) async {
   final prefs = await SharedPreferences.getInstance();
 
   String appPublicKey = prefs.getString("${appId.toString()}.pk");
   String appPrivateKey = prefs.getString("${appId.toString()}.sk");
 
   Map<String, Uint8List> key = await Sodium.cryptoBoxKeypair();
- 
+
   appPublicKey = null;
   appPrivateKey = null;
 
-  if(appPublicKey == null || appPublicKey == "") {
+  if (appPublicKey == null || appPublicKey == "") {
     appPublicKey = base64.encode(key['pk']);
     prefs.setString("${appId.toString()}.pk", appPublicKey);
 
@@ -82,14 +87,14 @@ Future<Map<String, Object>> generateKeypair(String appId, String doubleName) asy
 
     var data = {
       'doubleName': doubleName,
-      'signedAppPublicKey': await sign(appPublicKey, privateKey), 
+      'signedAppPublicKey': await sign(appPublicKey, privateKey),
       'signedAppId': await sign(appId, privateKey)
     };
 
     sendPublicKey(data);
   }
 
-  if(appPrivateKey == null || appPrivateKey == "") {
+  if (appPrivateKey == null || appPrivateKey == "") {
     appPrivateKey = base64.encode(key['sk']);
     prefs.setString("${appId.toString()}.sk", appPrivateKey);
   }

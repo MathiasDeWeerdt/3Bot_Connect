@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_sodium/flutter_sodium.dart';
+import 'package:password_hash/password_hash.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/3botService.dart';
@@ -43,6 +44,23 @@ Future<Map<String, String>> encrypt(String data, String publicKey, String pk) as
   };
 }
 
+/// sk = SecretKey
+/// pk = PublicKey
+Future<Map<String, Object>> generateDerivativeKeypair(String appId, String doubleName) async {
+
+  String privateKey = await getPrivateKey();
+
+  PBKDF2 generator = new PBKDF2();
+  List<int> hashKey = generator.generateKey(privateKey, appId, 1000, 32);
+
+  Map<String, Uint8List> key = await Sodium.cryptoBoxSeedKeypair(new Uint8List.fromList(hashKey));
+
+  print("Public key: " + key['pk'].toString());
+  print("Private key: " + key['sk'].toString());
+
+  return null;
+}
+
 Future<Map<String, Object>> generateKeypair(String appId, String doubleName) async {
   final prefs = await SharedPreferences.getInstance();
 
@@ -50,7 +68,7 @@ Future<Map<String, Object>> generateKeypair(String appId, String doubleName) asy
   String appPrivateKey = prefs.getString("${appId.toString()}.sk");
 
   Map<String, Uint8List> key = await Sodium.cryptoBoxKeypair();
-
+ 
   appPublicKey = null;
   appPrivateKey = null;
 

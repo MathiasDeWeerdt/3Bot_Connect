@@ -4,9 +4,10 @@ import 'package:threebotlogin/services/cryptoService.dart';
 import 'config.dart';
 import 'main.dart';
 
-void main() {
+void main() async {
 
   // generateKeypair('hello');
+  await generateDerivativeKeypair("hello2", "");
 
   var config = Config(
       name: '3bot local',

@@ -32,7 +32,7 @@ Future sendData(String hash, String signedHash, data, selectedImageId) {
 Future sendPublicKey(Map<String, Object> data) {
   logger.log('Sending appPublicKey to backend with appId: ' + json.encode(data));
   return http
-      .post('$threeBotApiUrl/apppublickey', 
+      .post('$threeBotApiUrl/savederivedpublickey', 
           body: json.encode(data), 
           headers: requestHeaders);
 }

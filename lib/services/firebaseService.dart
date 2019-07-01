@@ -9,7 +9,6 @@ import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/main.dart';
 
-
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 void initFirebaseMessagingListener(context) async {
@@ -69,14 +68,15 @@ Future openLogin(context, message) async {
     logger.log(data['type']);
     if (data['type'] == 'login' && data['mobile'] != 'true') {
       Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
     } else if (data['type'] == 'email_verification') {
       getEmail().then((emailMap) async {
         if (!emailMap['verified']) {
           checkVerificationStatus(await getDoubleName())
               .then((newEmailMap) async {
             logger.log("newEmailMap.body: ");
-            logger.log( newEmailMap.body);
+            logger.log(newEmailMap.body);
             var body = jsonDecode(newEmailMap.body);
             saveEmailVerified(body['verified'] == 1);
           });

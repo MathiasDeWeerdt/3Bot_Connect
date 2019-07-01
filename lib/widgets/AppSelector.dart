@@ -37,58 +37,64 @@ class _AppSelectorState extends State<AppSelector> {
   }
 
   Future launchApp(size, appId) async {
-    //final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
-    var url = apps[appId]['cookieUrl'];
-    var loadUrl = apps[appId]['url'];
+    try {
+      //final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
+      var url = apps[appId]['cookieUrl'];
+      var loadUrl = apps[appId]['url'];
 
-    var cookies = '';
-    if (url != '') {
-      final client = http.Client();
-      final request = new http.Request('GET', Uri.parse(url))
-        ..followRedirects = false;
-      final response = await client.send(request);
+      var cookies = '';
+      if (url != '') {
+        final client = http.Client();
+        final request = new http.Request('GET', Uri.parse(url))
+          ..followRedirects = false;
+        final response = await client.send(request);
 
-      final state =
-          Uri.decodeFull(response.headers['location'].split("&state=")[1]);
-      final privateKey = await getPrivateKey();
-      final signedHash = signHash(state, privateKey);
+        final state =
+            Uri.decodeFull(response.headers['location'].split("&state=")[1]);
+        final privateKey = await getPrivateKey();
+        final signedHash = signHash(state, privateKey);
 
-      final redirecturl = Uri.decodeFull(
-          response.headers['location'].split("&redirecturl=")[1].split("&")[0]);
-      final appName = Uri.decodeFull(
-          response.headers['location'].split("appid=")[1].split("&")[0]);
-      logger.log(appName);
-      final scope = Uri.decodeFull(
-          response.headers['location'].split("&scope=")[1].split("&")[0]);
-      final publickey = Uri.decodeFull(
-          response.headers['location'].split("&publickey=")[1].split("&")[0]);
-      cookies = response.headers['set-cookie'];
-      final union = '?';
+        final redirecturl = Uri.decodeFull(response.headers['location']
+            .split("&redirecturl=")[1]
+            .split("&")[0]);
+        final appName = Uri.decodeFull(
+            response.headers['location'].split("appid=")[1].split("&")[0]);
+        logger.log(appName);
+        final scope = Uri.decodeFull(
+            response.headers['location'].split("&scope=")[1].split("&")[0]);
+        final publickey = Uri.decodeFull(
+            response.headers['location'].split("&publickey=")[1].split("&")[0]);
+        cookies = response.headers['set-cookie'];
+        final union = '?';
 
-      final scopeData = {};
+        final scopeData = {};
 
-      if (scope != null && scope.contains("user:email")) {
-        scopeData['email'] = await getEmail();
+        if (scope != null && scope.contains("user:email")) {
+          scopeData['email'] = await getEmail();
+        }
+
+        var jsonData = jsonEncode(
+            (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
+        var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
+        loadUrl =
+            '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
       }
 
-      var jsonData = jsonEncode(
-          (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
-      var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
-      loadUrl =
-          '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+      flutterWebViewPlugins[appId].launch(loadUrl,
+          rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+          userAgent: kAndroidUserAgent,
+          hidden: true);
+
+      if (cookies != '') {
+        flutterWebViewPlugins[appId].setCookies(cookies);
+      }
+
+      logger.log(loadUrl);
+      logger.log(cookies);
+    } on NoSuchMethodError catch (exception) {
+      logger.log('error caught: $exception');
+      apps[appId]['errorText'] = true;
     }
-
-    flutterWebViewPlugins[appId].launch(loadUrl,
-        rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
-        userAgent: kAndroidUserAgent,
-        hidden: true);
-
-    if (cookies != '') {
-      flutterWebViewPlugins[appId].setCookies(cookies);
-    }
-
-    logger.log(loadUrl);
-    logger.log(cookies);
   }
 
   @override
@@ -126,17 +132,37 @@ class _AppSelectorState extends State<AppSelector> {
     if (!app['disabled']) {
       final emailVer = await getEmail();
       if (emailVer['verified']) {
-        final prefs = await SharedPreferences.getInstance();
+        if (!app['errorText']) {
+          final prefs = await SharedPreferences.getInstance();
 
-        if (!prefs.containsKey('firstvalidation')) {
-          final size = MediaQuery.of(context).size;
-          isLaunched = true;
-          launchApp(size, app['id']);
-          prefs.setBool('firstvalidation', true);
+          if (!prefs.containsKey('firstvalidation')) {
+            final size = MediaQuery.of(context).size;
+            isLaunched = true;
+            launchApp(size, app['id']);
+            prefs.setBool('firstvalidation', true);
+          }
+
+          widget.notifyParent(app['color']);
+          flutterWebViewPlugins[app['id']].show();
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomDialog(
+                  image: Icons.error,
+                  title: "Service Unavailable",
+                  description: new Text("Service Unavailable"),
+                  actions: <Widget>[
+                    // usually buttons at the bottom of the dialog
+                    FlatButton(
+                      child: new Text("Ok"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+          );
         }
-
-        widget.notifyParent(app['color']);
-        flutterWebViewPlugins[app['id']].show();
       } else {
         showDialog(
           context: context,

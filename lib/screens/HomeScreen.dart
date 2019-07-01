@@ -275,6 +275,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           onPressed: () {
             Navigator.pushNamed(context, '/scan');
           },
+        ),
+        RaisedButton(
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(10)),
+          padding: EdgeInsets.all(12),
+          child: Text(
+            "Recover Account",
+            style: TextStyle(color: Colors.white),
+          ),
+          color: Theme.of(context).accentColor,
+          onPressed: () {
+            Navigator.pushNamed(context, '/recover');
+          },
         )
       ],
     );

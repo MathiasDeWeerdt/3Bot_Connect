@@ -27,12 +27,13 @@ void main() {
       "subheading": 'Where privacy and social media co-exist.',
       "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://staging.freeflowpages.com/',
+      "initialUrl": 'https://www2.freeflowpages.com/',
       "visible": false,
       "id": 0,
       'cookieUrl':
-          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
-      'color': 0xFF708faa
+          'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
+      'color': 0xFF708fa0,
+      'errorText': false
     },
     {
       "content": Text(
@@ -51,7 +52,8 @@ void main() {
       "visible": false,
       "id": 1,
       'cookieUrl': '',
-      'color': 0xFF0f296a
+      'color': 0xFF0f296a,
+      'errorText': false
     },
     {
       "content": Text(
@@ -70,7 +72,8 @@ void main() {
       "visible": false,
       "id": 2,
       'cookieUrl': '',
-      'color': 0xFF0f296a
+      'color': 0xFF0f296a,
+      'errorText': false
     },
     {
       "content": Text(
@@ -89,7 +92,8 @@ void main() {
       "visible": false,
       "id": 3,
       'cookieUrl': '',
-      'color': 0xFF34495e
+      'color': 0xFF34495e,
+      'errorText': false
     },
     {
       "content": Icon(
@@ -105,7 +109,8 @@ void main() {
       "visible": false,
       "id": 4,
       'cookieUrl': '',
-      'color': 0xFF0f296a
+      'color': 0xFF0f296a,
+      'errorText': false
     }
   ];
 

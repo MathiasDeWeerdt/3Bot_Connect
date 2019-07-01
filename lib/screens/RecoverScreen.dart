@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:threebotlogin/main.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:bip39/bip39.dart' as bip39;
-
-import 'package:intl/intl.dart';
-import 'dart:async';
-
 import 'dart:convert';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:intl/intl.dart';
 import 'package:crypto/crypto.dart';
+import 'package:threebotlogin/main.dart';
 
 class RecoverScreen extends StatefulWidget {
   final Widget recoverScreen;
@@ -21,6 +18,13 @@ class _RecoverScreenState extends State<RecoverScreen> {
   String openKycApiUrl = "https://openkyc.staging.jimber.org";
   String publicKeyUser = "https://login.staging.jimber.org";
   Map<String, String> requestHeaders = {'Content-type': 'application/json'};
+
+  // TODO Compare email HASHES.
+  // TODO validation notices (username non existing, wrong keyphrase, wrong email)
+  // TODO Validate users public key and private key
+  // TODO Authenticate
+  // TODO Save user's account with new device.
+  // TODO Redirect user to appSelector
 
   final doubleNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -34,21 +38,14 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   String userNotFound = '';
 
-  bool sameEmail = false;
-
-  String data;
-  String emailGrabData;
-  String publicKeyData;
-
-  Timer timer;
-
   void initState() {
     super.initState();
+
+    // Testing purposes
     doubleNameController.text = "laika15";
     emailController.text = "anthony.debock@jimber.org";
     keyPhraseController.text =
         "mammal elephant opera mutual silk unit ensure better lottery donkey coach access swear require memory physical flip general smile glue tribe mesh tumble kangaroo";
-    // recoveringAccount(doubleName);
   }
 
   @override
@@ -76,7 +73,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                   textInputAction: TextInputAction.send,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'doublename',
+                    labelText: 'Doublename',
                   ),
                   controller: doubleNameController,
                   onSubmitted: (value) {
@@ -89,7 +86,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                     textInputAction: TextInputAction.send,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'email',
+                      labelText: 'Email',
                     ),
                     controller: emailController,
                     onSubmitted: (value) {
@@ -130,19 +127,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                     },
                   ),
                 ),
-                Text(entropy.toString() +
-                    " " +
-                    getDateTime()), // Debugging purposes
-                Text(publicKeyData.toString() +
-                    " " +
-                    getDateTime()), // Debugging purposes
-                Text(data.toString() +
-                    " " +
-                    getDateTime()), // Debugging purposes
-                Text(emailGrabData.toString() +
-                    " " +
-                    getDateTime()), // Debugging purposes
-                Text(userNotFound + " " + getDateTime())
+                Text(userNotFound),
               ]))),
     );
   }
@@ -173,52 +158,64 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
     logger.log("entering recoveringAccount");
 
-    publicKeyData = await grabPublicKey(doubleName);
+    String publicKeyData = await grabPublicKey(doubleName);
 
-    emailGrabData = await grabEmail(doubleName);
-    entropy = await getPrivatekey();
+    String emailGrabData = await grabEmail(doubleName);
+    entropy = await getPrivatekey(emailGrabData);
 
     // hash email from user
-    data = generateMd5(emailUser);
+    String data = generateMd5(emailUser);
+
+    logger.log("=============|Recovery|============== ");
+    logger.log("publicKeyData: " + publicKeyData);
+    logger.log("emailGrabData: " + emailGrabData);
+    logger.log("email Hash: " + data);
+    logger.log("entropy: " + entropy);
+    logger.log("======================================");
 
     return 1;
   }
 
   Future<String> grabPublicKey(String doubleName) async {
-    logger.log("entering grabpublickey");
-    if (doubleName != null || doubleName != '') {
-      var publicKey = await checkPublicKey(doubleName);
-      logger.log(publicKey.body);
-      var body = jsonDecode(publicKey.body);
+    try {
+      if (doubleName != null || doubleName != '') {
+        var publicKey = await checkPublicKey(doubleName);
+        var body = jsonDecode(publicKey.body);
 
-      // grabs publicKey value and insert into publicKeyData
-      return body['publicKey'];
+        // grabs publicKey value and insert into publicKeyData
+        return body['publicKey'];
+      }
+
+      return null;
+    } on FormatException catch (e) {
+      logger.log(e);
+      return userNotFound = "User does not exist";
     }
-
-    return null;
   }
 
   Future<String> grabEmail(String doubleName) async {
-    logger.log("entering grabemail");
-    if (doubleName != null || doubleName != '') {
-      var emailHash = await checkEmailHash(doubleName);
-      logger.log(emailHash.body);
-      var body = jsonDecode(emailHash.body);
+    try {
+      if (doubleName != null || doubleName != '') {
+        var emailHash = await checkEmailHash(doubleName);
+        var body = jsonDecode(emailHash.body);
 
-      // grabs email hash value and insert into emailGrabData
-      return body['email'];
+        // grabs email hash value and insert into emailGrabData
+        return body['email'];
+      }
+
+      return null;
+    } catch (e) {
+      logger.log(e);
+      return userNotFound = "Email not corresponding with Double name";
     }
-
-    return null;
   }
 
   // Will get privateKey out of user key phrase
-  Future<String> getPrivatekey() async {
+  Future<String> getPrivatekey(emailGrabData) async {
     try {
       if (emailGrabData != null) {
         userNotFound = "User has been found.";
         entropy = bip39.mnemonicToEntropy(keyPhrase);
-        logger.log(entropy);
 
         return entropy;
       } else {
@@ -227,16 +224,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
       return null;
     } catch (e) {
-      return null;
-      // entropy = "Invalid mnenomic";
+      logger.log(e);
+      return entropy = "Invalid mnenomic";
     }
-  }
-
-  String getDateTime() {
-    var now = new DateTime.now();
-    var formatter = new DateFormat('hh:mm:ss');
-    String formatted = formatter.format(now);
-
-    return formatted;
   }
 }

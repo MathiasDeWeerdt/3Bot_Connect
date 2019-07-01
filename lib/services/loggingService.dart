@@ -5,11 +5,11 @@ class LoggingService {
   bool writeToFile = false;
 
   void log(Object s) {
-    if(debug) {
+    if (debug) {
       print("[" + getDateTime() + "]: " + s.toString());
     }
 
-    if(writeToFile) {
+    if (writeToFile) {
       // Write logging to file.
     }
   }

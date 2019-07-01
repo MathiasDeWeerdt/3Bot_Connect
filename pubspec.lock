@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
+  bip39:
+    dependency: "direct main"
+    description:
+      name: bip39
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -37,7 +44,7 @@ packages:
     source: hosted
     version: "2.1.1"
   crypto:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: crypto
       url: "https://pub.dartlang.org"
@@ -65,7 +72,7 @@ packages:
       name: firebase_messaging
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.1+1"
+    version: "5.0.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -94,6 +101,13 @@ packages:
       url: "https://github.com/jdelrue/flutter_webview_plugin"
     source: git
     version: "0.3.5"
+  hex:
+    dependency: transitive
+    description:
+      name: hex
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   http:
     dependency: "direct main"
     description:
@@ -135,7 +149,7 @@ packages:
       name: package_info
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0+3"
+    version: "0.4.0+4"
   password_hash:
     dependency: "direct main"
     description:
@@ -164,6 +178,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
+  pointycastle:
+    dependency: transitive
+    description:
+      name: pointycastle
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   quiver:
     dependency: transitive
     description:
@@ -177,7 +198,7 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.2"
+    version: "0.5.3+1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -248,4 +269,4 @@ packages:
     version: "2.0.8"
 sdks:
   dart: ">=2.2.0 <3.0.0"
-  flutter: ">=0.1.4 <2.0.0"
+  flutter: ">=1.5.0 <2.0.0"

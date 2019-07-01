@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -13,157 +13,156 @@ import 'package:threebotlogin/main.dart';
 import 'CustomDialog.dart';
 
 class AppSelector extends StatefulWidget {
+  final Function(int colorData) notifyParent;
   final _AppSelectorState instance = _AppSelectorState();
 
-  void appsCallback() {
-    instance.appsCallback();
-  }
+  AppSelector({Key key, this.notifyParent}) : super(key: key);
 
   @override
   _AppSelectorState createState() => instance;
 }
 
 class _AppSelectorState extends State<AppSelector> {
-  List<Map<String, dynamic>> apps;
-  bool isVisible = true;
-  bool hasBrowserBeenInitialized = false;
-  bool hasFFPBeenInitialized = false;
-
   String kAndroidUserAgent =
+      //'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36';
       'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
   bool isLaunched = false;
   @override
   void initState() {
     super.initState();
-    flutterWebViewPlugins[1] = new FlutterWebviewPlugin();
+    for (var app in apps) {
+      logger.log("adding app webplugin " + app['id'].toString());
+      flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin();
+    }
   }
 
-  Future launchFfp(size) async {
-    final url = 'https://staging.freeflowpages.com/user/auth/external?authclient=3bot';
-    final client = http.Client();
-    final request = new http.Request('GET', Uri.parse(url))
-      ..followRedirects = false;
-    final response = await client.send(request);
+  Future launchApp(size, appId) async {
+    try {
+      //final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
+      var url = apps[appId]['cookieUrl'];
+      var loadUrl = apps[appId]['url'];
 
-    final state =
-        Uri.decodeFull(response.headers['location'].split("&state=")[1]);
-    final privateKey = await getPrivateKey();
-    final signedHash = signHash(state, privateKey);
+      var cookies = '';
+      if (url != '') {
+        final client = http.Client();
+        final request = new http.Request('GET', Uri.parse(url))
+          ..followRedirects = false;
+        final response = await client.send(request);
 
-    final redirecturl = Uri.decodeFull(
-        response.headers['location'].split("&redirecturl=")[1].split("&")[0]);
-    final appid = Uri.decodeFull(
-        response.headers['location'].split("appid=")[1].split("&")[0]);
-    final scope = Uri.decodeFull(
-        response.headers['location'].split("&scope=")[1].split("&")[0]);
-    final publickey = Uri.decodeFull(
-        response.headers['location'].split("&publickey=")[1].split("&")[0]);
-    final cookies = response.headers['set-cookie'];
-    var doubleName = await getDoubleName();
-    final union = '?';
+        final state =
+            Uri.decodeFull(response.headers['location'].split("&state=")[1]);
+        final privateKey = await getPrivateKey();
+        final signedHash = signHash(state, privateKey);
 
-    final scopeData = {};
+        final redirecturl = Uri.decodeFull(response.headers['location']
+            .split("&redirecturl=")[1]
+            .split("&")[0]);
+        final appName = Uri.decodeFull(
+            response.headers['location'].split("appid=")[1].split("&")[0]);
+        logger.log(appName);
+        final scope = Uri.decodeFull(
+            response.headers['location'].split("&scope=")[1].split("&")[0]);
+        final publickey = Uri.decodeFull(
+            response.headers['location'].split("&publickey=")[1].split("&")[0]);
+        cookies = response.headers['set-cookie'];
+        final union = '?';
 
-    if (scope != null && scope.contains("user:email")) {
-      scopeData['email'] = await getEmail();
+        final scopeData = {};
+
+        if (scope != null && scope.contains("user:email")) {
+          scopeData['email'] = await getEmail();
+        }
+
+        var jsonData = jsonEncode(
+            (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
+        var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
+        loadUrl =
+            '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+      }
+
+      flutterWebViewPlugins[appId].launch(loadUrl,
+          rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+          userAgent: kAndroidUserAgent,
+          hidden: true);
+
+      if (cookies != '') {
+        flutterWebViewPlugins[appId].setCookies(cookies);
+      }
+
+      logger.log(loadUrl);
+      logger.log(cookies);
+    } on NoSuchMethodError catch (exception) {
+      logger.log('error caught: $exception');
+      apps[appId]['errorText'] = true;
     }
-
-    if (scope != null && scope.contains("user:keys")) {
-      scopeData['keys'] = await getKeys(appid, doubleName);
-    }
-
-    var jsonData = jsonEncode(
-        (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
-    var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
-    var newRedirectUrl =
-        '$redirecturl${union}username=$doubleName&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
-
-    flutterWebViewPlugins[1].launch(newRedirectUrl,
-        rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
-        userAgent: kAndroidUserAgent,
-        hidden: true);
-    flutterWebViewPlugins[1].setCookies(cookies);
-
-    logger.log(appid);
-    logger.log(newRedirectUrl);
-    logger.log(cookies);
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final prefsF =  SharedPreferences.getInstance();
+    final prefsF = SharedPreferences.getInstance();
 
     prefsF.then((pres) {
       if (!isLaunched && pres.containsKey('firstvalidation')) {
         isLaunched = true;
-        launchFfp(size);
+        for (var app in apps) {
+          logger.log(app['url']);
+          logger.log("launching app " + app['id'].toString());
+          launchApp(size, app['id']);
+        }
       }
     });
 
     return Stack(children: <Widget>[
       Container(
           height: 0.7 * size.height,
-          child: FutureBuilder(
-              future: createList(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: apps.length,
-                      itemBuilder: (BuildContext ctxt, int index) {
-                        return SingleApp(apps[index], updateApp);
-                      });
-                } else
-                  return Container();
+          child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: apps.length,
+              itemBuilder: (BuildContext ctxt, int index) {
+                logger.log("adding app " + index.toString());
+
+                return SingleApp(apps[index], updateApp);
               }))
     ]);
   }
 
-  Future<List> createList() async {
-    apps = [
-      {
-        "name": 'FreeFlowPages',
-        "subheading": 'Where privacy and social media co-exist.',
-        "bg": 'ffp.jpg',
-        "disabled": false,
-        "initialUrl": 'https://freeflowpages.com/',
-        "callback": updateApp,
-        "visible": false,
-        "id": 1
-      },
-      {
-        "name": 'OpenBrowser',
-        "subheading": 'By Jimber (Coming soon)',
-        "url": 'https://broker.jimber.org',
-        "bg": 'jimber.png',
-        "disabled": false,
-        "initialUrl": 'https://broker.jimber.org',
-        "callback": updateApp,
-        "visible": false,
-        "id": 2
-      }
-    ];
-
-    return apps;
-  }
-
-  void appsCallback() {}
-
   Future updateApp(app) async {
-    if (app['id'] == 1) {
+    if (!app['disabled']) {
       final emailVer = await getEmail();
       if (emailVer['verified']) {
-        final prefs = await SharedPreferences.getInstance();
+        if (!app['errorText']) {
+          final prefs = await SharedPreferences.getInstance();
 
-        if (!prefs.containsKey('firstvalidation')) {
-          final size = MediaQuery.of(context).size;
-          isLaunched = true;
-          launchFfp(size);
-          prefs.setBool('firstvalidation', true);
+          if (!prefs.containsKey('firstvalidation')) {
+            final size = MediaQuery.of(context).size;
+            isLaunched = true;
+            launchApp(size, app['id']);
+            prefs.setBool('firstvalidation', true);
+          }
+
+          widget.notifyParent(app['color']);
+          flutterWebViewPlugins[app['id']].show();
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomDialog(
+                  image: Icons.error,
+                  title: "Service Unavailable",
+                  description: new Text("Service Unavailable"),
+                  actions: <Widget>[
+                    // usually buttons at the bottom of the dialog
+                    FlatButton(
+                      child: new Text("Ok"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+          );
         }
-         flutterWebViewPlugins[app['id']].show();
       } else {
         showDialog(
           context: context,

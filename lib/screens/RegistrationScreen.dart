@@ -171,7 +171,8 @@ class _ScanScreenState extends State<RegistrationScreen>
         }
 
       }
-
+      // Debug
+      print('Registration: \n $qrData ');
       showScopeDialog(context, scope, qrData['appId'], saveValues);
     }
   }

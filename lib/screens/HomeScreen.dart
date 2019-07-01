@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
-  AppSelector selector;
+  Color hexColor = Color(0xff0f296a);
 
   @override
   void initState() {
@@ -38,7 +38,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
-    selector = AppSelector();
+  }
+
+  refresh(colorData) {
+    setState(() {
+      this.hexColor = Color(colorData);
+    });
   }
 
   Future<Null> initUniLinks() async {
@@ -162,7 +167,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('3Bot'),
+          title: Text('3bot'),
+          backgroundColor: hexColor,
           leading: FutureBuilder(
               future: getDoubleName(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -171,7 +177,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       tooltip: 'Apps',
                       icon: const Icon(Icons.apps),
                       onPressed: () {
-                        flutterWebViewPlugins[1].hide();
+                        for (var flutterWebViewPlugin
+                            in flutterWebViewPlugins) {
+                          if (flutterWebViewPlugin != null) {
+                            flutterWebViewPlugin.hide();
+                          }
+                        }
+
+                        setState(() {
+                          hexColor = Color(0xFF0f296a);
+                        });
                       });
                 } else
                   return Container();
@@ -186,7 +201,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       icon: Icon(Icons.person),
                       tooltip: 'Your profile',
                       onPressed: () {
-                         flutterWebViewPlugins[1].hide();
+                        for (var flutterWebViewPlugin
+                            in flutterWebViewPlugins) {
+                          if (flutterWebViewPlugin != null) {
+                            flutterWebViewPlugin.hide();
+                          }
+                        }
                         Navigator.pushNamed(context, '/profile');
                       },
                     );
@@ -230,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Column registered(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[AppSelector()],
+      children: <Widget>[AppSelector(notifyParent: refresh)],
     );
   }
 
@@ -254,6 +274,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           color: Theme.of(context).accentColor,
           onPressed: () {
             Navigator.pushNamed(context, '/scan');
+          },
+        ),
+        RaisedButton(
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(10)),
+          padding: EdgeInsets.all(12),
+          child: Text(
+            "Recover Account",
+            style: TextStyle(color: Colors.white),
+          ),
+          color: Theme.of(context).accentColor,
+          onPressed: () {
+            Navigator.pushNamed(context, '/recover');
           },
         )
       ],

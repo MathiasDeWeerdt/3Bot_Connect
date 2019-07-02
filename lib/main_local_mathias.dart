@@ -6,8 +6,8 @@ import 'main.dart';
 
 void main() async {
 
-  // generateKeypair('hello');
-  await generateDerivativeKeypair("hello2", "");
+  // generateDerivedKeypair('hello');
+  // await generateDerivedKeypair("hello2", "");
 
   var config = Config(
       name: '3bot local',

@@ -62,7 +62,7 @@ Future<Map<String, Object>> getEmail() async {
 
 Future<Map<String, Object>> getKeys(String appId, String doubleName) async {
   print("##################### Getkeys #############################");
-  return await generateKeypair(appId, doubleName);
+  return await generateDerivedKeypair(appId, doubleName);
 }
 
 Future saveLoginToken(loginToken) async {

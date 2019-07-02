@@ -63,8 +63,8 @@ Future<Map<String, Object>> generateDerivedKeypair(
 
   Map<String, Uint8List> key = await Sodium.cryptoBoxSeedKeypair(new Uint8List.fromList(hashKey));
 
-  derivedPublicKey = null;
-  derivedPrivateKey = null;
+  // derivedPublicKey = null;
+  // derivedPrivateKey = null;
 
   if (derivedPublicKey == null || derivedPublicKey == "") {
     derivedPublicKey = base64.encode(key['pk']);

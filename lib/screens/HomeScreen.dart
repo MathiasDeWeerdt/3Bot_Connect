@@ -207,6 +207,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             flutterWebViewPlugin.hide();
                           }
                         }
+
+                        setState(() {
+                          hexColor = Color(0xFF0f296a);
+                        });
+
                         Navigator.pushNamed(context, '/profile');
                       },
                     );

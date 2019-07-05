@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'dart:core';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_sodium/flutter_sodium.dart';
@@ -10,7 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:crypto/crypto.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/services/cryptoService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 class RecoverScreen extends StatefulWidget {
   final Widget recoverScreen;
@@ -23,12 +23,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
   String publicKeyUser = "https://login.staging.jimber.org";
   Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
-  // TODO Compare email HASHES.
   // TODO validation notices (username non existing, wrong keyphrase, wrong email)
-  // TODO Validate users public key and private key
-  // TODO Authenticate
-  // TODO Save user's account with new device.
-  // TODO Redirect user to appSelector
 
   final doubleNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -37,6 +32,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
   String emailUser = "";
   String keyPhrase = "";
   String entropy;
+  Color colorEmail = Color(0xff0f296a);
+  bool newEmail = false;
 
   int timeStamp = new DateTime.now().millisecondsSinceEpoch;
 
@@ -86,16 +83,25 @@ class _RecoverScreenState extends State<RecoverScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.5),
-                  child: TextField(
-                    textInputAction: TextInputAction.send,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Email',
+                  child: new Theme(
+                    data: new ThemeData(
+                      primaryColor: Colors.blueAccent,
+                      primaryColorDark: Colors.blue,
                     ),
-                    controller: emailController,
-                    onSubmitted: (value) {
-                      emailUser = value;
-                    },
+                    child: TextField(
+                      textInputAction: TextInputAction.send,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.red[300],
+                                style: BorderStyle.solid)),
+                        labelText: 'Email',
+                      ),
+                      controller: emailController,
+                      onSubmitted: (value) {
+                        emailUser = value;
+                      },
+                    ),
                   ),
                 ),
                 Padding(
@@ -127,7 +133,10 @@ class _RecoverScreenState extends State<RecoverScreen> {
                       logger.log("Onpressed");
 
                       await recoveringAccount();
-                      setState(() {});
+                      colorEmail = Color(0xffff0000);
+                      setState(() {
+                        colorEmail.toString();
+                      });
                     },
                   ),
                 ),
@@ -139,13 +148,6 @@ class _RecoverScreenState extends State<RecoverScreen> {
   // create md5 hash from user email input
   String generateMd5(String input) {
     return md5.convert(utf8.encode(input)).toString();
-  }
-
-  //request for json data about emailHash
-  Future<http.Response> checkEmailHash(String doubleName) {
-    requestHeaders['signature'] = 'application/json';
-    return http.get('$openKycApiUrl/users/$doubleName' + '.3bot',
-        headers: requestHeaders);
   }
 
   //request for json data about emailHash
@@ -169,17 +171,17 @@ class _RecoverScreenState extends State<RecoverScreen> {
   }
 
   // Recovering account
-  Future<int> recoveringAccount() async {
+  Future<void> recoveringAccount() async {
     doubleName = doubleNameController.text;
     emailUser = emailController.text;
     keyPhrase = keyPhraseController.text;
 
     logger.log("entering recoveringAccount");
 
-    String publicKeyData = await grabPublicKey(doubleName);
+    String publicKeyData = await getPublicKey(doubleName);
 
-    String emailGrabData = await grabEmail(doubleName);
-    entropy = await getPrivatekey(emailGrabData);
+    Map emailData = await getMailFromKyc(doubleName);
+    entropy = await getPrivatekey();
 
     Map<String, Uint8List> key =
         await Sodium.cryptoSignSeedKeypair(toHex(entropy));
@@ -190,28 +192,94 @@ class _RecoverScreenState extends State<RecoverScreen> {
     logger.log("======================================");
 
     // hash email from user
-    String data = generateMd5(emailUser);
+    String mailmd5U = generateMd5(emailUser);
 
-    // var signedHash = signTimestamp(timeStamp.toString(), entropy);
+    var sig = await CryptoSign.sign(timeStamp.toString(), key['sk']);
+    var valid = await CryptoSign.verify(sig, timeStamp.toString(), key['pk']);
 
     logger.log("=============|Recovery|============== ");
     logger.log("publicKeyData: " + publicKeyData);
-    logger.log("emailGrabData: " + emailGrabData);
-    logger.log("email Hash: " + data);
+    logger.log("emailGrabData: " +
+        emailData['emailmd5'] +
+        " " +
+        emailData['verified'].toString());
+    logger.log("email Hash: " + mailmd5U);
     logger.log("entropy: " + entropy);
-    // logger.log("signedHash: " + signedHash.toString());
+    logger.log("key Valid: " + valid.toString());
+    logger.log("seed phrase: " + bip39.entropyToMnemonic(entropy));
     logger.log("======================================");
 
-    return 1;
+    bool isSameEmail = mailmd5U == emailData['emailmd5'];
+
+    if (!isSameEmail) {
+      var done = showDialog(
+        context: context,
+        builder: (BuildContext context) => CustomDialog(
+              image: Icons.error,
+              title: "Email address is not the same!",
+              description:
+                  new Text("You'll need to verify the new email addres."),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  child: new Text("Continue?"),
+                  onPressed: () {
+                    newEmail = true;
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: new Text("No"),
+                  onPressed: () {
+                    newEmail = false;
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+      );
+      await done;
+    } else {
+      bool isVerified = emailData['verified'] == 1;
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('privateKey', base64.encode(key['sk']).toString());
+      prefs.setString('publicKey', base64.encode(key['pk']).toString());
+      prefs.setString('email', emailUser);
+      prefs.setString('doubleName', doubleName);
+      prefs.setBool('firstvalidation', false);
+      prefs.setBool('emailVerified', isVerified);
+      Navigator.popAndPushNamed(context, '/profile');
+    }
+
+    if (newEmail) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('privateKey', base64.encode(key['sk']).toString());
+      prefs.setString('publicKey', base64.encode(key['pk']).toString());
+      prefs.setString('email', emailUser);
+      prefs.setString('doubleName', doubleName);
+      prefs.setBool('firstvalidation', true); //true if email not validated
+      // send verify & say to user to verify
+      /*  http.post('$openKycApiUrl/users/$doubleName/verify',
+          body: json.encode({
+            'userid': '$doubleName.3bot',
+            'verification_code': ,
+          }),
+          headers: requestHeaders); */
+
+      Navigator.popAndPushNamed(context, '/profile');
+    } else {
+      // email box red & focus
+
+    }
   }
 
-  Future<String> grabPublicKey(String doubleName) async {
+  Future<String> getPublicKey(String doubleName) async {
     try {
       if (doubleName != null || doubleName != '') {
         var publicKey = await checkPublicKey(doubleName);
         var body = jsonDecode(publicKey.body);
 
-        // grabs publicKey value and insert into publicKeyData
         return body['publicKey'];
       }
 
@@ -219,42 +287,40 @@ class _RecoverScreenState extends State<RecoverScreen> {
     } on FormatException catch (e) {
       logger.log(e);
       userNotFound = "User does not exist";
-      return userNotFound;
+      return null;
     }
   }
 
-  Future<String> grabEmail(String doubleName) async {
+  Future<Map> getMailFromKyc(String doubleName) async {
     try {
       if (doubleName != null || doubleName != '') {
-        var emailHash = await checkEmailHash(doubleName);
+        requestHeaders['signature'] = 'application/json';
+
+        var getEmailInfo = http.get(
+            '$openKycApiUrl/users/$doubleName' + '.3bot',
+            headers: requestHeaders);
+
+        var emailHash = await getEmailInfo;
         var body = jsonDecode(emailHash.body);
 
-        // grabs email hash value and insert into emailGrabData
-        return body['email'];
+        return {'emailmd5': body['email'], 'verified': body['verified']};
       }
 
       return null;
     } catch (e) {
       logger.log(e);
       userNotFound = "Email not corresponding with Double name";
-      return userNotFound;
+      return null;
     }
   }
 
   // Will get privateKey out of user key phrase
-  Future<String> getPrivatekey(emailGrabData) async {
+  Future<String> getPrivatekey() async {
     try {
-      if (emailGrabData != null) {
-        userNotFound = "User has been found.";
-
-        return bip39.mnemonicToEntropy(keyPhrase);
-      } else {
-        userNotFound = "User not found.";
-      }
+      return bip39.mnemonicToEntropy(keyPhrase);
     } catch (e) {
       logger.log(e);
     }
-
     return null;
   }
 }

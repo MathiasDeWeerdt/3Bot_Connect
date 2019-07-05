@@ -29,13 +29,14 @@ class _RegistrationWithoutScanScreen
   @override
   void initState() {
     super.initState();
-    getPrivateKey().then((pk) => pk != null
-        ? _showDialog()
-        : sendFlag(pk));
+    getPrivateKey().then((pk) => pk != null ? _showDialog() : sendFlag(pk));
   }
+
   Future sendFlag(pk) async {
-    sendScannedFlag(widget.initialData['state'], await signHash(deviceId, pk));
+    sendScannedFlag(widget.initialData['state'],
+        await signHash(deviceId, widget.initialData['privateKey']));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,15 +91,16 @@ class _RegistrationWithoutScanScreen
       scope['doubleName'] = widget.initialData['doubleName'];
 
       if (widget.initialData['scope'] != null) {
-        
         if (widget.initialData['scope'].contains('user:email')) {
-          scope['email'] = {'email': widget.initialData['email'], 'verified': false};
+          scope['email'] = {
+            'email': widget.initialData['email'],
+            'verified': false
+          };
         }
 
         if (widget.initialData['scope'].contains('user:keys')) {
           scope['keys'] = {'keys': widget.initialData['keys']};
         }
-
       }
 
       showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
@@ -119,7 +121,7 @@ class _RegistrationWithoutScanScreen
 
     var signedHash = signHash(hash, privateKey);
     var data = encrypt(jsonEncode(scope), publicKey, privateKey);
-    
+
     sendData(hash, await signedHash, await data, null).then((x) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -129,28 +131,32 @@ class _RegistrationWithoutScanScreen
 
   void _showDialog() {
     showDialog(
-    context: context,
-    builder: (BuildContext context) => CustomDialog(
-          title: "You are about to register a new account",
-          description: new Text("If you continue, you won't be able to login with the current account again"),
-          actions: <Widget>[
-            FlatButton(
-              child: new Text("Cancel"),
-              onPressed: () { 
-                // Navigator.popUntil(context, ModalRoute.withName('/'));
-                Navigator.pushReplacementNamed(context, '/profile');
-              },
-            ),
-            FlatButton(
-              child: new Text("Continue"),
-              onPressed: () async {
-                Navigator.pop(context);
-                clearData();
-                sendScannedFlag(widget.initialData['state'],  await signHash(deviceId, widget.initialData['privateKey']));
-              },
-            ),
-          ],
-        ),
-  );
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+            title: "You are about to register a new account",
+            description: new Text(
+                "If you continue, you won't be able to login with the current account again"),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Cancel"),
+                onPressed: () {
+                  // Navigator.popUntil(context, ModalRoute.withName('/'));
+                  Navigator.pushReplacementNamed(context, '/profile');
+                },
+              ),
+              FlatButton(
+                child: new Text("Continue"),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  clearData();
+                  sendScannedFlag(
+                      widget.initialData['state'],
+                      await signHash(
+                          deviceId, widget.initialData['privateKey']));
+                },
+              ),
+            ],
+          ),
+    );
   }
 }

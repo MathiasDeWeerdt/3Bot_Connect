@@ -116,6 +116,7 @@ class _RegistrationWithoutScanScreen
 
     savePin(pin);
     savePrivateKey(privateKey);
+    savePublicKey(publicKey);
     saveEmail(email, false);
     saveDoubleName(doubleName);
 

@@ -8,6 +8,7 @@ void main() {
       name: '3bot local',
       threeBotApiUrl: 'http://192.168.2.80:5000/api',
       openKycApiUrl: 'http://192.168.2.80:5005',
+      threeBotFrontEndUrl: 'http://192.168.2.80:8080/',
       child: new MyApp()
   );
   

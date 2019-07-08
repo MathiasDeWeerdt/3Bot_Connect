@@ -14,6 +14,17 @@ Future<String> getPin() async {
   return prefs.getString('pin');
 }
 
+Future savePublicKey(key) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('publickey');
+  prefs.setString('publickey', key);
+}
+
+Future<String> getPublicKey() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('publickey');
+}
+
 Future savePrivateKey(key) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('privatekey');

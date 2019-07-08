@@ -9,6 +9,7 @@ void main() {
       name: '3bot',
       threeBotApiUrl: 'https://login.threefold.me/api',
       openKycApiUrl: 'https://openkyc.live/',
+      threeBotFrontEndUrl: 'https://login.threefold.me/',
       child: new MyApp()
   );
 

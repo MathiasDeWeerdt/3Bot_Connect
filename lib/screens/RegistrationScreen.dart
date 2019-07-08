@@ -185,6 +185,7 @@ class _ScanScreenState extends State<RegistrationScreen>
 
     savePin(pin);
     savePrivateKey(privateKey);
+    savePublicKey(publicKey);
     saveEmail(email, false);
     saveDoubleName(doubleName);
 

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
+
+import '../main.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key key}) : super(key: key);
@@ -88,22 +91,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: <Widget>[
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(right: 10),
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .errorColor,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(20.0)),
-                                              ),
-                                              child: Icon(
-                                                Icons.close,
-                                                color: Colors.white,
-                                                size: 15,
-                                              ),
-                                            ),
-                                            Text('Email not verified, yet.')
+                                            Column(
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          right: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Theme.of(context)
+                                                            .errorColor,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    20.0)),
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.close,
+                                                        color: Colors.white,
+                                                        size: 15,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                        'Email not verified, yet.'),
+                                                  ],
+                                                ),
+                                                RaisedButton(
+                                                  shape:
+                                                      new RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              new BorderRadius
+                                                                      .circular(
+                                                                  10)),
+                                                  padding: EdgeInsets.all(3),
+                                                  child: Text(
+                                                    "Resend verification mail",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  color: Theme.of(context)
+                                                      .accentColor,
+                                                  onPressed: () {
+                                                    // Send email.
+                                                    sendVerificationEmail();
+                                                  },
+                                                ),
+                                              ],
+                                            )
                                           ],
                                         )
                                       : Container(),
@@ -149,31 +183,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  void sendVerificationEmail() async {
+    var response = await resendVerificationEmail();
+    print(response);
+
+    _showResetEmailDialog();
+  }
+
+  void _showResetEmailDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => CustomDialog(
+              image: Icons.check,
+              title: "Email has been resend.",
+              description: new Text("A new verification email has been send."),
+              actions: <Widget>[
+                FlatButton(
+                  child: new Text("Ok"),
+                  onPressed: () {
+                    // clearData();
+                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                  },
+                ),
+              ],
+            ));
+  }
+
   void _showDialog() {
     // flutter defined function
     showDialog(
-      context: context,
-      builder: (BuildContext context) => CustomDialog(
-          image: Icons.error,
-          title: "Are you sure?",
-          description: new Text("If you continue, you won't be able to login with the current account again (for now). However, this acccount still exists."),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            FlatButton(
-              child: new Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            FlatButton(
-              child: new Text("Continue"),
-              onPressed: () {
-                clearData();
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-              },
-            ),
-          ],
-      ));
-      
+        context: context,
+        builder: (BuildContext context) => CustomDialog(
+              image: Icons.error,
+              title: "Are you sure?",
+              description: new Text(
+                  "If you continue, you won't be able to login with the current account again (for now). However, this acccount still exists."),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  child: new Text("Cancel"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: new Text("Continue"),
+                  onPressed: () {
+                    clearData();
+                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                  },
+                ),
+              ],
+            ));
   }
 }

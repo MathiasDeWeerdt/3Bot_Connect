@@ -10,6 +10,7 @@ void main() {
       name: '3bot staging',
       threeBotApiUrl: 'https://login.staging.jimber.org/api',
       openKycApiUrl: 'https://openkyc.staging.jimber.org',
+      threeBotFrontEndUrl: 'https://login.staging.jimber.org/',
       child: new MyApp());
 
   init();

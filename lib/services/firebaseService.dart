@@ -27,10 +27,9 @@ void initFirebaseMessagingListener(context) async {
     },
   );
 
-  _firebaseMessaging.requestNotificationPermissions(
-      const IosNotificationSettings(sound: true, badge: true, alert: true));
-  _firebaseMessaging.onIosSettingsRegistered
-      .listen((IosNotificationSettings settings) {
+  _firebaseMessaging.requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
+  
+  _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
     logger.log("Settings registered: $settings");
   });
 }
@@ -39,7 +38,11 @@ Future openLogin(context, message) async {
   logger.log('OpenLogin');
 
   var data = message['data'];
-  if (Platform.isIOS) data = message;
+
+  if (Platform.isIOS) {
+    data = message;
+  } 
+
   if (data['logintoken'] != null) {
     logger.log('---------------');
     logger.log('Got loginToken');

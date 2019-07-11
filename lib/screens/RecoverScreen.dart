@@ -10,7 +10,10 @@ import 'package:bip39/bip39.dart' as bip39;
 import 'package:crypto/crypto.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
+
+import 'RegistrationWithoutScanScreen.dart';
 
 class RecoverScreen extends StatefulWidget {
   final Widget recoverScreen;
@@ -19,11 +22,7 @@ class RecoverScreen extends StatefulWidget {
 }
 
 class _RecoverScreenState extends State<RecoverScreen> {
-  String openKycApiUrl = "https://openkyc.staging.jimber.org";
-  String publicKeyUser = "https://login.staging.jimber.org";
   Map<String, String> requestHeaders = {'Content-type': 'application/json'};
-
-  // TODO validation notices (username non existing, wrong keyphrase, wrong email)
 
   final doubleNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -41,12 +40,6 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   void initState() {
     super.initState();
-
-    // Testing purposes
-    doubleNameController.text = "crypto";
-    emailController.text = "mathiasdeweerdt@gmail.com";
-    keyPhraseController.text =
-        "sweet calm example fan attract quote swamp innocent light come eye mushroom emerge pluck future buyer exact initial again share helmet eagle habit chapter";
   }
 
   @override
@@ -62,86 +55,93 @@ class _RecoverScreenState extends State<RecoverScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('Recover Account')),
       body: Center(
-          child: Container(
-              height: 400,
-              width: 300,
-              child: Column(children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.only(bottom: 8.5),
-                    child: Text('Please insert your passphrase',
-                        style: TextStyle(fontWeight: FontWeight.bold))),
-                TextField(
-                  textInputAction: TextInputAction.send,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Doublename',
-                  ),
-                  controller: doubleNameController,
-                  onSubmitted: (value) {
-                    doubleName = value;
-                  },
+        child: Container(
+          height: 400,
+          width: 300,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.5),
+                child: Text(
+                  'Please insert your passphrase',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.5),
-                  child: new Theme(
-                    data: new ThemeData(
-                      primaryColor: Colors.blueAccent,
-                      primaryColorDark: Colors.blue,
-                    ),
-                    child: TextField(
-                      textInputAction: TextInputAction.send,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.red[300],
-                                style: BorderStyle.solid)),
-                        labelText: 'Email',
-                      ),
-                      controller: emailController,
-                      onSubmitted: (value) {
-                        emailUser = value;
-                      },
-                    ),
-                  ),
+              ),
+              TextField(
+                textInputAction: TextInputAction.send,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Doublename',
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.5),
+                controller: doubleNameController,
+                onSubmitted: (value) {
+                  doubleName = value;
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.5),
+                child: new Theme(
+                  data: new ThemeData(
+                    primaryColor: Colors.blueAccent,
+                    primaryColorDark: Colors.blue,
+                  ),
                   child: TextField(
                     textInputAction: TextInputAction.send,
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Key',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.red[300], style: BorderStyle.solid),
+                      ),
+                      labelText: 'Email',
                     ),
-                    controller: keyPhraseController,
+                    controller: emailController,
                     onSubmitted: (value) {
-                      keyPhrase = value;
+                      emailUser = value;
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.5),
-                  child: RaisedButton(
-                    shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(10)),
-                    padding: EdgeInsets.all(12),
-                    child: Text(
-                      "Recover Account",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    color: Theme.of(context).accentColor,
-                    onPressed: () async {
-                      logger.log("Onpressed");
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.5),
+                child: TextField(
+                  textInputAction: TextInputAction.send,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Key',
+                  ),
+                  controller: keyPhraseController,
+                  onSubmitted: (value) {
+                    keyPhrase = value;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.5),
+                child: RaisedButton(
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(10)),
+                  padding: EdgeInsets.all(12),
+                  child: Text(
+                    "Recover Account",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Theme.of(context).accentColor,
+                  onPressed: () async {
+                    logger.log("Onpressed");
 
-                      await recoveringAccount();
-                      colorEmail = Color(0xffff0000);
-                      setState(() {
-                        colorEmail.toString();
-                      });
-                    },
-                  ),
+                    await recoveringAccount();
+                    colorEmail = Color(0xffff0000);
+                    setState(() {
+                      colorEmail.toString();
+                    });
+                  },
                 ),
-                Text(userNotFound),
-              ]))),
+              ),
+              Text(userNotFound),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -151,8 +151,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
   }
 
   //request for json data about emailHash
-  Future<http.Response> checkPublicKey(String doubleName) {
-    return http.get('$publicKeyUser/api/users/$doubleName' + '.3bot',
+  Future<http.Response> checkpublickey(String doubleName) {
+    return http.get('${config.threeBotApiUrl}/users/$doubleName',
         headers: requestHeaders);
   }
 
@@ -172,16 +172,16 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   // Recovering account
   Future<void> recoveringAccount() async {
-    doubleName = doubleNameController.text;
+    doubleName = doubleNameController.text + ".3bot";
     emailUser = emailController.text;
     keyPhrase = keyPhraseController.text;
 
     logger.log("entering recoveringAccount");
 
-    String publicKeyData = await getPublicKey(doubleName);
+    String publickeyData = await getpublickey(doubleName);
 
     Map emailData = await getMailFromKyc(doubleName);
-    entropy = await getPrivatekey();
+    entropy = await getprivatekey();
 
     Map<String, Uint8List> key =
         await Sodium.cryptoSignSeedKeypair(toHex(entropy));
@@ -198,7 +198,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     var valid = await CryptoSign.verify(sig, timeStamp.toString(), key['pk']);
 
     logger.log("=============|Recovery|============== ");
-    logger.log("publicKeyData: " + publicKeyData);
+    logger.log("publickeyData: " + publickeyData);
     logger.log("emailGrabData: " +
         emailData['emailmd5'] +
         " " +
@@ -243,42 +243,46 @@ class _RecoverScreenState extends State<RecoverScreen> {
       bool isVerified = emailData['verified'] == 1;
 
       final prefs = await SharedPreferences.getInstance();
-      prefs.setString('privateKey', base64.encode(key['sk']).toString());
-      prefs.setString('publicKey', base64.encode(key['pk']).toString());
+      prefs.setString('privatekey', base64.encode(key['sk']).toString());
+      prefs.setString('publickey', base64.encode(key['pk']).toString());
       prefs.setString('email', emailUser);
       prefs.setString('doubleName', doubleName);
       prefs.setBool('firstvalidation', false);
       prefs.setBool('emailVerified', isVerified);
+
+      String deviceId = await messaging.getToken();
+      updateDeviceId(deviceId, doubleName);
+
       Navigator.popAndPushNamed(context, '/profile');
+
+      openPincodeScreen();
     }
 
     if (newEmail) {
       final prefs = await SharedPreferences.getInstance();
-      prefs.setString('privateKey', base64.encode(key['sk']).toString());
-      prefs.setString('publicKey', base64.encode(key['pk']).toString());
+      prefs.setString('privatekey', base64.encode(key['sk']).toString());
+      prefs.setString('publickey', base64.encode(key['pk']).toString());
       prefs.setString('email', emailUser);
       prefs.setString('doubleName', doubleName);
-      prefs.setBool('firstvalidation', true); //true if email not validated
-      // send verify & say to user to verify
-      /*  http.post('$openKycApiUrl/users/$doubleName/verify',
-          body: json.encode({
-            'userid': '$doubleName.3bot',
-            'verification_code': ,
-          }),
-          headers: requestHeaders); */
-
+      prefs.setBool('firstvalidation', true);
       Navigator.popAndPushNamed(context, '/profile');
-    } else {
-      // email box red & focus
-
-    }
+    } else {}
   }
 
-  Future<String> getPublicKey(String doubleName) async {
+  void openPincodeScreen() {
+    openPage(RegistrationWithoutScanScreen(null, resetPin: true));
+  }
+
+  openPage(page) {
+    // Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+  }
+
+  Future<String> getpublickey(String doubleName) async {
     try {
       if (doubleName != null || doubleName != '') {
-        var publicKey = await checkPublicKey(doubleName);
-        var body = jsonDecode(publicKey.body);
+        var publickey = await checkpublickey(doubleName);
+        var body = jsonDecode(publickey.body);
 
         return body['publicKey'];
       }
@@ -296,8 +300,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
       if (doubleName != null || doubleName != '') {
         requestHeaders['signature'] = 'application/json';
 
-        var getEmailInfo = http.get(
-            '$openKycApiUrl/users/$doubleName' + '.3bot',
+        var getEmailInfo = http.get('${config.openKycApiUrl}/users/$doubleName',
             headers: requestHeaders);
 
         var emailHash = await getEmailInfo;
@@ -314,8 +317,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
     }
   }
 
-  // Will get privateKey out of user key phrase
-  Future<String> getPrivatekey() async {
+  // Will get privatekey out of user key phrase
+  Future<String> getprivatekey() async {
     try {
       return bip39.mnemonicToEntropy(keyPhrase);
     } catch (e) {

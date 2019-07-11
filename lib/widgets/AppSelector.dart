@@ -104,7 +104,7 @@ class _AppSelectorState extends State<AppSelector> {
     final prefsF = SharedPreferences.getInstance();
 
     prefsF.then((pres) {
-      if (!isLaunched && pres.containsKey('firstvalidation')) {
+      if (!isLaunched && pres.containsKey('firstValidation')) {
         isLaunched = true;
         for (var app in apps) {
           logger.log(app['url']);
@@ -135,11 +135,11 @@ class _AppSelectorState extends State<AppSelector> {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
 
-          if (!prefs.containsKey('firstvalidation')) {
+          if (!prefs.containsKey('firstValidation')) {
             final size = MediaQuery.of(context).size;
             isLaunched = true;
             launchApp(size, app['id']);
-            prefs.setBool('firstvalidation', true);
+            prefs.setBool('firstValidation', true);
           }
 
           widget.notifyParent(app['color']);

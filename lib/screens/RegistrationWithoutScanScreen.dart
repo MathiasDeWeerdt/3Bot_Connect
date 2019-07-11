@@ -13,8 +13,9 @@ import 'package:threebotlogin/widgets/scopeDialog.dart';
 class RegistrationWithoutScanScreen extends StatefulWidget {
   final Widget registrationWithoutScanScreen;
   final initialData;
+  final bool resetPin;
   RegistrationWithoutScanScreen(this.initialData,
-      {Key key, this.registrationWithoutScanScreen})
+      {Key key, this.registrationWithoutScanScreen, this.resetPin})
       : super(key: key);
 
   _RegistrationWithoutScanScreen createState() =>
@@ -26,10 +27,13 @@ class _RegistrationWithoutScanScreen
   String helperText = 'Choose new pin';
   String pin;
   var scope = {};
+
   @override
   void initState() {
     super.initState();
-    getPrivateKey().then((pk) => pk != null ? _showDialog() : sendFlag(pk));
+    if (!widget.resetPin) {
+      getPrivateKey().then((pk) => pk != null ? _showDialog() : sendFlag(pk));
+    }
   }
 
   Future sendFlag(pk) async {
@@ -40,40 +44,48 @@ class _RegistrationWithoutScanScreen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Registration'),
-          elevation: 0.0,
-        ),
-        body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).primaryColor,
+      appBar: AppBar(
+        title: Text('Registration'),
+        elevation: 0.0,
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Theme.of(context).primaryColor,
+        child: Container(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
             child: Container(
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0))),
-                    child: Container(
-                        padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Container(
-                                  width: double.infinity,
-                                  padding:
-                                      EdgeInsets.only(top: 24.0, bottom: 24.0),
-                                  child: Center(
-                                      child: Text(
-                                    helperText,
-                                    style: TextStyle(fontSize: 16.0),
-                                  ))),
-                              PinField(callback: (p) => pinFilledIn(p))
-                            ],
-                          ),
-                        ))))));
+              padding: EdgeInsets.only(top: 0.0, bottom: 0.0),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.only(top: 0.0, bottom: 24.0),
+                      child: Center(
+                        child: Text(
+                          helperText,
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ),
+                    ),
+                    PinField(callback: (p) => pinFilledIn(p))
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future pinFilledIn(String value) async {
@@ -88,22 +100,30 @@ class _RegistrationWithoutScanScreen
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-      scope['doubleName'] = widget.initialData['doubleName'];
+      if(widget.resetPin) {
+        savePin(pin);
 
-      if (widget.initialData['scope'] != null) {
-        if (widget.initialData['scope'].contains('user:email')) {
-          scope['email'] = {
-            'email': widget.initialData['email'],
-            'verified': false
-          };
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.of(context).pushNamed('/success');
+      } else {
+        scope['doubleName'] = widget.initialData['doubleName'];
+
+        if (widget.initialData['scope'] != null) {
+          if (widget.initialData['scope'].contains('user:email')) {
+            scope['email'] = {
+              'email': widget.initialData['email'],
+              'verified': false
+            };
+          }
+
+          if (widget.initialData['scope'].contains('user:keys')) {
+            scope['keys'] = {'keys': widget.initialData['keys']};
+          }
         }
 
-        if (widget.initialData['scope'].contains('user:keys')) {
-          scope['keys'] = {'keys': widget.initialData['keys']};
-        }
+        showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
       }
-
-      showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
+      
     }
   }
 

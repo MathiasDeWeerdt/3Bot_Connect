@@ -228,9 +228,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 FlatButton(
                   child: new Text("Continue"),
-                  onPressed: () {
-                    clearData();
+                  onPressed: () async {
+                    await clearData();
                     Navigator.popUntil(context, ModalRoute.withName('/'));
+                    setState(() {});
                   },
                 ),
               ],

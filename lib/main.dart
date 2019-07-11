@@ -12,6 +12,7 @@ import 'package:threebotlogin/screens/RecoverScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:threebotlogin/services/userService.dart';
 
+FirebaseMessaging messaging = FirebaseMessaging();
 List<CameraDescription> cameras;
 String pk;
 String deviceId;
@@ -53,8 +54,6 @@ void init() async {
   } on QRReaderException catch (e) {
     print(e);
   }
-
-  FirebaseMessaging messaging = FirebaseMessaging();
 
   messaging.requestNotificationPermissions();
   messaging.getToken().then((t) {

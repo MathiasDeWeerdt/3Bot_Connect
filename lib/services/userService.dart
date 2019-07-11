@@ -1,7 +1,8 @@
-import 'dart:convert';
-
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
+
+import '3botService.dart';
 
 Future savePin(pin) async {
   final prefs = await SharedPreferences.getInstance();
@@ -87,12 +88,23 @@ Future<String> getLoginToken() async {
   return prefs.getString('loginToken');
 }
 
-void clearData() async {
+Future<void> clearData() async {
   final prefs = await SharedPreferences.getInstance();
-  prefs.remove('pin');
-  prefs.remove('privatekey');
-  prefs.remove('email');
-  prefs.remove('emailVerified');
-  prefs.remove('doubleName');
-  prefs.remove('firstvalidation');
+  
+  Response response = await removeDeviceId(prefs.getString('doubleName'));
+
+  if(response.statusCode == 200) {
+      print("Removing account");
+      prefs.remove('pin');
+      prefs.remove('privatekey');
+      prefs.remove('publickey');
+      prefs.remove('email');
+      prefs.remove('emailVerified');
+      prefs.remove('doubleName');
+      prefs.remove('firstvalidation');
+      prefs.remove('loginToken');
+    } else {
+      // Handle this error?
+      print("Something went wrong while removing your account");
+    }
 }

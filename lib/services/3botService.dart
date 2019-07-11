@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:threebotlogin/main.dart';
 import 'dart:convert';
 
@@ -21,6 +22,15 @@ sendScannedFlag(String hash, String deviceId) async {
   );
 }
 
+updateDeviceId(String deviceId, String doubleName) async {
+  String privatekey = await getPrivateKey();
+  String signedDeviceId = await signTimestamp(deviceId, privatekey);
+
+  http.put('$threeBotApiUrl/users/$doubleName/deviceid',
+      body: json.encode({'signedDeviceId': signedDeviceId}),
+      headers: requestHeaders);
+}
+
 Future sendData(String hash, String signedHash, data, selectedImageId) {
   print(data);
   return http.post('$threeBotApiUrl/sign',
@@ -34,11 +44,10 @@ Future sendData(String hash, String signedHash, data, selectedImageId) {
 }
 
 Future sendPublicKey(Map<String, Object> data) {
-  logger.log('Sending appPublicKey to backend with appId: ' + json.encode(data));
-  return http
-      .post('$threeBotApiUrl/savederivedpublickey', 
-          body: json.encode(data), 
-          headers: requestHeaders);
+  logger
+      .log('Sending appPublicKey to backend with appId: ' + json.encode(data));
+  return http.post('$threeBotApiUrl/savederivedpublickey',
+      body: json.encode(data), headers: requestHeaders);
 }
 
 Future checkLoginAttempts(String doubleName) async {
@@ -47,11 +56,25 @@ Future checkLoginAttempts(String doubleName) async {
   String signedTimestamp = await signTimestamp(timestamp, privatekey);
 
   Map<String, String> loginRequestHeaders = {
-    'Content-type': 'application/json', 
+    'Content-type': 'application/json',
     'Jimber-Authorization': signedTimestamp
   };
 
   return http.get('$threeBotApiUrl/attempts/$doubleName',
+      headers: loginRequestHeaders);
+}
+
+Future<Response> removeDeviceId(String doubleName) async {
+  String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
+  String privatekey = await getPrivateKey();
+  String signedTimestamp = await signTimestamp(timestamp, privatekey);
+
+  Map<String, String> loginRequestHeaders = {
+    'Content-type': 'application/json',
+    'Jimber-Authorization': signedTimestamp
+  };
+
+  return http.delete('$threeBotApiUrl/users/$doubleName/deviceid',
       headers: loginRequestHeaders);
 }
 

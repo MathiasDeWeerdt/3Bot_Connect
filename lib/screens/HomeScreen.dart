@@ -66,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
+        resetPin: false,
       ));
     } else if (link.host == 'login') {
       logger.log('Login via link');
@@ -242,8 +243,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       return registered(context);
-                    } else
+                    } else {
                       return notRegistered(context);
+                    }
                   }),
             ),
           ),

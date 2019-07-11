@@ -1,13 +1,13 @@
 #!/bin/bash
 shouldBuild=0
 
-if [ $1 == "--help" ]
+if [[ $1 == "--help" ]]
 then
     echo "Usage: ./build.sh --[run|build|switch] --[local|staging|production]"
     exit 1
 fi
 
-if [ $2 == "--local" ]
+if [[ $2 == "--local" ]]
 then
     cp android/app/google-services-local.json android/app/google-services.json
 
@@ -33,11 +33,11 @@ then
         sed -i -e 's/org.jimber.threebotlogin/org.jimber.threebotlogin.local/g' ios/Runner/Info.plist
     fi
 
-    if [ $1 == "--run" ]
+    if [[ $1 == "--run" ]]
     then
         echo "flutter run -t lib/main_local_mathias.dart"
         flutter run -t lib/main_local_mathias.dart
-    elif [ $1 == "--switch" ]
+    elif [[ $1 == "--switch" ]]
     then
         echo "Switched configs local."
     else
@@ -48,7 +48,7 @@ then
     exit 0
 fi
 
-if [ $2 == "--staging" ]
+if [[ $2 == "--staging" ]]
 then
     cp android/app/google-services-staging.json android/app/google-services.json
 
@@ -74,11 +74,11 @@ then
         sed -i -e 's/org.jimber.threebotlogin/org.jimber.threebotlogin.staging/g' ios/Runner/Info.plist
     fi
 
-    if [ $1 == "--run" ]
+    if [[ $1 == "--run" ]]
     then
         echo "flutter run -t lib/main_staging.dart"
         flutter run -t lib/main_staging.dart
-    elif [ $1 == "--switch" ]
+    elif [[ $1 == "--switch" ]]
     then
         echo "Switched configs staging."
     else
@@ -93,7 +93,7 @@ then
     exit 0
 fi
 
-if [ $2 == "--production" ]
+if [[ $2 == "--production" ]]
 then
     cp android/app/google-services-prod.json android/app/google-services.json
 
@@ -119,11 +119,11 @@ then
         sed -i -e 's/org.jimber.threebotlogin.staging/org.jimber.threebotlogin/g' ios/Runner/Info.plist
     fi
 
-    if [ $1 == "--run" ]
+    if [[ $1 == "--run" ]]
     then
         echo "flutter run -t lib/main_prod.dart"
         flutter run -t lib/main_prod.dart
-    elif [ $1 == "--switch" ]
+    elif [[ $1 == "--switch" ]]
     then
         echo "Switched configs to production."
     else
@@ -140,5 +140,5 @@ then
 fi
 
 echo "Syntax error."
-echo "Usage: ./build.sh --[run|build|switch] --[local|staging|production]"
+echo "Usage: ./build.sh --[[run|build|switch]] --[[local|staging|production]]"
 exit 1

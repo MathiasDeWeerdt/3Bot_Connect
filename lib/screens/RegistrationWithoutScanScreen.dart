@@ -100,7 +100,7 @@ class _RegistrationWithoutScanScreen
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-      if(widget.resetPin) {
+      if (widget.resetPin) {
         savePin(pin);
 
         Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -123,7 +123,6 @@ class _RegistrationWithoutScanScreen
 
         showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
       }
-      
     }
   }
 
@@ -133,12 +132,14 @@ class _RegistrationWithoutScanScreen
     var doubleName = widget.initialData['doubleName'];
     var email = widget.initialData['email'];
     var publicKey = widget.initialData['appPublicKey'];
+    var phrase = widget.initialData['phrase'];
 
     savePin(pin);
     savePrivateKey(privateKey);
     savePublicKey(publicKey);
     saveEmail(email, false);
     saveDoubleName(doubleName);
+    savePhrase(phrase);
 
     var signedHash = signHash(hash, privateKey);
     var data = encrypt(jsonEncode(scope), publicKey, privateKey);

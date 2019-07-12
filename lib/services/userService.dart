@@ -1,5 +1,8 @@
+import 'dart:core';
+
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 
 import '3botService.dart';
@@ -35,6 +38,17 @@ Future savePrivateKey(key) async {
 Future<String> getPrivateKey() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString('privatekey');
+}
+
+Future savePhrase(phrase) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('phrase');
+  prefs.setString('phrase', phrase);
+}
+
+Future<String> getPhrase() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('phrase');
 }
 
 Future saveDoubleName(doubleName) async {
@@ -103,6 +117,7 @@ Future<void> clearData() async {
       prefs.remove('doubleName');
       prefs.remove('firstvalidation');
       prefs.remove('loginToken');
+      prefs.remove('phrase');
     } else {
       // Handle this error?
       print("Something went wrong while removing your account");

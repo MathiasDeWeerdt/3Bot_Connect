@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:threebotlogin/screens/PreferenceScreen.dart';
 import 'package:threebotlogin/services/loggingService.dart';
 import 'config.dart';
 import 'package:threebotlogin/screens/HomeScreen.dart';
@@ -88,7 +89,8 @@ class MyApp extends StatelessWidget {
         '/success': (context) => SuccessfulScreen(),
         '/profile': (context) => ProfileScreen(),
         '/error': (context) => ErrorScreen(),
-        '/recover': (context) => RecoverScreen()
+        '/recover': (context) => RecoverScreen(),
+        '/preference': (context) => PreferenceScreen()
       },
     );
   }

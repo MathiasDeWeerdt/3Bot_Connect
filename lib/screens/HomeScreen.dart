@@ -208,7 +208,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             flutterWebViewPlugin.hide();
                           }
                         }
-
                         setState(() {
                           hexColor = Color(0xFF0f296a);
                         });
@@ -242,8 +241,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   future: getDoubleName(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
+                      print(doubleName);
                       return registered(context);
                     } else {
+                      print(doubleName);
                       return notRegistered(context);
                     }
                   }),

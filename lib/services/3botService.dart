@@ -73,7 +73,6 @@ Future<Response> removeDeviceId(String doubleName) async {
     'Content-type': 'application/json',
     'Jimber-Authorization': signedTimestamp
   };
-
   return http.delete('$threeBotApiUrl/users/$doubleName/deviceid',
       headers: loginRequestHeaders);
 }

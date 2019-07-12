@@ -217,21 +217,11 @@ class _RecoverScreenState extends State<RecoverScreen> {
         builder: (BuildContext context) => CustomDialog(
               image: Icons.error,
               title: "Email address is not the same!",
-              description:
-                  new Text("You'll need to verify the new email addres."),
+              description: new Text("Please enter the right email"),
               actions: <Widget>[
-                // usually buttons at the bottom of the dialog
                 FlatButton(
-                  child: new Text("Continue?"),
+                  child: new Text("Continue"),
                   onPressed: () {
-                    newEmail = true;
-                    Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  child: new Text("No"),
-                  onPressed: () {
-                    newEmail = false;
                     Navigator.pop(context);
                   },
                 ),
@@ -247,6 +237,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
       prefs.setString('publickey', base64.encode(key['pk']).toString());
       prefs.setString('email', emailUser);
       prefs.setString('doubleName', doubleName);
+      prefs.setString('phrase', keyPhrase);
       prefs.setBool('firstvalidation', false);
       prefs.setBool('emailVerified', isVerified);
 

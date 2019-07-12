@@ -25,6 +25,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Profile'),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.settings),
+                tooltip: "Settings",
+                onPressed: () {
+                  Navigator.pushNamed(context, '/preference');
+                }),
+          ],
           elevation: 0.0,
         ),
         body: Container(
@@ -116,26 +124,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         'Email not verified, yet.'),
                                                   ],
                                                 ),
-                                                RaisedButton(
-                                                  shape:
-                                                      new RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              new BorderRadius
-                                                                      .circular(
-                                                                  10)),
-                                                  padding: EdgeInsets.all(3),
-                                                  child: Text(
-                                                    "Resend verification mail",
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                  color: Theme.of(context)
-                                                      .accentColor,
-                                                  onPressed: () {
-                                                    // Send email.
-                                                    sendVerificationEmail();
-                                                  },
-                                                ),
                                               ],
                                             )
                                           ],
@@ -147,22 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Expanded(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    RaisedButton(
-                                      shape: new RoundedRectangleBorder(
-                                          borderRadius:
-                                              new BorderRadius.circular(10)),
-                                      padding: EdgeInsets.all(12),
-                                      child: Text(
-                                        "Delete account",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      color: Theme.of(context).errorColor,
-                                      onPressed: () {
-                                        _showDialog();
-                                      },
-                                    ),
-                                  ],
+                                  children: <Widget>[],
                                 ),
                               )
                             ],
@@ -183,58 +156,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  void sendVerificationEmail() async {
-    var response = await resendVerificationEmail();
-    print(response);
-
-    _showResetEmailDialog();
-  }
-
-  void _showResetEmailDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
-              image: Icons.check,
-              title: "Email has been resend.",
-              description: new Text("A new verification email has been send."),
-              actions: <Widget>[
-                FlatButton(
-                  child: new Text("Ok"),
-                  onPressed: () {
-                    // clearData();
-                    Navigator.popUntil(context, ModalRoute.withName('/'));
-                  },
-                ),
-              ],
-            ));
-  }
-
-  void _showDialog() {
-    // flutter defined function
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
-              image: Icons.error,
-              title: "Are you sure?",
-              description: new Text(
-                  "If you continue, you won't be able to login with the current account again (for now). However, this acccount still exists."),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                FlatButton(
-                  child: new Text("Cancel"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                FlatButton(
-                  child: new Text("Continue"),
-                  onPressed: () async {
-                    await clearData();
-                    Navigator.popUntil(context, ModalRoute.withName('/'));
-                    setState(() {});
-                  },
-                ),
-              ],
-            ));
-  }
 }

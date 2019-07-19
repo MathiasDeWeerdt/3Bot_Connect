@@ -7,29 +7,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
 
-Future<String> signHash(String stateHash, String sk) async {
-  logger.log('stateHash' + stateHash);
-  var private = base64.decode(sk);
-  var signedHash =
-      await Sodium.cryptoSign(Uint8List.fromList(stateHash.codeUnits), private);
-  var base64EncryptedSignedHash = base64.encode(signedHash);
+// Future<String> signHash(String stateHash, String sk) async {
+//   logger.log('stateHash' + stateHash);
+//   var private = base64.decode(sk);
+//   var signedHash =
+//       await Sodium.cryptoSign(Uint8List.fromList(stateHash.codeUnits), private);
+//   var base64EncryptedSignedHash = base64.encode(signedHash);
 
-  return base64EncryptedSignedHash;
-}
+//   return base64EncryptedSignedHash;
+// }
 
-Future<String> signTimestamp(String timestamp, String sk) async {
-  logger.log('timestamp' + timestamp);
-  var private = base64.decode(sk);
-  var signedTimestamp =
-      await Sodium.cryptoSign(Uint8List.fromList(timestamp.codeUnits), private);
+// Future<String> signData(String timestamp, String sk) async {
+//   logger.log('timestamp' + timestamp);
+//   var private = base64.decode(sk);
+//   var signedTimestamp =
+//       await Sodium.cryptoSign(Uint8List.fromList(timestamp.codeUnits), private);
 
-  return base64.encode(signedTimestamp);
-}
+//   return base64.encode(signedTimestamp);
+// }
 
-Future<String> sign(String other, String sk) async {
+// Future<String> sign(String other, String sk) async {
+//   var private = base64.decode(sk);
+//   var signed =
+//       await Sodium.cryptoSign(Uint8List.fromList(other.codeUnits), private);
+
+//   return base64.encode(signed);
+// }
+
+Future<String> signData(String data, String sk) async {
   var private = base64.decode(sk);
   var signed =
-      await Sodium.cryptoSign(Uint8List.fromList(other.codeUnits), private);
+      await Sodium.cryptoSign(Uint8List.fromList(data.codeUnits), private);
 
   return base64.encode(signed);
 }
@@ -74,8 +82,8 @@ Future<Map<String, Object>> generateDerivedKeypair(
 
     var data = {
       'doubleName': doubleName,
-      'signedDerivedPublicKey': await sign(derivedPublicKey, privateKey),
-      'signedAppId': await sign(appId, privateKey)
+      'signedDerivedPublicKey': await signData(derivedPublicKey, privateKey),
+      'signedAppId': await signData(appId, privateKey)
     };
 
     sendPublicKey(data);

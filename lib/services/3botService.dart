@@ -24,7 +24,7 @@ sendScannedFlag(String hash, String deviceId) async {
 
 updateDeviceId(String deviceId, String doubleName) async {
   String privatekey = await getPrivateKey();
-  String signedDeviceId = await signTimestamp(deviceId, privatekey);
+  String signedDeviceId = await signData(deviceId, privatekey);
 
   http.put('$threeBotApiUrl/users/$doubleName/deviceid',
       body: json.encode({'signedDeviceId': signedDeviceId}),
@@ -53,11 +53,12 @@ Future sendPublicKey(Map<String, Object> data) {
 Future checkLoginAttempts(String doubleName) async {
   String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
   String privatekey = await getPrivateKey();
-  String signedTimestamp = await signTimestamp(timestamp, privatekey);
+  Map<String, dynamic> payload = {"timestamp": timestamp, "intention": "attempts"};
+  String signedPayload = await signData(jsonEncode(payload), privatekey);
 
   Map<String, String> loginRequestHeaders = {
     'Content-type': 'application/json',
-    'Jimber-Authorization': signedTimestamp
+    'Jimber-Authorization': signedPayload
   };
 
   return http.get('$threeBotApiUrl/attempts/$doubleName',
@@ -67,11 +68,13 @@ Future checkLoginAttempts(String doubleName) async {
 Future<Response> removeDeviceId(String doubleName) async {
   String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
   String privatekey = await getPrivateKey();
-  String signedTimestamp = await signTimestamp(timestamp, privatekey);
+
+  Map<String, dynamic> payload = {"timestamp": timestamp, "intention": "delete-deviceid"};
+  String signedPayload = await signData(jsonEncode(payload), privatekey);
 
   Map<String, String> loginRequestHeaders = {
     'Content-type': 'application/json',
-    'Jimber-Authorization': signedTimestamp
+    'Jimber-Authorization': signedPayload
   };
   return http.delete('$threeBotApiUrl/users/$doubleName/deviceid',
       headers: loginRequestHeaders);

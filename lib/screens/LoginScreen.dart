@@ -149,9 +149,10 @@ class _LoginScreenState extends State<LoginScreen> {
   sendIt() async {
     print('sendIt');
     var state = widget.message['state'];
+    
     var publicKey = widget.message['appPublicKey']?.replaceAll(" ", "+");
 
-    var signedHash = signHash(state, await getPrivateKey());
+    var signedHash = signData(state, await getPrivateKey());
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);

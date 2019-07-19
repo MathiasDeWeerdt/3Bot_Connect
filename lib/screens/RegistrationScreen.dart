@@ -138,7 +138,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       print("something is null");
       showError();
     } else {
-      var signedDeviceId = signHash(deviceId, privateKey);
+      var signedDeviceId = signData(deviceId, privateKey);
       sendScannedFlag(hash, await signedDeviceId).then((response) {
         sliderAnimationController.forward();
         setState(() {
@@ -202,7 +202,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveDoubleName(doubleName);
     savePhrase(phrase);
 
-    var signedHash = signHash(hash, privateKey);
+    var signedHash = signData(hash, privateKey);
     var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
     sendData(hash, await signedHash, await data, null).then((x) {
@@ -212,7 +212,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   }
 
   _showInformation() {
-    var _stepsList = 'Step 1: Go to the website: https://login.threefold.me/  \n' + 'Step 2: Create an account\n' + 'Step 3: Scan the QR code\n';
+    var _stepsList = 'Step 1: Go to application using 3botlogin\n' + 'Step 2: Create an account\n' + 'Step 3: Scan the QR code\n';
 
     showDialog(
         context: context,

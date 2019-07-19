@@ -38,7 +38,7 @@ class _RegistrationWithoutScanScreen
 
   Future sendFlag(pk) async {
     sendScannedFlag(widget.initialData['state'],
-        await signHash(deviceId, widget.initialData['privateKey']));
+        await signData(deviceId, widget.initialData['privateKey']));
   }
 
   @override
@@ -141,7 +141,7 @@ class _RegistrationWithoutScanScreen
     saveDoubleName(doubleName);
     savePhrase(phrase);
 
-    var signedHash = signHash(hash, privateKey);
+    var signedHash = signData(hash, privateKey);
     var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
     sendData(hash, await signedHash, await data, null).then((x) {
@@ -173,7 +173,7 @@ class _RegistrationWithoutScanScreen
                   clearData();
                   sendScannedFlag(
                       widget.initialData['state'],
-                      await signHash(
+                      await signData(
                           deviceId, widget.initialData['privateKey']));
                 },
               ),

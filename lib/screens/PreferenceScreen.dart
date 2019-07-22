@@ -1,131 +1,199 @@
 import 'package:flutter/material.dart';
-import 'package:preferences/preferences.dart';
-
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 class PreferenceScreen extends StatefulWidget {
-  final Widget preferenceScreen;
-  PreferenceScreen({Key key, this.preferenceScreen}) : super(key: key);
+  PreferenceScreen({Key key}) : super(key: key);
   _PreferenceScreenState createState() => _PreferenceScreenState();
 }
 
 class _PreferenceScreenState extends State<PreferenceScreen> {
   Map email;
+  String doubleName = '';
+  String phrase = '';
+  bool emailunVerified = false;
+  bool showAdvancedOptions = false;
+  Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_up);
+  String emailAdress = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUserValues();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Preferences'),
-      ),
-      body: PreferencePage([
-        PreferenceTitle('General'),
-        PreferencePageLink(
-          'Key Phrase',
-          leading: Icon(Icons.vpn_key),
-          trailing: Icon(Icons.keyboard_arrow_right),
-          page: PreferencePage([
-            PreferenceTitle('Write this down on a piece of paper'),
-            Padding(
-              padding: EdgeInsets.all(15.0),
-              child: RaisedButton(
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(10)),
-                padding: EdgeInsets.all(12),
-                child: Text(
-                  "Show my Key Phrase",
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Theme.of(context).accentColor,
-                onPressed: () {
-                  _showPhrase();
-                },
-              ),
-            ),
-          ]),
-        ),
-        _showResendMail(),
-        Container(
-            child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              PreferenceTitle('Delete'),
-              Padding(
-                padding: EdgeInsets.all(15.0),
-                child: RaisedButton(
-                  shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10)),
-                  padding: EdgeInsets.all(12),
-                  child: Text(
-                    "Delete account",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Theme.of(context).errorColor,
-                  onPressed: () {
-                    _showDialog();
-                  },
-                ),
-              )
-            ],
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              showAdvancedOptions = false;
+              Navigator.pop(context);
+            },
           ),
-        ))
-      ]),
-    );
-  }
+          title: Text('Preferences'),
+          elevation: 0.0,
+        ),
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        "Profile",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(color: Colors.green),
+                      )),
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20.0, top: 10.0, bottom: 10.0),
+                        child: Align(
+                            child: Icon(Icons.person),
+                            alignment: Alignment.centerLeft),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text(doubleName, textAlign: TextAlign.center),
+                      ),
+                    ],
+                  ),
 
-  Widget _showResendMail() {
-    getEmail().then((emailMap) {
-      setState(() {
-        email = emailMap;
-      });
-    });
 
-    bool showButton;
-    if (!(email['verified'])) {
-      showButton = true;
-      return Visibility(
-          visible: showButton,
-          child: Padding(
-            padding: EdgeInsets.all(15.0),
-            child: RaisedButton(
-              shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(10)),
-              padding: EdgeInsets.all(12),
-              child: Text(
-                "Resend Verification Mail",
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Theme.of(context).accentColor,
-              onPressed: () {
-                sendVerificationEmail();
-              },
-            ),
-          ));
-    } else {
-      showButton = false;
-      return Visibility(
-          visible: showButton,
-          child: Padding(
-            padding: EdgeInsets.all(15.0),
-            child: RaisedButton(
-              shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(10)),
-              padding: EdgeInsets.all(12),
-              child: Text(
-                "Resend Verification Mail",
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Theme.of(context).accentColor,
-              onPressed: () {},
-            ),
-          ));
-    }
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 20.0),
+                        child: Align(
+                            child: Icon(Icons.mail),
+                            alignment: Alignment.centerLeft),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text(emailAdress, textAlign: TextAlign.center),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: (emailunVerified)
+                            ? Container()
+                            : Text(
+                                "(unverified)",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                      ),
+                      Expanded(
+                          child: (emailunVerified)
+                              ? Container()
+                              : Align(
+                                  alignment: Alignment.centerRight,
+                                  child: IconButton(
+                                    icon: Icon(Icons.keyboard_arrow_right),
+                                    onPressed: () {
+                                      sendVerificationEmail();
+                                    },
+                                  ))),
+                    ],
+                  ),
+
+
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 20.0),
+                        child: Align(
+                            child: Icon(Icons.vpn_key),
+                            alignment: Alignment.centerLeft),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text("Key Phrase", textAlign: TextAlign.center),
+                      ),
+                      Expanded(
+                          child: Align(
+                        alignment: Alignment.centerRight,
+                        child: IconButton(
+                          icon: Icon(Icons.visibility),
+                          onPressed: () {
+                            _showPhrase();
+                          },
+                        ),
+                      )),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "Advanced Options",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(color: Colors.green),
+                          )),
+                      Expanded(
+                          child: Align(
+                              alignment: Alignment.centerRight,
+                              child: IconButton(
+                                icon: showAdvancedOptionsIcon,
+                                onPressed: () {
+                                  setState(() {
+                                    if (!showAdvancedOptions) {
+                                      showAdvancedOptions = true;
+                                      showAdvancedOptionsIcon =
+                                          Icon(Icons.keyboard_arrow_down);
+                                    } else {
+                                      showAdvancedOptions = false;
+                                      showAdvancedOptionsIcon =
+                                          Icon(Icons.keyboard_arrow_up);
+                                    }
+                                  });
+                                },
+                              )))
+                    ],
+                  ),
+                  Visibility(
+                    visible: showAdvancedOptions,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(left: 20.0),
+                              child: Align(
+                                  child: Icon(Icons.remove_circle),
+                                  alignment: Alignment.centerLeft),
+                            ),
+                            FlatButton(
+                              padding: EdgeInsets.all(15),
+                              child: Text(
+                                "Remove Account From Device",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              onPressed: () {
+                                _showDialog();
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ])));
   }
 
   void _showDialog() {
@@ -155,28 +223,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             ));
   }
 
-  void _showPhrase() async {
-    final phrase = await getPhrase();
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
-              image: Icons.error,
-              title: "Please write this down on a piece of paper",
-              description: new Text(phrase.toString()),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                FlatButton(
-                  child: new Text("Continue"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ));
-  }
-
   void sendVerificationEmail() async {
+    print("test");
     var response = await resendVerificationEmail();
     print(response);
 
@@ -194,10 +242,53 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 FlatButton(
                   child: new Text("Ok"),
                   onPressed: () {
-                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                    Navigator.pop(context);
                   },
                 ),
               ],
             ));
+  }
+
+  void _showPhrase() async {
+    final phrase = await getPhrase();
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => CustomDialog(
+              image: Icons.create,
+              title: "Please write this down on a piece of paper",
+              description: new Text(phrase.toString()),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  child: new Text("Continue"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ));
+  }
+
+  void getUserValues() {
+    getDoubleName().then((dn) {
+      setState(() {
+        doubleName = dn;
+      });
+    });
+    getEmail().then((emailMap) {
+      setState(() {
+        email = emailMap;
+        if(email['email'] != null || email['verified']) {
+          emailAdress = email['email'];
+          emailunVerified = email['verified'];
+        }
+      });
+    });
+    getPhrase().then((seedPhrase) {
+      setState(() {
+        phrase = seedPhrase;
+      });
+    });
   }
 }

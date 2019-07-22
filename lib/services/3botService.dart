@@ -112,3 +112,12 @@ Future<int> checkVersionNumber(BuildContext context, String version) async {
 
   return 0;
 }
+
+Future cancelLogin(doubleName) {
+  print("inside cancelLogin");
+
+  print('$threeBotApiUrl/users/$doubleName/cancel');
+
+  return http.post('$threeBotApiUrl/users/$doubleName/cancel',
+      body:null, headers: requestHeaders);
+}

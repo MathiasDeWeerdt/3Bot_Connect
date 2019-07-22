@@ -105,7 +105,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 helperText,
                                 style: TextStyle(fontSize: 16.0),
                               ))),
-                          PinField(callback: (p) => pinFilledIn(p))
+                          PinField(callback: (p) => pinFilledIn(p)),
+                          SizedBox(
+                            height: 100,
+                          ),
+                          FlatButton(
+                            padding: EdgeInsets.all(2),
+                            child: Text(
+                              "It wasn\'t me",
+                              style: TextStyle(fontSize: 16.0, color: Color(0xff0f296a) ),
+                            ),
+                            onPressed: () {
+                              cancelIt();
+                            },
+                          ),
                         ],
                       ),
                     ))))));
@@ -131,9 +144,8 @@ class _LoginScreenState extends State<LoginScreen> {
           if (widget.message['scope'].contains('user:keys')) {
             scope['keys'] = await getKeys(widget.message['appId'], scope['doubleName']);
           }
-          
         }
-        showScopeDialog(context, scope, widget.message['appId'], sendIt);
+        showScopeDialog(context, scope, widget.message['appId'], sendIt, cancelCallback: cancelIt);
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('Oops... you entered the wrong pin'),
@@ -144,6 +156,12 @@ class _LoginScreenState extends State<LoginScreen> {
         content: Text('Please select an emoji'),
       ));
     }
+  }
+
+  cancelIt() async {
+    cancelLogin(await getDoubleName());
+    print("inside cancelIt");
+    Navigator.pushNamed(context, '/');
   }
 
   sendIt() async {

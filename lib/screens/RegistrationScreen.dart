@@ -23,7 +23,6 @@ class _ScanScreenState extends State<RegistrationScreen>
   Animation<double> offset;
   dynamic qrData = '';
   String pin;
-  String _step = "";
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var scope = Map();
 
@@ -212,7 +211,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   }
 
   _showInformation() {
-    var _stepsList = 'Step 1: Go to the website: https://login.threefold.me/  \n' + 'Step 2: Create an account\n' + 'Step 3: Scan the QR code\n';
+    var _stepsList = 'Step 1: Go to the website: https://www.freeflowpages.com/  \n' + 'Step 2: Create an account\n' + 'Step 3: Scan the QR code\n';
 
     showDialog(
         context: context,

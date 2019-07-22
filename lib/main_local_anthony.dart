@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'config.dart';
 import 'main.dart';
 
 void main() async {
-  
+  //debugPaintSizeEnabled=true;
   var config = Config(
-      name: '3bot staging',
-      threeBotApiUrl: 'https://login.staging.jimber.org/api',
-      openKycApiUrl: 'https://openkyc.staging.jimber.org',
-      threeBotFrontEndUrl: 'https://login.staging.jimber.org/',
+      name: '3bot local',
+      threeBotApiUrl: 'http://192.168.2.243:5000/api',
+      openKycApiUrl: 'http://192.168.2.243:5005',
+      threeBotFrontEndUrl: 'http://192.168.2.243:8080/',
       child: new MyApp());
 
   init();

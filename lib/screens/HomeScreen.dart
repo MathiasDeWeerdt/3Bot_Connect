@@ -168,57 +168,55 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('3bot'),
-          backgroundColor: hexColor,
-          leading: FutureBuilder(
+        title: Text('3bot'),
+        backgroundColor: hexColor,
+        leading: FutureBuilder(
+            future: getDoubleName(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return IconButton(
+                    tooltip: 'Apps',
+                    icon: const Icon(Icons.apps),
+                    onPressed: () {
+                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+                        if (flutterWebViewPlugin != null) {
+                          flutterWebViewPlugin.hide();
+                        }
+                      }
+                      setState(() {
+                        hexColor = Color(0xFF0f296a);
+                      });
+                    });
+              } else
+                return Container();
+            }),
+        elevation: 0.0,
+        actions: <Widget>[
+          FutureBuilder(
               future: getDoubleName(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   return IconButton(
-                      tooltip: 'Apps',
-                      icon: const Icon(Icons.apps),
-                      onPressed: () {
-                        for (var flutterWebViewPlugin
-                            in flutterWebViewPlugins) {
-                          if (flutterWebViewPlugin != null) {
-                            flutterWebViewPlugin.hide();
-                          }
+                    icon: Icon(Icons.settings),
+                    tooltip: 'Settings',
+                    onPressed: () {
+                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+                        if (flutterWebViewPlugin != null) {
+                          flutterWebViewPlugin.hide();
                         }
-
-                        setState(() {
-                          hexColor = Color(0xFF0f296a);
-                        });
+                      }
+                      setState(() {
+                        hexColor = Color(0xFF0f296a);
                       });
+
+                      Navigator.pushNamed(context, '/preference');
+                    },
+                  );
                 } else
                   return Container();
               }),
-          elevation: 0.0,
-          actions: <Widget>[
-            FutureBuilder(
-                future: getDoubleName(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    return IconButton(
-                      icon: Icon(Icons.person),
-                      tooltip: 'Your profile',
-                      onPressed: () {
-                        for (var flutterWebViewPlugin
-                            in flutterWebViewPlugins) {
-                          if (flutterWebViewPlugin != null) {
-                            flutterWebViewPlugin.hide();
-                          }
-                        }
-                        setState(() {
-                          hexColor = Color(0xFF0f296a);
-                        });
-
-                        Navigator.pushNamed(context, '/profile');
-                      },
-                    );
-                  } else
-                    return Container();
-                }),
-          ]),
+        ],
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,

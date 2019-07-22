@@ -216,7 +216,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                   onPressed: () async {
                     await clearData();
                     Navigator.popUntil(context, ModalRoute.withName('/'));
-                    setState(() {});
+                    // setState(() {});
                   },
                 ),
               ],

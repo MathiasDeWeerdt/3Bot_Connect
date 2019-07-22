@@ -137,7 +137,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       print("something is null");
       showError();
     } else {
-      var signedDeviceId = signHash(deviceId, privateKey);
+      var signedDeviceId = signData(deviceId, privateKey);
       sendScannedFlag(hash, await signedDeviceId).then((response) {
         sliderAnimationController.forward();
         setState(() {
@@ -201,7 +201,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveDoubleName(doubleName);
     savePhrase(phrase);
 
-    var signedHash = signHash(hash, privateKey);
+    var signedHash = signData(hash, privateKey);
     var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
     sendData(hash, await signedHash, await data, null).then((x) {

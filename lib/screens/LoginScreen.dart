@@ -136,13 +136,13 @@ class _LoginScreenState extends State<LoginScreen> {
       if (pin == p) {
         scope['doubleName'] = await getDoubleName();
         if (widget.message['scope'] != null) {
-
           if (widget.message['scope'].contains('user:email')) {
             scope['email'] = await getEmail();
           }
 
           if (widget.message['scope'].contains('user:keys')) {
-            scope['keys'] = await getKeys(widget.message['appId'], scope['doubleName']);
+            scope['keys'] =
+                await getKeys(widget.message['appId'], scope['doubleName']);
           }
         }
         showScopeDialog(context, scope, widget.message['appId'], sendIt, cancelCallback: cancelIt);
@@ -167,9 +167,20 @@ class _LoginScreenState extends State<LoginScreen> {
   sendIt() async {
     print('sendIt');
     var state = widget.message['state'];
-    var publicKey = widget.message['appPublicKey']?.replaceAll(" ", "+");
 
-    var signedHash = signHash(state, await getPrivateKey());
+    var publicKey = widget.message['appPublicKey']?.replaceAll(" ", "+");
+    bool hashMatch = RegExp(r"[^A-Za-z0-9]+").hasMatch(state);
+    print("hash match?? " + hashMatch.toString());
+    if (hashMatch) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
+      ));
+      // Navigator.popUntil(context, ModalRoute.withName('/'));
+      // Navigator.pushNamed(context, '/success');
+      return;
+    }
+
+    var signedHash = signData(state, await getPrivateKey());
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);

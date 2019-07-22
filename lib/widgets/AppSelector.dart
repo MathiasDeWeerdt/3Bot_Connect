@@ -52,7 +52,7 @@ class _AppSelectorState extends State<AppSelector> {
         final state =
             Uri.decodeFull(response.headers['location'].split("&state=")[1]);
         final privateKey = await getPrivateKey();
-        final signedHash = signHash(state, privateKey);
+        final signedHash = signData(state, privateKey);
 
         final redirecturl = Uri.decodeFull(response.headers['location']
             .split("&redirecturl=")[1]

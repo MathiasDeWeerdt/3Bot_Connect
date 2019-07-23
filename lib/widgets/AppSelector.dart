@@ -49,7 +49,8 @@ class _AppSelectorState extends State<AppSelector> {
         final request = new http.Request('GET', Uri.parse(url))
           ..followRedirects = false;
         final response = await client.send(request);
-
+        logger.log('-----');
+        logger.log(response.headers);
         final state =
             Uri.decodeFull(response.headers['location'].split("&state=")[1]);
         final privateKey = await getPrivateKey();

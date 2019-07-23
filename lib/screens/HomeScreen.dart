@@ -272,11 +272,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         RaisedButton(
           shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(10)),
-          padding: EdgeInsets.all(12),
+            borderRadius: new BorderRadius.circular(10),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
           child: Text(
             "Scan QR code",
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white,),
           ),
           color: Theme.of(context).accentColor,
           onPressed: () {
@@ -285,7 +286,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         RaisedButton(
           shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(10)),
+            borderRadius: new BorderRadius.circular(10),
+          ),
           padding: EdgeInsets.all(12),
           child: Text(
             "Recover Account",

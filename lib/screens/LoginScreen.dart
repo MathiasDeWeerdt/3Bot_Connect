@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -107,7 +105,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 helperText,
                                 style: TextStyle(fontSize: 16.0),
                               ))),
-                          PinField(callback: (p) => pinFilledIn(p))
+                          PinField(callback: (p) => pinFilledIn(p)),
+                          SizedBox(
+                            height: 100,
+                          ),
+                          FlatButton(
+                            padding: EdgeInsets.all(2),
+                            child: Text(
+                              "It wasn\'t me",
+                              style: TextStyle(fontSize: 16.0, color: Color(0xff0f296a) ),
+                            ),
+                            onPressed: () {
+                              cancelIt();
+                            },
+                          ),
                         ],
                       ),
                     ))))));
@@ -117,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       selectedImageId = imageId;
     });
-  } 
+  }
 
   pinFilledIn(p) async {
     if (selectedImageId != -1 || isMobile()) {
@@ -125,10 +136,16 @@ class _LoginScreenState extends State<LoginScreen> {
       if (pin == p) {
         scope['doubleName'] = await getDoubleName();
         if (widget.message['scope'] != null) {
-          if (widget.message['scope'].contains('user:email'))
+          if (widget.message['scope'].contains('user:email')) {
             scope['email'] = await getEmail();
+          }
+
+          if (widget.message['scope'].contains('user:keys')) {
+            scope['keys'] =
+                await getKeys(widget.message['appId'], scope['doubleName']);
+          }
         }
-        showScopeDialog(context, scope, widget.message['appId'], sendIt);
+        showScopeDialog(context, scope, widget.message['appId'], sendIt, cancelCallback: cancelIt);
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('Oops... you entered the wrong pin'),
@@ -141,12 +158,29 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  cancelIt() async {
+    cancelLogin(await getDoubleName());
+    print("inside cancelIt");
+    Navigator.pushNamed(context, '/');
+  }
+
   sendIt() async {
     print('sendIt');
     var state = widget.message['state'];
-    var publicKey = widget.message['appPublicKey']?.replaceAll(" ", "+");
 
-    var signedHash = signHash(state, await getPrivateKey());
+    var publicKey = widget.message['appPublicKey']?.replaceAll(" ", "+");
+    bool hashMatch = RegExp(r"[^A-Za-z0-9]+").hasMatch(state);
+    print("hash match?? " + hashMatch.toString());
+    if (hashMatch) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
+      ));
+      // Navigator.popUntil(context, ModalRoute.withName('/'));
+      // Navigator.pushNamed(context, '/success');
+      return;
+    }
+
+    var signedHash = signData(state, await getPrivateKey());
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);
@@ -166,9 +200,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ));
     }
   }
+
   bool isMobile() {
     return widget.message['mobile'] == 'true';
   }
+
   bool isNumeric(String s) {
     if (s == null) {
       return false;

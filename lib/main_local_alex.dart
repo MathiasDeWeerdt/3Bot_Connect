@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 
 import 'config.dart';
 import 'main.dart';
 
-void main() {
+void main() async {
+
+  // generateDerivedKeypair('hello');
+  // await generateDerivedKeypair("hello2", "");
+
   var config = Config(
       name: '3bot local',
-      threeBotApiUrl: 'http://192.168.2.80:5000/api',
-      openKycApiUrl: 'http://192.168.2.80:5005',
-      threeBotFrontEndUrl: 'http://192.168.2.80:8080/',
+      threeBotApiUrl: 'http://192.168.2.50:5000/api',
+      openKycApiUrl: 'https://openkyc.staging.jimber.org/',
+      threeBotFrontEndUrl: 'http://192.168.2.50:8080/',
       child: new MyApp()
   );
   
@@ -46,10 +50,12 @@ void main() {
         textAlign: TextAlign.center,
       ),
       "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org/',
+      // "url": 'https://broker.jimber.org/', anders zit da heelsan te loggen
+      "url": 'https://google.com',
       "bg": 'jimber.png',
       "disabled": false,
-      "initialUrl": 'https://broker.jimber.org/',
+      // "initialUrl": 'https://broker.jimber.org/',
+      "initialUrl": 'https://google.com',
       "visible": false,
       "id": 1,
       'cookieUrl': '',
@@ -106,7 +112,7 @@ void main() {
       "bg": 'example.jpg',
       "url": 'https://jimber.org/app',
       "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work',
+      "initialUrl": 'https://jimber.org/app',
       "visible": false,
       "id": 4,
       'cookieUrl': '',
@@ -115,9 +121,6 @@ void main() {
     }
   ];
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-    .then((_) {
-      runApp(config);
-      logger.log("running main_local.dart");
-    });
+  runApp(config);
+  logger.log("running main_local_alex.dart");
 }

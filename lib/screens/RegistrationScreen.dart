@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/3botService.dart';
@@ -45,22 +46,21 @@ class _ScanScreenState extends State<RegistrationScreen>
         Container(
             color: Colors.transparent,
             child: Container(
-              decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0))),
-              padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
-              width: double.infinity,
-              child: Text(
-                'REGISTRATION',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 21.0),
-              ),
-            )),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0))),
+                padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
+                width: double.infinity,
+                child: Text(
+                  'REGISTRATION',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 21.0),
+                ))),
         Container(
             color: Theme.of(context).primaryColor,
             child: Container(
@@ -108,7 +108,14 @@ class _ScanScreenState extends State<RegistrationScreen>
             callback: (qr) => gotQrData(qr),
             context: context,
           ),
-          Align(alignment: Alignment.bottomCenter, child: content())
+          Align(alignment: Alignment.bottomCenter, child: content()),
+          Align(alignment: Alignment.bottomRight, child: FloatingActionButton(tooltip: "What should I do?",
+            onPressed: () {
+              _showInformation();
+            }
+            ,
+            child: Icon(Icons.help_outline),
+          ),)
         ]));
   }
 
@@ -121,13 +128,16 @@ class _ScanScreenState extends State<RegistrationScreen>
     var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
+    var phrase = qrData['phrase'];
     if (hash == null ||
         privateKey == null ||
         doubleName == null ||
-        email == null) {
+        email == null ||
+        phrase == null) {
+      print("something is null");
       showError();
     } else {
-      var signedDeviceId = signHash(deviceId, privateKey);
+      var signedDeviceId = signData(deviceId, privateKey);
       sendScannedFlag(hash, await signedDeviceId).then((response) {
         sliderAnimationController.forward();
         setState(() {
@@ -161,10 +171,16 @@ class _ScanScreenState extends State<RegistrationScreen>
       scope['doubleName'] = qrData['doubleName'];
 
       if (qrData['scope'] != null) {
-        if (qrData['scope'].contains('user:email'))
+        if (qrData['scope'].contains('user:email')) {
           scope['email'] = {'email': qrData['email'], 'verified': false};
-      }
+        }
 
+        if (qrData['scope'].contains('user:keys')) {
+          scope['keys'] = {'keys': qrData['keys']};
+        }
+      }
+      // Debug
+      print('Registration: \n $qrData ');
       showScopeDialog(context, scope, qrData['appId'], saveValues);
     }
   }
@@ -176,18 +192,41 @@ class _ScanScreenState extends State<RegistrationScreen>
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
     var publicKey = qrData['appPublicKey'];
+    var phrase = qrData['phrase'];
 
     savePin(pin);
     savePrivateKey(privateKey);
+    savePublicKey(publicKey);
     saveEmail(email, false);
     saveDoubleName(doubleName);
+    savePhrase(phrase);
 
-    var signedHash = signHash(hash, privateKey);
+    var signedHash = signData(hash, privateKey);
     var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
     sendData(hash, await signedHash, await data, null).then((x) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       Navigator.of(context).pushNamed('/success');
     });
+  }
+
+  _showInformation() {
+    var _stepsList = 'Step 1: Go to the website: https://www.freeflowpages.com/  \n' + 'Step 2: Create an account\n' + 'Step 3: Scan the QR code\n';
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => CustomDialog(
+              image: Icons.error,
+              title: "Steps",
+              description: new Text(_stepsList, textAlign: TextAlign.center, textScaleFactor: 1.2,),
+              actions: <Widget>[
+                FlatButton(
+                  child: new Text("Continue"),
+                  onPressed: () {
+                      Navigator.pop(context);
+                  },
+                ),
+              ],
+            ));
   }
 }

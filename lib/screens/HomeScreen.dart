@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
-import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
-import 'package:http/http.dart' as http;
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:uni_links/uni_links.dart';
@@ -28,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
-  AppSelector selector;
+  Color hexColor = Color(0xff0f296a);
 
   @override
   void initState() {
@@ -40,7 +38,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
-    selector = AppSelector();
+  }
+
+  refresh(colorData) {
+    setState(() {
+      this.hexColor = Color(colorData);
+    });
   }
 
   Future<Null> initUniLinks() async {
@@ -63,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
+        resetPin: false,
       ));
     } else if (link.host == 'login') {
       logger.log('Login via link');
@@ -164,38 +168,55 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('3Bot'),
-          leading: FutureBuilder(
+        title: Text('3bot'),
+        backgroundColor: hexColor,
+        leading: FutureBuilder(
+            future: getDoubleName(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return IconButton(
+                    tooltip: 'Apps',
+                    icon: const Icon(Icons.apps),
+                    onPressed: () {
+                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+                        if (flutterWebViewPlugin != null) {
+                          flutterWebViewPlugin.hide();
+                        }
+                      }
+                      setState(() {
+                        hexColor = Color(0xFF0f296a);
+                      });
+                    });
+              } else
+                return Container();
+            }),
+        elevation: 0.0,
+        actions: <Widget>[
+          FutureBuilder(
               future: getDoubleName(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   return IconButton(
-                      tooltip: 'Apps',
-                      icon: const Icon(Icons.apps),
-                      onPressed: () {
-                        flutterWebViewPlugins[1].hide();
+                    icon: Icon(Icons.settings),
+                    tooltip: 'Settings',
+                    onPressed: () {
+                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+                        if (flutterWebViewPlugin != null) {
+                          flutterWebViewPlugin.hide();
+                        }
+                      }
+                      setState(() {
+                        hexColor = Color(0xFF0f296a);
                       });
+
+                      Navigator.pushNamed(context, '/preference');
+                    },
+                  );
                 } else
                   return Container();
               }),
-          elevation: 0.0,
-          actions: <Widget>[
-            FutureBuilder(
-                future: getDoubleName(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    return IconButton(
-                      icon: Icon(Icons.person),
-                      tooltip: 'Your profile',
-                      onPressed: () {
-                        flutterWebViewPlugins[1].hide();
-                        Navigator.pushNamed(context, '/profile');
-                      },
-                    );
-                  } else
-                    return Container();
-                }),
-          ]),
+        ],
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -215,13 +236,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 topRight: Radius.circular(20.0),
               ),
               child: FutureBuilder(
-                  future: getDoubleName(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      return registered(context);
-                    } else
-                      return notRegistered(context);
-                  }),
+                future: getDoubleName(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    print(doubleName);
+                    return registered(context);
+                  } else {
+                    print(doubleName);
+                    return notRegistered(context);
+                  }
+                },
+              ),
             ),
           ),
         ),
@@ -229,11 +254,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  
   Column registered(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[AppSelector()],
+      children: <Widget>[AppSelector(notifyParent: refresh)],
     );
   }
 
@@ -257,6 +281,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           color: Theme.of(context).accentColor,
           onPressed: () {
             Navigator.pushNamed(context, '/scan');
+          },
+        ),
+        RaisedButton(
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(10)),
+          padding: EdgeInsets.all(12),
+          child: Text(
+            "Recover Account",
+            style: TextStyle(color: Colors.white),
+          ),
+          color: Theme.of(context).accentColor,
+          onPressed: () {
+            Navigator.pushNamed(context, '/recover');
           },
         )
       ],

@@ -1,4 +1,11 @@
+import 'dart:core';
+
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
+
+import '3botService.dart';
 
 Future savePin(pin) async {
   final prefs = await SharedPreferences.getInstance();
@@ -11,6 +18,17 @@ Future<String> getPin() async {
   return prefs.getString('pin');
 }
 
+Future savePublicKey(key) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('publickey');
+  prefs.setString('publickey', key);
+}
+
+Future<String> getPublicKey() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('publickey');
+}
+
 Future savePrivateKey(key) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('privatekey');
@@ -20,6 +38,17 @@ Future savePrivateKey(key) async {
 Future<String> getPrivateKey() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString('privatekey');
+}
+
+Future savePhrase(phrase) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('phrase');
+  prefs.setString('phrase', phrase);
+}
+
+Future<String> getPhrase() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('phrase');
 }
 
 Future saveDoubleName(doubleName) async {
@@ -57,6 +86,11 @@ Future<Map<String, Object>> getEmail() async {
   };
 }
 
+Future<Map<String, Object>> getKeys(String appId, String doubleName) async {
+  print("##################### Getkeys #############################");
+  return await generateDerivedKeypair(appId, doubleName);
+}
+
 Future saveLoginToken(loginToken) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('loginToken');
@@ -68,12 +102,24 @@ Future<String> getLoginToken() async {
   return prefs.getString('loginToken');
 }
 
-void clearData() async {
+Future<void> clearData() async {
   final prefs = await SharedPreferences.getInstance();
-  prefs.remove('pin');
-  prefs.remove('privatekey');
-  prefs.remove('email');
-  prefs.remove('emailVerified');
-  prefs.remove('doubleName');
-  prefs.remove('firstvalidation');
+  
+  Response response = await removeDeviceId(prefs.getString('doubleName'));
+
+  if(response.statusCode == 200) {
+      print("Removing account");
+      prefs.remove('pin');
+      prefs.remove('privatekey');
+      prefs.remove('publickey');
+      prefs.remove('email');
+      prefs.remove('emailVerified');
+      prefs.remove('doubleName');
+      prefs.remove('firstvalidation');
+      prefs.remove('loginToken');
+      prefs.remove('phrase');
+    } else {
+      // Handle this error?
+      print("Something went wrong while removing your account");
+    }
 }

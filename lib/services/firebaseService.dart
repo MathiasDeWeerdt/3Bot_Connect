@@ -9,7 +9,6 @@ import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/main.dart';
 
-
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 void initFirebaseMessagingListener(context) async {
@@ -28,10 +27,9 @@ void initFirebaseMessagingListener(context) async {
     },
   );
 
-  _firebaseMessaging.requestNotificationPermissions(
-      const IosNotificationSettings(sound: true, badge: true, alert: true));
-  _firebaseMessaging.onIosSettingsRegistered
-      .listen((IosNotificationSettings settings) {
+  _firebaseMessaging.requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
+  
+  _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
     logger.log("Settings registered: $settings");
   });
 }
@@ -40,7 +38,11 @@ Future openLogin(context, message) async {
   logger.log('OpenLogin');
 
   var data = message['data'];
-  if (Platform.isIOS) data = message;
+
+  if (Platform.isIOS) {
+    data = message;
+  } 
+
   if (data['logintoken'] != null) {
     logger.log('---------------');
     logger.log('Got loginToken');
@@ -50,13 +52,19 @@ Future openLogin(context, message) async {
       var publicKey = data['appPublicKey'];
       var privateKey = getPrivateKey();
       var email = getEmail();
+      var keys = getKeys(data['appId'], await getDoubleName());
 
-      var signedHash = signHash(state, await privateKey);
+      var signedHash = signData(state, await privateKey);
       var scope = {};
       var dataToSend;
       if (data['scope'] != null) {
-        if (data['scope'].split(",").contains('user:email'))
+        if (data['scope'].split(",").contains('user:email')) {
           scope['email'] = await email;
+        }
+
+        if (data['scope'].split(",").contains('user:keys')) {
+          scope['keys'] = await keys;
+        }
       }
       if (scope.isNotEmpty) {
         logger.log(scope.isEmpty);
@@ -69,14 +77,15 @@ Future openLogin(context, message) async {
     logger.log(data['type']);
     if (data['type'] == 'login' && data['mobile'] != 'true') {
       Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
     } else if (data['type'] == 'email_verification') {
       getEmail().then((emailMap) async {
         if (!emailMap['verified']) {
           checkVerificationStatus(await getDoubleName())
               .then((newEmailMap) async {
             logger.log("newEmailMap.body: ");
-            logger.log( newEmailMap.body);
+            logger.log(newEmailMap.body);
             var body = jsonDecode(newEmailMap.body);
             saveEmailVerified(body['verified'] == 1);
           });

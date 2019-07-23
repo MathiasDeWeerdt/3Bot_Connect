@@ -239,10 +239,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   future: getDoubleName(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
-                      print(doubleName);
                       return registered(context);
                     } else {
-                      print(doubleName);
                       return notRegistered(context);
                     }
                   }),

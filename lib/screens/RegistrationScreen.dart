@@ -134,7 +134,6 @@ class _ScanScreenState extends State<RegistrationScreen>
         doubleName == null ||
         email == null ||
         phrase == null) {
-      print("something is null");
       showError();
     } else {
       var signedDeviceId = signData(deviceId, privateKey);
@@ -179,8 +178,6 @@ class _ScanScreenState extends State<RegistrationScreen>
           scope['keys'] = {'keys': qrData['keys']};
         }
       }
-      // Debug
-      print('Registration: \n $qrData ');
       showScopeDialog(context, scope, qrData['appId'], saveValues);
     }
   }

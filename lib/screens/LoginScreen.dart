@@ -170,11 +170,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     var publicKey = widget.message['appPublicKey']?.replaceAll(" ", "+");
     bool hashMatch = RegExp(r"[^A-Za-z0-9]+").hasMatch(state);
-    print("hash match?? " + hashMatch.toString());
+    print("hash match?? " + hashMatch.toString() + " false is ok");
     if (hashMatch) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
       ));
+      
       // Navigator.popUntil(context, ModalRoute.withName('/'));
       // Navigator.pushNamed(context, '/success');
       return;

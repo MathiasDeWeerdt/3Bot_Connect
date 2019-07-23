@@ -31,8 +31,8 @@ class _AppSelectorState extends State<AppSelector> {
   void initState() {
     super.initState();
     for (var app in apps) {
-      logger.log("adding app webplugin " + app['id'].toString());
-      flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin();
+      logger.log("adding app webplugin " + app['id'].toString() + " " + app['name'].toString());
+      flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin(); 
     }
   }
 
@@ -64,7 +64,9 @@ class _AppSelectorState extends State<AppSelector> {
             response.headers['location'].split("&scope=")[1].split("&")[0]);
         final publickey = Uri.decodeFull(
             response.headers['location'].split("&publickey=")[1].split("&")[0]);
+        logger.log(response.headers['set-cookie'].toString() + " Lower");
         cookies = response.headers['set-cookie'];
+
         final union = '?';
 
         final scopeData = {};
@@ -77,7 +79,7 @@ class _AppSelectorState extends State<AppSelector> {
             (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
         loadUrl =
-            '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+            'https://$appName/$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
       }
 
       flutterWebViewPlugins[appId].launch(loadUrl,
@@ -86,6 +88,8 @@ class _AppSelectorState extends State<AppSelector> {
           hidden: true);
 
       if (cookies != '') {
+        logger.log("=======");
+        logger.log(cookies.toString());
         flutterWebViewPlugins[appId].setCookies(cookies);
       }
 
@@ -108,7 +112,7 @@ class _AppSelectorState extends State<AppSelector> {
         isLaunched = true;
         for (var app in apps) {
           logger.log(app['url']);
-          logger.log("launching app " + app['id'].toString());
+          logger.log("launching app " + app['id'].toString() + " " + app['name'].toString());
           launchApp(size, app['id']);
         }
       }
@@ -121,7 +125,7 @@ class _AppSelectorState extends State<AppSelector> {
               scrollDirection: Axis.horizontal,
               itemCount: apps.length,
               itemBuilder: (BuildContext ctxt, int index) {
-                logger.log("adding app " + index.toString());
+                logger.log("adding app " + index.toString() + " call 2");
 
                 return SingleApp(apps[index], updateApp);
               }))

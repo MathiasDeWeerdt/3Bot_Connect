@@ -35,7 +35,7 @@ void main() {
           'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false
-    },
+    }/*,
     {
       "content": Text(
         'OpenBrowser',
@@ -112,7 +112,7 @@ void main() {
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
-    }
+    }*/
   ];
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

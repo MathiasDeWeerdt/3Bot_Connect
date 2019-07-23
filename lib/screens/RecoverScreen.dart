@@ -244,8 +244,6 @@ class _RecoverScreenState extends State<RecoverScreen> {
       String deviceId = await messaging.getToken();
       updateDeviceId(deviceId, doubleName);
 
-      Navigator.popAndPushNamed(context, '/profile');
-
       openPincodeScreen();
     }
 
@@ -256,7 +254,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
       prefs.setString('email', emailUser);
       prefs.setString('doubleName', doubleName);
       prefs.setBool('firstvalidation', true);
-      Navigator.popAndPushNamed(context, '/profile');
+      Navigator.popAndPushNamed(context, '/preference');
     } else {}
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:threebotlogin/screens/HomeScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
@@ -66,8 +67,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                       ),
                     ],
                   ),
-
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
@@ -104,9 +103,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                   ))),
                     ],
                   ),
-
-
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
@@ -215,8 +211,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                   child: new Text("Continue"),
                   onPressed: () async {
                     await clearData();
-                    Navigator.popUntil(context, ModalRoute.withName('/'));
-                    // setState(() {});
+                    Navigator.pushNamedAndRemoveUntil(context, "/", (r) => false);
                   },
                 ),
               ],
@@ -279,7 +274,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     getEmail().then((emailMap) {
       setState(() {
         email = emailMap;
-        if(email['email'] != null || email['verified']) {
+        if (email['email'] != null || email['verified']) {
           emailAdress = email['email'];
           emailunVerified = email['verified'];
         }

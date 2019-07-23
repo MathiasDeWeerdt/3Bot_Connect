@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
+import 'package:threebotlogin/widgets/PinField.dart';
 
 class PreferenceScreen extends StatefulWidget {
   PreferenceScreen({Key key}) : super(key: key);
@@ -104,8 +106,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                             child: ListTile(
                               trailing: Icon(Icons.visibility),
                               leading: Icon(Icons.vpn_key),
-                              title: Text("Key Phrase"),
-                              onTap: _showPhrase,
+                              title: Text("Seed Phrase"),
+                              onTap: _showPinDialog,
                             ),
                           ),
                           ExpansionTile(
@@ -169,7 +171,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
 
   void sendVerificationEmail() async {
     _prefScaffold.currentState.showSnackBar(SnackBar(
-      content: Text('Resending verification email.'),
+      content: Text('Resending verification email...'),
     ));
     await resendVerificationEmail();
     _showResendEmailDialog();
@@ -194,12 +196,48 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     );
   }
 
+  void _showPinDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+            image: Icons.dialpad,
+            title: "Please enter your pincode",
+            description: Container(
+              padding: EdgeInsets.only(bottom: 32.0),
+              child: PinField(
+                callback: checkPin,
+              ),
+            ),
+          ),
+    );
+  }
+
+  Future copySeedPhrase() async {
+    Clipboard.setData(new ClipboardData(text: await getPhrase()));
+    _prefScaffold.currentState.showSnackBar(SnackBar(
+        content: Text('Seedphrase copied to clipboard'),
+      ));
+  }
+
+  Future checkPin(pin) async {
+    if (pin == await getPin()) {
+      Navigator.pop(context);
+      _showPhrase();
+    } else {
+      Navigator.pop(context);
+      _prefScaffold.currentState.showSnackBar(SnackBar(
+        content: Text('Pin invalid'),
+      ));
+    }
+  }
+
   void _showPhrase() async {
     final phrase = await getPhrase();
 
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
+            hiddenaction: copySeedPhrase,
             image: Icons.create,
             title: "Please write this down on a piece of paper",
             description: new Text(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/screens/HomeScreen.dart';
+import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
@@ -15,8 +15,13 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   String phrase = '';
   bool emailunVerified = false;
   bool showAdvancedOptions = false;
-  Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_up);
+  Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_down);
   String emailAdress = '';
+  final _prefScaffold = GlobalKey<ScaffoldState>();
+
+  bool _act = true;
+
+  var thiscolor = Colors.green;
 
   @override
   void initState() {
@@ -27,6 +32,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _prefScaffold,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -41,160 +47,90 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "Profile",
-                textAlign: TextAlign.left,
-                style: TextStyle(color: Colors.green),
+        color: Theme.of(context).primaryColor,
+        child: Container(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
               ),
             ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 20.0, top: 10.0, bottom: 10.0),
-                  child: Align(
-                      child: Icon(Icons.person),
-                      alignment: Alignment.centerLeft),
+            child: Container(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Text(doubleName, textAlign: TextAlign.center),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Align(
-                      child: Icon(Icons.mail), alignment: Alignment.centerLeft),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Text(emailAdress, textAlign: TextAlign.center),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: (emailunVerified)
-                      ? Container()
-                      : Text(
-                          "(unverified)",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                ),
-                Expanded(
-                  child: (emailunVerified)
-                      ? Container()
-                      : Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            icon: Icon(Icons.keyboard_arrow_right),
-                            onPressed: () {
-                              sendVerificationEmail();
-                            },
+                child: Container(
+                  padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
+                  child: Center(
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: ListView(
+                        children: <Widget>[
+                          ListTile(
+                            title: Text("Profile"),
                           ),
-                        ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Align(
-                      child: Icon(Icons.vpn_key),
-                      alignment: Alignment.centerLeft),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: Text("Key Phrase", textAlign: TextAlign.center),
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: Icon(Icons.visibility),
-                      onPressed: () {
-                        _showPhrase();
-                      },
+                          Material(
+                            child: ListTile(
+                              leading: Icon(Icons.person),
+                              title: Text(doubleName),
+                            ),
+                          ),
+                          Material(
+                            child: ListTile(
+                              trailing:
+                                  emailunVerified ? Icon(Icons.refresh) : null,
+                              leading: Icon(Icons.mail),
+                              title: Text(emailAdress),
+                              subtitle: emailunVerified
+                                  ? Text(
+                                      "Unverified",
+                                      style: TextStyle(color: Colors.grey),
+                                    )
+                                  : Container(),
+                              onTap: emailunVerified
+                                  ? sendVerificationEmail
+                                  : null,
+                            ),
+                          ),
+                          Material(
+                            child: ListTile(
+                              trailing: Icon(Icons.visibility),
+                              leading: Icon(Icons.vpn_key),
+                              title: Text("Key Phrase"),
+                              onTap: _showPhrase,
+                            ),
+                          ),
+                          ExpansionTile(
+                            title: Text("Advanced settings"),
+                            children: <Widget>[
+                              Material(
+                                child: ListTile(
+                                  leading: Icon(Icons.remove_circle),
+                                  title: Text(
+                                    "Remove Account From Device",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  onTap: _showDialog,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "Advanced Options",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(color: Colors.green),
-                  ),
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: showAdvancedOptionsIcon,
-                      onPressed: () {
-                        setState(() {
-                          if (!showAdvancedOptions) {
-                            showAdvancedOptions = true;
-                            showAdvancedOptionsIcon =
-                                Icon(Icons.keyboard_arrow_down);
-                          } else {
-                            showAdvancedOptions = false;
-                            showAdvancedOptionsIcon =
-                                Icon(Icons.keyboard_arrow_up);
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Visibility(
-              visible: showAdvancedOptions,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 20.0),
-                        child: Align(
-                            child: Icon(Icons.remove_circle),
-                            alignment: Alignment.centerLeft),
-                      ),
-                      FlatButton(
-                        padding: EdgeInsets.all(15),
-                        child: Text(
-                          "Remove Account From Device",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        onPressed: () {
-                          _showDialog();
-                        },
-                      ),
-                    ],
-                  )
-                ],
               ),
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
@@ -232,10 +168,10 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   void sendVerificationEmail() async {
-    print("test");
-    var response = await resendVerificationEmail();
-    print(response);
-
+    _prefScaffold.currentState.showSnackBar(SnackBar(
+      content: Text('Resending verification email.'),
+    ));
+    await resendVerificationEmail();
     _showResendEmailDialog();
   }
 
@@ -272,7 +208,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               FlatButton(
-                child: new Text("Continue"),
+                child: new Text("Close"),
                 onPressed: () {
                   Navigator.pop(context);
                 },

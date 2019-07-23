@@ -44,6 +44,7 @@ List<Map<String, dynamic>> apps = [
   }*/
 ];
 
+
 void init() async {
   logger = new LoggingService();
 

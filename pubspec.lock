@@ -97,8 +97,8 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "4a2f40e16b2dfc78a58b6b28f91c6ce37365ddd4"
-      url: "https://github.com/jdelrue/flutter_webview_plugin"
+      resolved-ref: "9df5e4977ce0b37db93f70ae4195c6d0ef99ceed"
+      url: "https://github.com/coeneivan/flutter_webview_plugin"
     source: git
     version: "0.3.5"
   hex:
@@ -185,13 +185,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  preferences:
-    dependency: "direct main"
-    description:
-      name: preferences
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.0.0"
   quiver:
     dependency: transitive
     description:

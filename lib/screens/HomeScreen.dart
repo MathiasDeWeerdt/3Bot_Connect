@@ -236,14 +236,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 topRight: Radius.circular(20.0),
               ),
               child: FutureBuilder(
-                  future: getDoubleName(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      return registered(context);
-                    } else {
-                      return notRegistered(context);
-                    }
-                  }),
+                future: getDoubleName(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    return registered(context);
+                  } else {
+                    return notRegistered(context);
+                  }
+                },
+              ),
             ),
           ),
         ),
@@ -269,11 +270,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         RaisedButton(
           shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(10)),
-          padding: EdgeInsets.all(12),
+            borderRadius: new BorderRadius.circular(10),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
           child: Text(
             "Scan QR code",
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white,),
           ),
           color: Theme.of(context).accentColor,
           onPressed: () {
@@ -282,7 +284,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         RaisedButton(
           shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(10)),
+            borderRadius: new BorderRadius.circular(10),
+          ),
           padding: EdgeInsets.all(12),
           child: Text(
             "Recover Account",

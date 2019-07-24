@@ -35,10 +35,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     var generated = 1;
     var rng = new Random();
-    if (isNumeric(widget.message['randomImageId']))
+    if (isNumeric(widget.message['randomImageId'])) {
       correctImage = int.parse(widget.message['randomImageId']);
-    else
+    } else {
       correctImage = 1;
+    }
 
     imageList.add(correctImage);
 
@@ -112,8 +113,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           FlatButton(
                             padding: EdgeInsets.all(2),
                             child: Text(
-                              "It wasn\'t me",
-                              style: TextStyle(fontSize: 16.0, color: Color(0xff0f296a) ),
+                              "It wasn\'t me - cancel",
+                              style: TextStyle(
+                                  fontSize: 16.0, color: Color(0xff0f296a)),
                             ),
                             onPressed: () {
                               cancelIt();
@@ -145,7 +147,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 await getKeys(widget.message['appId'], scope['doubleName']);
           }
         }
-        showScopeDialog(context, scope, widget.message['appId'], sendIt, cancelCallback: cancelIt);
+        showScopeDialog(context, scope, widget.message['appId'], sendIt,
+            cancelCallback: cancelIt);
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('Oops... you entered the wrong pin'),

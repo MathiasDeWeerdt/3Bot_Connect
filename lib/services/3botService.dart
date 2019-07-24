@@ -43,17 +43,35 @@ Future sendData(String hash, String signedHash, data, selectedImageId) {
       headers: requestHeaders);
 }
 
-Future sendPublicKey(Map<String, Object> data) {
+Future sendPublicKey(Map<String, Object> data) async {
   logger
       .log('Sending appPublicKey to backend with appId: ' + json.encode(data));
+
+  String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
+  String privatekey = await getPrivateKey();
+
+  Map<String, dynamic> headers = {
+    "timestamp": timestamp,
+    "intention": "post-savederivedpublickey"
+  };
+  String signedHeaders = await signData(jsonEncode(headers), privatekey);
+
+  Map<String, String> loginRequestHeaders = {
+    'Content-type': 'application/json',
+    'Jimber-Authorization': signedHeaders
+  };
+
   return http.post('$threeBotApiUrl/savederivedpublickey',
-      body: json.encode(data), headers: requestHeaders);
+      body: json.encode(data), headers: loginRequestHeaders);
 }
 
 Future checkLoginAttempts(String doubleName) async {
   String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
   String privatekey = await getPrivateKey();
-  Map<String, dynamic> payload = {"timestamp": timestamp, "intention": "attempts"};
+  Map<String, dynamic> payload = {
+    "timestamp": timestamp,
+    "intention": "attempts"
+  };
   String signedPayload = await signData(jsonEncode(payload), privatekey);
 
   Map<String, String> loginRequestHeaders = {
@@ -69,7 +87,10 @@ Future<Response> removeDeviceId(String doubleName) async {
   String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
   String privatekey = await getPrivateKey();
 
-  Map<String, dynamic> payload = {"timestamp": timestamp, "intention": "delete-deviceid"};
+  Map<String, dynamic> payload = {
+    "timestamp": timestamp,
+    "intention": "delete-deviceid"
+  };
   String signedPayload = await signData(jsonEncode(payload), privatekey);
 
   Map<String, String> loginRequestHeaders = {
@@ -118,5 +139,5 @@ Future<int> checkVersionNumber(BuildContext context, String version) async {
 
 Future cancelLogin(doubleName) {
   return http.post('$threeBotApiUrl/users/$doubleName/cancel',
-      body:null, headers: requestHeaders);
+      body: null, headers: requestHeaders);
 }

@@ -69,7 +69,8 @@ Future<Map<String, Object>> generateDerivedKeypair(
   PBKDF2 generator = new PBKDF2();
   List<int> hashKey = generator.generateKey(privateKey, appId, 1000, 32);
 
-  Map<String, Uint8List> key = await Sodium.cryptoBoxSeedKeypair(new Uint8List.fromList(hashKey));
+  Map<String, Uint8List> key =
+      await Sodium.cryptoBoxSeedKeypair(new Uint8List.fromList(hashKey));
 
   // derivedPublicKey = null;
   // derivedPrivateKey = null;
@@ -78,7 +79,7 @@ Future<Map<String, Object>> generateDerivedKeypair(
     derivedPublicKey = base64.encode(key['pk']);
     prefs.setString("${appId.toString()}.dpk", derivedPublicKey);
 
-    String privateKey = await getPrivateKey();
+    // String privateKey = await getPrivateKey();
 
     var data = {
       'doubleName': doubleName,

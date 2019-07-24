@@ -36,13 +36,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     return Scaffold(
       key: _prefScaffold,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            showAdvancedOptions = false;
-            Navigator.pop(context);
-          },
-        ),
         title: Text('Preferences'),
         elevation: 0.0,
       ),
@@ -88,16 +81,16 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                           Material(
                             child: ListTile(
                               trailing:
-                                  emailunVerified ? Icon(Icons.refresh) : null,
+                                  !emailunVerified ? Icon(Icons.refresh) : null,
                               leading: Icon(Icons.mail),
                               title: Text(emailAdress),
-                              subtitle: emailunVerified
+                              subtitle: !emailunVerified
                                   ? Text(
                                       "Unverified",
                                       style: TextStyle(color: Colors.grey),
                                     )
                                   : Container(),
-                              onTap: emailunVerified
+                              onTap: !emailunVerified
                                   ? sendVerificationEmail
                                   : null,
                             ),
@@ -156,6 +149,12 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
               FlatButton(
                 child: new Text("Continue"),
                 onPressed: () async {
+                  for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+                    if (flutterWebViewPlugin != null) {
+                      flutterWebViewPlugin.cleanCookies();
+                      flutterWebViewPlugin.close();
+                    }
+                  }
                   await clearData();
                   Navigator.popUntil(
                     context,
@@ -215,8 +214,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   Future copySeedPhrase() async {
     Clipboard.setData(new ClipboardData(text: await getPhrase()));
     _prefScaffold.currentState.showSnackBar(SnackBar(
-        content: Text('Seedphrase copied to clipboard'),
-      ));
+      content: Text('Seedphrase copied to clipboard'),
+    ));
   }
 
   Future checkPin(pin) async {

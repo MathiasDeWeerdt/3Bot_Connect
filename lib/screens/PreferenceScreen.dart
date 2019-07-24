@@ -138,7 +138,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             image: Icons.error,
             title: "Are you sure?",
             description: new Text(
-                "If you continue, you won't be able to login with the current account again (for now). However, this acccount still exists."),
+                "If you confirm, you won't be able to login with the current account again (for now). However, this acccount still exists."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Cancel"),
@@ -147,7 +147,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 },
               ),
               FlatButton(
-                child: new Text("Continue"),
+                child: new Text("Yes"),
                 onPressed: () async {
                   for (var flutterWebViewPlugin in flutterWebViewPlugins) {
                     if (flutterWebViewPlugin != null) {

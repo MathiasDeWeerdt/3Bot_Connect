@@ -94,6 +94,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Doublename',
+                            suffixText: '.3bot',
+                            suffixStyle: TextStyle(fontWeight: FontWeight.bold)
                           ),
                           controller: doubleNameController,
                           onSubmitted: (value) {

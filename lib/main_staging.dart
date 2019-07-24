@@ -26,6 +26,7 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": 'Where privacy and social media co-exist.',
+      "url" : 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
       "disabled": false,
       "initialUrl": 'https://staging.freeflowpages.com/',

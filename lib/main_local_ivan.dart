@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'config.dart';
 import 'main.dart';
 
-void main() {
+void main() async {
+  //debugPaintSizeEnabled=true;
   var config = Config(
       name: '3bot local',
       threeBotApiUrl: 'http://192.168.2.80:5000/api',
       openKycApiUrl: 'http://192.168.2.80:5005',
       threeBotFrontEndUrl: 'http://192.168.2.80:8080/',
-      child: new MyApp()
-  );
-  
+      child: new MyApp());
+
   init();
 
   apps = [
@@ -27,11 +29,10 @@ void main() {
       "subheading": 'Where privacy and social media co-exist.',
       "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://www2.freeflowpages.com/',
+      "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
       "id": 0,
-      'cookieUrl':
-          'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
+      'cookieUrl': 'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false
     },
@@ -114,6 +115,9 @@ void main() {
     }
   ];
 
-  runApp(config);
-  logger.log("running main_local_ivan.dart");
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(config);
+    logger.log("running main_staging.dart");
+  });
 }

@@ -163,7 +163,7 @@ class _RegistrationWithoutScanScreen
                 child: new Text("Cancel"),
                 onPressed: () {
                   // Navigator.popUntil(context, ModalRoute.withName('/'));
-                  Navigator.pushReplacementNamed(context, '/profile');
+                  Navigator.pushReplacementNamed(context, '/preference');
                 },
               ),
               FlatButton(

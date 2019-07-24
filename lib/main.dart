@@ -30,7 +30,7 @@ List<Map<String, dynamic>> apps = [
     "visible": false,
     "id": 0,
     'cookieUrl': 'https://freeflowpages.com/user/auth/external?authclient=3bot'
-  },
+  }/*,
   {
     "name": 'OpenBrowser',
     "subheading": 'By Jimber (Coming soon)',
@@ -41,8 +41,9 @@ List<Map<String, dynamic>> apps = [
     "visible": false,
     "id": 1,
     'cookieUrl': ''
-  }
+  }*/
 ];
+
 
 void init() async {
   logger = new LoggingService();

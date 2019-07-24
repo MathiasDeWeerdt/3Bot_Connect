@@ -34,7 +34,7 @@ dependencies:
   uni_links:
   flutter_webview_plugin:
     git:
-      url: https://github.com/jdelrue/flutter_webview_plugin
+      url: https://github.com/coeneivan/flutter_webview_plugin
   cupertino_icons: ^0.1.2
   crypto: ^2.0.6
   bip39: ^1.0.3

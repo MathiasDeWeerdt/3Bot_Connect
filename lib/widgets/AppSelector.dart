@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:http/http.dart' as http;
@@ -31,8 +32,8 @@ class _AppSelectorState extends State<AppSelector> {
   void initState() {
     super.initState();
     for (var app in apps) {
-      logger.log("adding app webplugin " + app['id'].toString());
-      flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin();
+      logger.log("adding app webplugin " + app['id'].toString() + " " + app['name'].toString());
+      flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin(); 
     }
   }
 
@@ -48,7 +49,8 @@ class _AppSelectorState extends State<AppSelector> {
         final request = new http.Request('GET', Uri.parse(url))
           ..followRedirects = false;
         final response = await client.send(request);
-
+        logger.log('-----');
+        logger.log(response.headers);
         final state =
             Uri.decodeFull(response.headers['location'].split("&state=")[1]);
         final privateKey = await getPrivateKey();
@@ -64,7 +66,9 @@ class _AppSelectorState extends State<AppSelector> {
             response.headers['location'].split("&scope=")[1].split("&")[0]);
         final publickey = Uri.decodeFull(
             response.headers['location'].split("&publickey=")[1].split("&")[0]);
+        logger.log(response.headers['set-cookie'].toString() + " Lower");
         cookies = response.headers['set-cookie'];
+
         final union = '?';
 
         final scopeData = {};
@@ -77,18 +81,25 @@ class _AppSelectorState extends State<AppSelector> {
             (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
         loadUrl =
-            '$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
-      }
+            'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+
+            var cookieList = List<Cookie>();
+      cookieList.add(Cookie.fromSetCookieValue(cookies));
 
       flutterWebViewPlugins[appId].launch(loadUrl,
-          rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+          rect: Rect.fromLTWH(0.0, 75, size.width, size.height- 75),
           userAgent: kAndroidUserAgent,
-          hidden: true);
-
-      if (cookies != '') {
-        flutterWebViewPlugins[appId].setCookies(cookies);
+          hidden: true,
+          cookies: cookieList);
+      } else {
+        flutterWebViewPlugins[appId].launch(loadUrl,
+          rect: Rect.fromLTWH(0.0, 75, size.width, size.height- 75),
+          userAgent: kAndroidUserAgent,
+          hidden: true,
+          cookies: []);
+          logger.log("Launching App" + [appId].toString());
       }
-
+          
       logger.log(loadUrl);
       logger.log(cookies);
     } on NoSuchMethodError catch (exception) {
@@ -121,7 +132,7 @@ class _AppSelectorState extends State<AppSelector> {
               scrollDirection: Axis.horizontal,
               itemCount: apps.length,
               itemBuilder: (BuildContext ctxt, int index) {
-                logger.log("adding app " + index.toString());
+                logger.log("adding app " + index.toString() + " call 2");
 
                 return SingleApp(apps[index], updateApp);
               }))
@@ -185,22 +196,23 @@ class _AppSelectorState extends State<AppSelector> {
       }
     } else {
       showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
-              image: Icons.error,
-              title: "Coming soon",
-              description: new Text("This will be available soon."),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                FlatButton(
-                  child: new Text("Ok"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-      );
+          context: context,
+          builder: (BuildContext context) => CustomDialog(
+                image: Icons.error,
+                title: "Coming soon",
+                description:
+                    new Text("This will be available soon."),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  FlatButton(
+                    child: new Text("Ok"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+        );
     }
   }
 }

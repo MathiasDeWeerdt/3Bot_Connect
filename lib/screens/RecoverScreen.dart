@@ -54,91 +54,119 @@ class _RecoverScreenState extends State<RecoverScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Recover Account')),
-      body: Center(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Theme.of(context).primaryColor,
         child: Container(
-          height: 400,
-          width: 300,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.5),
-                child: Text(
-                  'Please insert your passphrase',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
               ),
-              TextField(
-                textInputAction: TextInputAction.send,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Doublename',
-                ),
-                controller: doubleNameController,
-                onSubmitted: (value) {
-                  doubleName = value;
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.5),
-                child: new Theme(
-                  data: new ThemeData(
-                    primaryColor: Colors.blueAccent,
-                    primaryColorDark: Colors.blue,
-                  ),
-                  child: TextField(
-                    textInputAction: TextInputAction.send,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.red[300], style: BorderStyle.solid),
-                      ),
-                      labelText: 'Email',
-                    ),
-                    controller: emailController,
-                    onSubmitted: (value) {
-                      emailUser = value;
-                    },
+            ),
+            child: Container(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.5),
-                child: TextField(
-                  textInputAction: TextInputAction.send,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Key',
-                  ),
-                  controller: keyPhraseController,
-                  onSubmitted: (value) {
-                    keyPhrase = value;
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.5),
-                child: RaisedButton(
-                  shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10)),
-                  padding: EdgeInsets.all(12),
-                  child: Text(
-                    "Recover Account",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  onPressed: () async {
-                    logger.log("Onpressed");
+                child: Container(
+                  padding: EdgeInsets.all(24.0),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: Text(
+                            'Please insert your passphrase',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        TextField(
+                          textInputAction: TextInputAction.send,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Doublename',
+                          ),
+                          controller: doubleNameController,
+                          onSubmitted: (value) {
+                            doubleName = value;
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.5),
+                          child: new Theme(
+                            data: new ThemeData(
+                              primaryColor: Colors.blueAccent,
+                              primaryColorDark: Colors.blue,
+                            ),
+                            child: TextField(
+                              textInputAction: TextInputAction.send,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.red[300],
+                                      style: BorderStyle.solid),
+                                ),
+                                labelText: 'Email',
+                              ),
+                              controller: emailController,
+                              onSubmitted: (value) {
+                                emailUser = value;
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.5),
+                          child: TextField(
+                            textInputAction: TextInputAction.send,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Key',
+                            ),
+                            controller: keyPhraseController,
+                            onSubmitted: (value) {
+                              keyPhrase = value;
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 64.0),
+                          child: RaisedButton(
+                            shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(10)),
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              "Recover Account",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            color: Theme.of(context).accentColor,
+                            onPressed: () async {
+                              logger.log("Onpressed");
 
-                    await recoveringAccount();
-                    colorEmail = Color(0xffff0000);
-                    setState(() {
-                      colorEmail.toString();
-                    });
-                  },
+                              await recoveringAccount();
+                              colorEmail = Color(0xffff0000);
+                              setState(() {
+                                colorEmail.toString();
+                              });
+                            },
+                          ),
+                        ),
+                        Text(userNotFound),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              Text(userNotFound),
-            ],
+            ),
           ),
         ),
       ),
@@ -244,8 +272,6 @@ class _RecoverScreenState extends State<RecoverScreen> {
       String deviceId = await messaging.getToken();
       updateDeviceId(deviceId, doubleName);
 
-      Navigator.popAndPushNamed(context, '/profile');
-
       openPincodeScreen();
     }
 
@@ -256,7 +282,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
       prefs.setString('email', emailUser);
       prefs.setString('doubleName', doubleName);
       prefs.setBool('firstvalidation', true);
-      Navigator.popAndPushNamed(context, '/profile');
+      Navigator.popAndPushNamed(context, '/preference');
     } else {}
   }
 

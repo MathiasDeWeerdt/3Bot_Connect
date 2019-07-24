@@ -44,23 +44,39 @@ class _ScanScreenState extends State<RegistrationScreen>
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-            color: Colors.transparent,
-            child: Container(
-                decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0))),
-                padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
-                width: double.infinity,
-                child: Text(
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0))),
+            padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                SizedBox(width: 60.0,),
+                Text(
                   'REGISTRATION',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 21.0),
-                ))),
+                ),
+                FloatingActionButton(
+                  tooltip: "What should I do?",
+                  mini: true,
+                  onPressed: () {
+                    _showInformation();
+                  },
+                  child: Icon(Icons.help_outline),
+                ),
+              ],
+            ),
+          ),
+        ),
         Container(
             color: Theme.of(context).primaryColor,
             child: Container(
@@ -102,21 +118,27 @@ class _ScanScreenState extends State<RegistrationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
-        body: Stack(children: [
+      key: _scaffoldKey,
+      body: Stack(
+        children: [
           Scanner(
             callback: (qr) => gotQrData(qr),
             context: context,
           ),
           Align(alignment: Alignment.bottomCenter, child: content()),
-          Align(alignment: Alignment.bottomRight, child: FloatingActionButton(tooltip: "What should I do?",
-            onPressed: () {
-              _showInformation();
-            }
-            ,
-            child: Icon(Icons.help_outline),
-          ),)
-        ]));
+          // Align(
+          //   alignment: Alignment.bottomRight,
+          //   child: FloatingActionButton(
+          //     tooltip: "What should I do?",
+          //     onPressed: () {
+          //       _showInformation();
+          //     },
+          //     child: Icon(Icons.help_outline),
+          //   ),
+          // )
+        ],
+      ),
+    );
   }
 
   gotQrData(value) async {
@@ -134,7 +156,6 @@ class _ScanScreenState extends State<RegistrationScreen>
         doubleName == null ||
         email == null ||
         phrase == null) {
-      print("something is null");
       showError();
     } else {
       var signedDeviceId = signData(deviceId, privateKey);
@@ -179,8 +200,6 @@ class _ScanScreenState extends State<RegistrationScreen>
           scope['keys'] = {'keys': qrData['keys']};
         }
       }
-      // Debug
-      print('Registration: \n $qrData ');
       showScopeDialog(context, scope, qrData['appId'], saveValues);
     }
   }
@@ -211,22 +230,30 @@ class _ScanScreenState extends State<RegistrationScreen>
   }
 
   _showInformation() {
-    var _stepsList = 'Step 1: Go to the website: https://www.freeflowpages.com/  \n' + 'Step 2: Create an account\n' + 'Step 3: Scan the QR code\n';
+    var _stepsList =
+        'Step 1: Go to the website: https://www.freeflowpages.com/  \n' +
+            'Step 2: Create an account\n' +
+            'Step 3: Scan the QR code\n';
 
     showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
-              image: Icons.error,
-              title: "Steps",
-              description: new Text(_stepsList, textAlign: TextAlign.center, textScaleFactor: 1.2,),
-              actions: <Widget>[
-                FlatButton(
-                  child: new Text("Continue"),
-                  onPressed: () {
-                      Navigator.pop(context);
-                  },
-                ),
-              ],
-            ));
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+            image: Icons.error,
+            title: "Steps",
+            description: new Text(
+              _stepsList,
+              textAlign: TextAlign.center,
+              textScaleFactor: 1.2,
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Continue"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+    );
   }
 }

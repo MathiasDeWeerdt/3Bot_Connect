@@ -34,13 +34,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     return Scaffold(
       key: _prefScaffold,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            showAdvancedOptions = false;
-            Navigator.pop(context);
-          },
-        ),
         title: Text('Preferences'),
         elevation: 0.0,
       ),
@@ -143,7 +136,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             image: Icons.error,
             title: "Are you sure?",
             description: new Text(
-                "If you continue, you won't be able to login with the current account again (for now). However, this acccount still exists."),
+                "If you confirm, you won't be able to login with the current account again (for now). However, this acccount still exists."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Cancel"),
@@ -152,8 +145,14 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 },
               ),
               FlatButton(
-                child: new Text("Continue"),
+                child: new Text("Yes"),
                 onPressed: () async {
+                  for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+                    if (flutterWebViewPlugin != null) {
+                      flutterWebViewPlugin.cleanCookies();
+                      flutterWebViewPlugin.close();
+                    }
+                  }
                   await clearData();
                   Navigator.popUntil(
                     context,
@@ -213,8 +212,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   Future copySeedPhrase() async {
     Clipboard.setData(new ClipboardData(text: await getPhrase()));
     _prefScaffold.currentState.showSnackBar(SnackBar(
-        content: Text('Seedphrase copied to clipboard'),
-      ));
+      content: Text('Seedphrase copied to clipboard'),
+    ));
   }
 
   Future checkPin(pin) async {

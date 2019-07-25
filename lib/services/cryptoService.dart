@@ -61,7 +61,7 @@ Future<Map<String, Object>> generateDerivedKeypair(
     derivedPublicKey = base64.encode(key['pk']);
     prefs.setString("${appId.toString()}.dpk", derivedPublicKey);
 
-    String privateKey = await getPrivateKey();
+    // String privateKey = await getPrivateKey();
 
     var data = {
       'doubleName': doubleName,

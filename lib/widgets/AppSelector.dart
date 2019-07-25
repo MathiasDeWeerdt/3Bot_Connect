@@ -32,8 +32,8 @@ class _AppSelectorState extends State<AppSelector> {
   void initState() {
     super.initState();
     for (var app in apps) {
-      logger.log("adding app webplugin " + app['id'].toString() + " " + app['name'].toString());
-      flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin(); 
+      logger.log("adding app webplugin " + app['id'].toString());
+      flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin();
     }
   }
 
@@ -83,23 +83,23 @@ class _AppSelectorState extends State<AppSelector> {
         loadUrl =
             'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
 
-            var cookieList = List<Cookie>();
-      cookieList.add(Cookie.fromSetCookieValue(cookies));
+        var cookieList = List<Cookie>();
+        cookieList.add(Cookie.fromSetCookieValue(cookies));
 
-      flutterWebViewPlugins[appId].launch(loadUrl,
-          rect: Rect.fromLTWH(0.0, 75, size.width, size.height- 75),
-          userAgent: kAndroidUserAgent,
-          hidden: true,
-          cookies: cookieList);
+        flutterWebViewPlugins[appId].launch(loadUrl,
+            rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+            userAgent: kAndroidUserAgent,
+            hidden: true,
+            cookies: cookieList);
       } else {
         flutterWebViewPlugins[appId].launch(loadUrl,
-          rect: Rect.fromLTWH(0.0, 75, size.width, size.height- 75),
-          userAgent: kAndroidUserAgent,
-          hidden: true,
-          cookies: []);
-          logger.log("Launching App" + [appId].toString());
+            rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+            userAgent: kAndroidUserAgent,
+            hidden: true,
+            cookies: []);
+        logger.log("Launching App" + [appId].toString());
       }
-          
+
       logger.log(loadUrl);
       logger.log(cookies);
     } on NoSuchMethodError catch (exception) {
@@ -115,7 +115,7 @@ class _AppSelectorState extends State<AppSelector> {
     final prefsF = SharedPreferences.getInstance();
 
     prefsF.then((pres) {
-      if (!isLaunched && pres.containsKey('firstValidation')) {
+      if (!isLaunched && pres.containsKey('firstvalidation')) {
         isLaunched = true;
         for (var app in apps) {
           logger.log(app['url']);
@@ -146,14 +146,24 @@ class _AppSelectorState extends State<AppSelector> {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
 
-          if (!prefs.containsKey('firstValidation')) {
+          if (!prefs.containsKey('firstvalidation')) {
             final size = MediaQuery.of(context).size;
             isLaunched = true;
-            launchApp(size, app['id']);
-            prefs.setBool('firstValidation', true);
+
+            for (var oneApp in apps) {
+              if (app['id'] != oneApp['id']) {
+                logger.log(oneApp['url']);
+                logger.log("launching app " + oneApp['id'].toString());
+                launchApp(size, oneApp['id']);
+              }
+            }
+            await launchApp(size, app['id']);
+            flutterWebViewPlugins[app['id']].show();
+            prefs.setBool('firstvalidation', true);
           }
 
           widget.notifyParent(app['color']);
+          logger.log("Webviews is showing");
           flutterWebViewPlugins[app['id']].show();
         } else {
           showDialog(
@@ -196,23 +206,22 @@ class _AppSelectorState extends State<AppSelector> {
       }
     } else {
       showDialog(
-          context: context,
-          builder: (BuildContext context) => CustomDialog(
-                image: Icons.error,
-                title: "Coming soon",
-                description:
-                    new Text("This will be available soon."),
-                actions: <Widget>[
-                  // usually buttons at the bottom of the dialog
-                  FlatButton(
-                    child: new Text("Ok"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-        );
+        context: context,
+        builder: (BuildContext context) => CustomDialog(
+              image: Icons.error,
+              title: "Coming soon",
+              description: new Text("This will be available soon."),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  child: new Text("Ok"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+      );
     }
   }
 }

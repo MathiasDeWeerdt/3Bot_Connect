@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:crypto/crypto.dart';
+import 'package:password_hash/pbkdf2.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/3botService.dart';
@@ -26,10 +27,10 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   final doubleNameController = TextEditingController();
   final emailController = TextEditingController();
-  final keyPhraseController = TextEditingController();
+  final seedPhraseController = TextEditingController();
   String doubleName = "";
   String emailUser = "";
-  String keyPhrase = "";
+  String seedPhrase = "";
   String entropy;
   Color colorEmail = Color(0xff0f296a);
   bool newEmail = false;
@@ -37,6 +38,11 @@ class _RecoverScreenState extends State<RecoverScreen> {
   int timeStamp = new DateTime.now().millisecondsSinceEpoch;
 
   String userNotFound = '';
+  String emailNotFound = '';
+
+  bool _validateUser = false;
+  bool _validateEmail = false;
+  bool _validateSeedPhrase = false;
 
   void initState() {
     super.initState();
@@ -45,7 +51,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
   @override
   void dispose() {
     doubleNameController.dispose();
-    keyPhraseController.dispose();
+    seedPhraseController.dispose();
     emailController.dispose();
     super.dispose();
   }
@@ -77,7 +83,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                   ),
                 ),
                 child: Container(
-                  padding: EdgeInsets.all(24.0),
+                  padding: EdgeInsets.all(20.0),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -85,7 +91,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
                           child: Text(
-                            'Please insert your passphrase',
+                            'Please insert your info',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -94,6 +100,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Doublename',
+                            errorText: _validateUser ? 'Doublename Can\'t Be Empty' : null,
                             suffixText: '.3bot',
                             suffixStyle: TextStyle(fontWeight: FontWeight.bold)
                           ),
@@ -118,6 +125,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                                       style: BorderStyle.solid),
                                 ),
                                 labelText: 'Email',
+                                errorText: _validateEmail ? 'Email Can\'t Be Empty' : null,
                               ),
                               controller: emailController,
                               onSubmitted: (value) {
@@ -133,10 +141,11 @@ class _RecoverScreenState extends State<RecoverScreen> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Key',
+                              errorText: _validateSeedPhrase ? 'Key Can\'t Be Empty' : null,
                             ),
-                            controller: keyPhraseController,
+                            controller: seedPhraseController,
                             onSubmitted: (value) {
-                              keyPhrase = value;
+                              seedPhrase = value;
                             },
                           ),
                         ),
@@ -153,7 +162,10 @@ class _RecoverScreenState extends State<RecoverScreen> {
                             color: Theme.of(context).accentColor,
                             onPressed: () async {
                               logger.log("Onpressed");
-
+                              FocusScope.of(context).requestFocus(new FocusNode());
+                              doubleNameController.text.isEmpty ? _validateUser = true : _validateUser = false;
+                              emailController.text.isEmpty ? _validateEmail = true : _validateEmail = false;
+                              seedPhraseController.text.isEmpty ? _validateSeedPhrase = true : _validateSeedPhrase = false;
                               await recoveringAccount();
                               colorEmail = Color(0xffff0000);
                               setState(() {
@@ -162,7 +174,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
                             },
                           ),
                         ),
-                        Text(userNotFound),
+                        Text(userNotFound, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                        Text(emailNotFound, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -204,7 +217,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
   Future<void> recoveringAccount() async {
     doubleName = doubleNameController.text + ".3bot";
     emailUser = emailController.text;
-    keyPhrase = keyPhraseController.text;
+    seedPhrase = seedPhraseController.text;
 
     logger.log("entering recoveringAccount");
 
@@ -212,6 +225,10 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
     Map emailData = await getMailFromKyc(doubleName);
     entropy = await getprivatekey();
+
+    setState(() {
+      
+    });
 
     Map<String, Uint8List> key =
         await Sodium.cryptoSignSeedKeypair(toHex(entropy));
@@ -242,24 +259,9 @@ class _RecoverScreenState extends State<RecoverScreen> {
     bool isSameEmail = mailmd5U == emailData['emailmd5'];
 
     if (!isSameEmail) {
-      var done = showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
-              image: Icons.error,
-              title: "Email address is not the same!",
-              description: new Text("Please enter the right email"),
-              actions: <Widget>[
-                FlatButton(
-                  child: new Text("Continue"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-      );
-      await done;
+      emailNotFound = "Email is not found";
     } else {
+      emailNotFound = "";
       bool isVerified = emailData['verified'] == 1;
 
       final prefs = await SharedPreferences.getInstance();
@@ -267,7 +269,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
       prefs.setString('publickey', base64.encode(key['pk']).toString());
       prefs.setString('email', emailUser);
       prefs.setString('doubleName', doubleName);
-      prefs.setString('phrase', keyPhrase);
+      prefs.setString('phrase', seedPhrase);
       prefs.setBool('firstvalidation', false);
       prefs.setBool('emailVerified', isVerified);
 
@@ -303,7 +305,12 @@ class _RecoverScreenState extends State<RecoverScreen> {
         var publickey = await checkpublickey(doubleName);
         var body = jsonDecode(publickey.body);
 
-        return body['publicKey'];
+        if(publickey != null){
+          userNotFound = "";
+          return body['publicKey'];
+        } else {
+          return body = null;
+        }
       }
 
       return null;
@@ -324,14 +331,20 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
         var emailHash = await getEmailInfo;
         var body = jsonDecode(emailHash.body);
-
+        if(body != null){
+        emailNotFound = "";
         return {'emailmd5': body['email'], 'verified': body['verified']};
+        }
+      
+        emailNotFound = "Email does not exist";
+        return null;
+        
       }
 
       return null;
     } catch (e) {
       logger.log(e);
-      userNotFound = "Email not corresponding with Double name";
+      emailNotFound = "Email not found";
       return null;
     }
   }
@@ -339,7 +352,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
   // Will get privatekey out of user key phrase
   Future<String> getprivatekey() async {
     try {
-      return bip39.mnemonicToEntropy(keyPhrase);
+      return bip39.mnemonicToEntropy(seedPhrase);
     } catch (e) {
       logger.log(e);
     }

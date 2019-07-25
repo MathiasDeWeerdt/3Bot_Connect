@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:threebotlogin/widgets/SingleApp.dart';
 import 'package:threebotlogin/main.dart';
 
+import 'package:threebotlogin/services/openKYCService.dart';
 import 'CustomDialog.dart';
 
 class AppSelector extends StatefulWidget {
@@ -28,6 +29,8 @@ class _AppSelectorState extends State<AppSelector> {
       //'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36';
       'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
   bool isLaunched = false;
+
+  final _appSelectScaffold = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -138,6 +141,32 @@ class _AppSelectorState extends State<AppSelector> {
               }))
     ]);
   }
+    void sendVerificationEmail() async {
+    // _appSelectScaffold.currentState.showSnackBar(SnackBar(
+    //   content: Text('Resending verification email...'),
+    // )); @ivancone pls help
+    await resendVerificationEmail();
+    _showResendEmailDialog();
+  }
+
+  void _showResendEmailDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+            image: Icons.check,
+            title: "Email has been resend.",
+            description: new Text("A new verification email has been send."),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+    );
+  }
 
   Future updateApp(app) async {
     if (!app['disabled']) {
@@ -197,6 +226,13 @@ class _AppSelectorState extends State<AppSelector> {
                   FlatButton(
                     child: new Text("Ok"),
                     onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    child: new Text("Resend email"),
+                    onPressed: () {
+                      sendVerificationEmail();
                       Navigator.pop(context);
                     },
                   ),

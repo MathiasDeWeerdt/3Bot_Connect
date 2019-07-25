@@ -1,38 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_sodium/flutter_sodium.dart';
 import 'package:password_hash/password_hash.dart';
-import 'package:threebotlogin/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
 
-// Future<String> signHash(String stateHash, String sk) async {
-//   logger.log('stateHash' + stateHash);
-//   var private = base64.decode(sk);
-//   var signedHash =
-//       await Sodium.cryptoSign(Uint8List.fromList(stateHash.codeUnits), private);
-//   var base64EncryptedSignedHash = base64.encode(signedHash);
 
-//   return base64EncryptedSignedHash;
-// }
-
-// Future<String> signData(String timestamp, String sk) async {
-//   logger.log('timestamp' + timestamp);
-//   var private = base64.decode(sk);
-//   var signedTimestamp =
-//       await Sodium.cryptoSign(Uint8List.fromList(timestamp.codeUnits), private);
-
-//   return base64.encode(signedTimestamp);
-// }
-
-// Future<String> sign(String other, String sk) async {
-//   var private = base64.decode(sk);
-//   var signed =
-//       await Sodium.cryptoSign(Uint8List.fromList(other.codeUnits), private);
-
-//   return base64.encode(signed);
-// }
+Future<Map<String, String>> generateKeyPair () async {
+  var keys = await Sodium.cryptoSignKeypair();
+   return {
+    'privateKey': base64.encode(keys['sk']),
+    'publicKey': base64.encode(keys['pk'])
+  };
+}
 
 Future<String> signData(String data, String sk) async {
   var private = base64.decode(sk);
@@ -69,7 +51,8 @@ Future<Map<String, Object>> generateDerivedKeypair(
   PBKDF2 generator = new PBKDF2();
   List<int> hashKey = generator.generateKey(privateKey, appId, 1000, 32);
 
-  Map<String, Uint8List> key = await Sodium.cryptoBoxSeedKeypair(new Uint8List.fromList(hashKey));
+  Map<String, Uint8List> key =
+      await Sodium.cryptoBoxSeedKeypair(new Uint8List.fromList(hashKey));
 
   // derivedPublicKey = null;
   // derivedPrivateKey = null;

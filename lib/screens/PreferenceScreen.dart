@@ -15,13 +15,11 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   Map email;
   String doubleName = '';
   String phrase = '';
-  bool emailunVerified = false;
+  bool emailVerified = false;
   bool showAdvancedOptions = false;
   Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_down);
   String emailAdress = '';
   final _prefScaffold = GlobalKey<ScaffoldState>();
-
-  bool _act = true;
 
   var thiscolor = Colors.green;
 
@@ -88,16 +86,16 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                           Material(
                             child: ListTile(
                               trailing:
-                                  emailunVerified ? Icon(Icons.refresh) : null,
+                                  !emailVerified ? Icon(Icons.refresh) : null,
                               leading: Icon(Icons.mail),
                               title: Text(emailAdress),
-                              subtitle: emailunVerified
+                              subtitle: !emailVerified
                                   ? Text(
                                       "Unverified",
                                       style: TextStyle(color: Colors.grey),
                                     )
                                   : Container(),
-                              onTap: emailunVerified
+                              onTap: !emailVerified
                                   ? sendVerificationEmail
                                   : null,
                             ),
@@ -267,7 +265,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
         email = emailMap;
         if (email['email'] != null || email['verified']) {
           emailAdress = email['email'];
-          emailunVerified = email['verified'];
+          emailVerified = email['verified'];
         }
       });
     });

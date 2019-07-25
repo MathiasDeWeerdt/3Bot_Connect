@@ -13,10 +13,6 @@ showScopeDialog(context, Map<dynamic, dynamic> scope, String appId, callback, {c
           description: scopeList(context, scope),
           actions: <Widget>[
             FlatButton(
-              child: Text("Cancel"),
-              onPressed: cancelCallback
-            ),
-            FlatButton(
               child: Text("Ok"),
               onPressed: callback,
             )

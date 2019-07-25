@@ -26,7 +26,7 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": 'Where privacy and social media co-exist.',
-      "url" : 'https://staging.freeflowpages.com/',
+      "url": 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
       "disabled": false,
       "initialUrl": 'https://staging.freeflowpages.com/',
@@ -48,12 +48,15 @@ void main() async {
       ),
       "subheading": '',
       "url": 'https://wallet.staging.jimber.org',
+      "appid": 'wallet.staging.jimber.org',
+      "redirecturl" : '/login',
       "bg": 'nbh.png',
       "disabled": false,
       "initialUrl": 'https://wallet.staging.jimber.org',
       "visible": false,
       "id": 1,
       'cookieUrl': '',
+      'localStorageKeys': true,
       'color': 0xFF34495e,
       'errorText': false
     },
@@ -79,7 +82,7 @@ void main() async {
     },
     {
       "content": Text(
-        'FreeflowConnect',
+        'FreeFlowConnect',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,

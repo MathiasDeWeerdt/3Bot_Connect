@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_sodium/flutter_sodium.dart';
+import 'package:password_hash/password_hash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:http/http.dart' as http;
 import 'package:threebotlogin/widgets/SingleApp.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/services/toolsService.dart';
 
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'CustomDialog.dart';
@@ -46,7 +49,10 @@ class _AppSelectorState extends State<AppSelector> {
       var url = apps[appId]['cookieUrl'];
       var loadUrl = apps[appId]['url'];
 
+      var localStorageKeys = apps[appId]['localStorageKeys'];
+
       var cookies = '';
+      final union = '?';
       if (url != '') {
         final client = http.Client();
         final request = new http.Request('GET', Uri.parse(url))
@@ -72,8 +78,6 @@ class _AppSelectorState extends State<AppSelector> {
         logger.log(response.headers['set-cookie'].toString() + " Lower");
         cookies = response.headers['set-cookie'];
 
-        final union = '?';
-
         final scopeData = {};
 
         if (scope != null && scope.contains("user:email")) {
@@ -93,13 +97,52 @@ class _AppSelectorState extends State<AppSelector> {
             rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
             userAgent: kAndroidUserAgent,
             hidden: true,
-            cookies: cookieList);
+            cookies: cookieList,
+            withLocalStorage: true);
+      } else if (localStorageKeys) {
+        await flutterWebViewPlugins[appId].launch(loadUrl + '/error',
+            rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+            userAgent: kAndroidUserAgent,
+            hidden: true,
+            cookies: [],
+            withLocalStorage: true);
+
+        var keys = await generateKeyPair();
+
+        final state = RandomString(15);
+
+        final privateKey = await getPrivateKey();
+        final signedHash = signData(state, privateKey);
+
+        var jsToExecute =
+            "(function() { try { window.localStorage.setItem('tempKeys', '{ privateKey: ${keys["privateKey"]}, publicKey: ${keys["publicKey"]}');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
+
+        final res = await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
+        final appid = apps[appId]['appid'];
+        final redirecturl = apps[appId]['redirecturl'];
+        var scope = {};
+        scope['doubleName'] = await getDoubleName();
+        scope['keys'] = await getKeys(appid, scope['doubleName']);
+
+        var jsonData = jsonEncode((await encrypt(
+            jsonEncode(scope), keys["publicKey"], privateKey)));
+        var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
+
+        loadUrl =
+            'https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+
+        // Wrapped `setItem` into a func that would return some helpful info in case it throws.
+        flutterWebViewPlugins[appId].reloadUrl(loadUrl);
+        print("Eval result: $res");
+
+        logger.log("Launching App" + [appId].toString());
       } else {
         flutterWebViewPlugins[appId].launch(loadUrl,
             rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
             userAgent: kAndroidUserAgent,
             hidden: true,
-            cookies: []);
+            cookies: [],
+            withLocalStorage: true);
         logger.log("Launching App" + [appId].toString());
       }
 

@@ -34,6 +34,16 @@ import 'package:threebotlogin/services/userService.dart';
 //   return base64.encode(signed);
 // }
 
+
+Future<Map<String, String>> generateKeyPair () async {
+  var keys = await Sodium.cryptoBoxKeypair();
+   return {
+    'privateKey': base64.encode(keys['sk']),
+    'publicKey': base64.encode(keys['pk'])
+  };
+}
+
+
 Future<String> signData(String data, String sk) async {
   var private = base64.decode(sk);
   var signed =

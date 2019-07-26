@@ -1,4 +1,4 @@
-package org.jimber.threebotlogin.local;
+package org.jimber.threebotlogin.staging;
 
 import android.app.NotificationManager;
 import android.content.Context;

@@ -57,8 +57,7 @@ class _AppSelectorState extends State<AppSelector> {
         final response = await client.send(request);
         logger.log('-----');
         logger.log(response.headers);
-        final state =
-            Uri.decodeFull(response.headers['location'].split("&state=")[1]);
+        final state = Uri.decodeFull(response.headers['location'].split("&state=")[1]);
         final privateKey = await getPrivateKey();
         final signedHash = signData(state, privateKey);
 
@@ -81,8 +80,7 @@ class _AppSelectorState extends State<AppSelector> {
           scopeData['email'] = await getEmail();
         }
 
-        var jsonData = jsonEncode(
-            (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
+        var jsonData = jsonEncode((await encrypt(jsonEncode(scopeData), publickey, privateKey)));
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
         loadUrl =
             'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
@@ -96,7 +94,7 @@ class _AppSelectorState extends State<AppSelector> {
             hidden: true,
             cookies: cookieList,
             withLocalStorage: true);
-      } else if (localStorageKeys) {
+      } else if (localStorageKeys != null) {
         await flutterWebViewPlugins[appId].launch(loadUrl + '/error',
             rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
             userAgent: kAndroidUserAgent,
@@ -112,7 +110,7 @@ class _AppSelectorState extends State<AppSelector> {
         final signedHash = signData(state, privateKey);
 
         var jsToExecute =
-            "(function() { try { window.localStorage.setItem('tempKeys', '{ privateKey: ${keys["privateKey"]}, publicKey: ${keys["publicKey"]}');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
+            "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
 
         final res = await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
         final appid = apps[appId]['appid'];
@@ -121,12 +119,12 @@ class _AppSelectorState extends State<AppSelector> {
         scope['doubleName'] = await getDoubleName();
         scope['keys'] = await getKeys(appid, scope['doubleName']);
 
-        var jsonData = jsonEncode((await encrypt(
-            jsonEncode(scope), keys["publicKey"], privateKey)));
+        var encrypted = await encrypt(jsonEncode(scope), keys["publicKey"], privateKey);
+        var jsonData = jsonEncode(encrypted);
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
 
-        loadUrl =
-            'https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+        loadUrl ='https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+        // loadUrl ='https://www.cam-recorder.com/';
 
         // Wrapped `setItem` into a func that would return some helpful info in case it throws.
         flutterWebViewPlugins[appId].reloadUrl(loadUrl);

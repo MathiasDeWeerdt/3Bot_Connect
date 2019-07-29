@@ -229,11 +229,13 @@ class _AppSelectorState extends State<AppSelector> {
             }
             await launchApp(size, app['id']);
             flutterWebViewPlugins[app['id']].show();
+            showButton = true;
             prefs.setBool('firstvalidation', true);
           }
 
           widget.notifyParent(app['color']);
           logger.log("Webviews is showing");
+          showButton = true;
           flutterWebViewPlugins[app['id']].show();
         } else {
           showDialog(

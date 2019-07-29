@@ -367,7 +367,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                     emailFromForm = emailController.text;
                     seedPhrase = seedPhrasecontroller.text;
                     checkDoubleNameExistence(doubleName);
-                    checkEmailIsSame(doubleName, emailFromForm);
+                    checkEmailIsSame(doubleName, (emailFromForm.toLowerCase()));
                     checkSeedPhrase(seedPhrase);
                   },
                 ),

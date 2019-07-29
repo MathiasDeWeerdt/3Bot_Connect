@@ -97,7 +97,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                             child: ListTile(
                               trailing: Icon(Icons.visibility),
                               leading: Icon(Icons.vpn_key),
-                              title: Text("Seed Phrase"),
+                              title: Text("Show Phrase"),
                               onTap: _showPinDialog,
                             ),
                           ),
@@ -106,11 +106,12 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                             children: <Widget>[
                               Material(
                                 child: ListTile(
-                                  leading: Icon(Icons.remove_circle),
+                                  leading: Icon(Icons.person),
                                   title: Text(
                                     "Remove Account From Device",
                                     style: TextStyle(color: Colors.red),
                                   ),
+                                  trailing: Icon(Icons.remove_circle, color: Colors.red,),
                                   onTap: _showDialog,
                                 ),
                               ),

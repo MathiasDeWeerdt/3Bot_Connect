@@ -174,19 +174,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             future: getDoubleName(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                return IconButton(
-                    tooltip: 'Apps',
-                    icon: const Icon(Icons.apps),
-                    onPressed: () {
-                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-                        if (flutterWebViewPlugin != null) {
-                          flutterWebViewPlugin.hide();
-                        }
-                      }
-                      setState(() {
-                        hexColor = Color(0xFF0f296a);
-                      });
-                    });
+                return Visibility(
+                    visible: showButton,
+                    child: IconButton(
+                        tooltip: 'Apps',
+                        icon: const Icon(Icons.apps),
+                        onPressed: () {
+                          for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+                            if (flutterWebViewPlugin != null) {
+                              flutterWebViewPlugin.hide();
+                              showButton = false;
+                            }
+                          }
+                          setState(() {
+                            hexColor = Color(0xFF0f296a);
+                          });
+                        }));
               } else
                 return Container();
             }),
@@ -203,6 +206,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
                         if (flutterWebViewPlugin != null) {
                           flutterWebViewPlugin.hide();
+                          showButton = false;
                         }
                       }
                       setState(() {

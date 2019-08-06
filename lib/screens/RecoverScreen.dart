@@ -49,7 +49,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     requestHeaders['signature'] = 'application/json';
 
     http.Response response = await http.get(
-        '${config.threeBotApiUrl}/users/$doubleName.3bot',
+        '${config.threeBotApiUrl}/users/$doubleName',
         headers: requestHeaders);
 
     if (response.statusCode == 200) {
@@ -63,7 +63,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     requestHeaders['signature'] = 'application/json';
 
     var getEmailInfo = http.get(
-        '${config.openKycApiUrl}/users/$doubleName.3bot',
+        '${config.openKycApiUrl}/users/$doubleName',
         headers: requestHeaders);
 
     var emailHash = await getEmailInfo;
@@ -80,7 +80,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     requestHeaders['signature'] = 'application/json';
 
     http.Response response = await http.get(
-        '${config.openKycApiUrl}/users/$doubleName.3bot',
+        '${config.openKycApiUrl}/users/$doubleName',
         headers: requestHeaders);
 
     if (response.statusCode == 200) {
@@ -198,7 +198,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
       prefs.setString('privatekey', base64.encode(key['sk']).toString());
       prefs.setString('publickey', base64.encode(key['pk']).toString());
       prefs.setString('email', emailFromForm);
-      prefs.setString('doubleName', doubleName + ".3bot");
+      prefs.setString('doubleName', doubleName);
       prefs.setString('phrase', seedPhrase);
       prefs.setBool('firstvalidation', false);
       prefs.setBool('emailVerified', _isVerified);
@@ -336,7 +336,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                         return null;
                       })),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Text(
                 userError,
@@ -349,28 +349,26 @@ class _RecoverScreenState extends State<RecoverScreen> {
               Text(seedPhraseError,
                   style: TextStyle(
                       color: Colors.red, fontWeight: FontWeight.bold)),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 64.0),
-                child: RaisedButton(
-                  shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(10)),
-                  padding: EdgeInsets.all(12),
-                  child: Text(
-                    'Recover Account',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  onPressed: () async {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                    _autoValidate = true;
-                    doubleName = doubleNameController.text;
-                    emailFromForm = emailController.text;
-                    seedPhrase = seedPhrasecontroller.text;
-                    checkDoubleNameExistence(doubleName);
-                    checkEmailIsSame(doubleName, (emailFromForm.toLowerCase()));
-                    checkSeedPhrase(seedPhrase);
-                  },
+              RaisedButton(
+                shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(10)),
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  'Recover Account',
+                  style: TextStyle(color: Colors.white),
                 ),
+                color: Theme.of(context).accentColor,
+                onPressed: () async {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                  _autoValidate = true;
+                  doubleName = doubleNameController.text;
+                  emailFromForm = emailController.text;
+                  seedPhrase = seedPhrasecontroller.text;
+                  doubleName += '.3bot';
+                  checkDoubleNameExistence(doubleName);
+                  checkEmailIsSame(doubleName, (emailFromForm.toLowerCase()));
+                  checkSeedPhrase(seedPhrase);
+                },
               ),
             ],
           ),

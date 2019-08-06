@@ -5,6 +5,8 @@ import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
+import 'package:threebotlogin/widgets/SingleApp.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class PreferenceScreen extends StatefulWidget {
   PreferenceScreen({Key key}) : super(key: key);
@@ -87,10 +89,10 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                       "Unverified",
                                       style: TextStyle(color: Colors.grey),
                                     )
-                                  : Container(),
-                              onTap: !emailVerified
-                                  ? sendVerificationEmail
                                   : null,
+                              onTap: !emailVerified
+                               ? sendVerificationEmail 
+                               : null,
                             ),
                           ),
                           Material(
@@ -154,6 +156,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                       flutterWebViewPlugin.close();
                     }
                   }
+                  FlutterWebviewPlugin.resetWebviews();
                   await clearData();
                   Navigator.popUntil(
                     context,

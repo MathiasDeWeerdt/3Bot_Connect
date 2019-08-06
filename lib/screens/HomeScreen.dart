@@ -14,6 +14,8 @@ import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 
+
+
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
 
@@ -164,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,6 +186,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           for (var flutterWebViewPlugin in flutterWebViewPlugins) {
                             if (flutterWebViewPlugin != null) {
                               flutterWebViewPlugin.hide();
+                              lastAppUsed = null;
                               showButton = false;
                             }
                           }
@@ -202,18 +206,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   return IconButton(
                     icon: Icon(Icons.settings),
                     tooltip: 'Settings',
-                    onPressed: () {
+                    onPressed: ()  {
+                      Navigator.pushNamed(context, '/preference');
                       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
                         if (flutterWebViewPlugin != null) {
                           flutterWebViewPlugin.hide();
-                          showButton = false;
                         }
-                      }
-                      setState(() {
-                        hexColor = Color(0xFF0f296a);
-                      });
-
-                      Navigator.pushNamed(context, '/preference');
+                      }                      
                     },
                   );
                 } else

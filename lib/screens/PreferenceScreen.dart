@@ -7,8 +7,10 @@ import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 
 class PreferenceScreen extends StatefulWidget {
+  
   PreferenceScreen({Key key}) : super(key: key);
   _PreferenceScreenState createState() => _PreferenceScreenState();
+
 }
 
 class _PreferenceScreenState extends State<PreferenceScreen> {
@@ -29,15 +31,31 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     getUserValues();
   }
 
+  Future<bool> _onWillPop() {
+    var index = 0;
+    
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        if (index == lastAppUsed) {
+          flutterWebViewPlugin.show(); 
+          showButton = true;
+        }
+        index++;
+      }
+    }
+    return Future.value(true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _prefScaffold,
-      appBar: AppBar(
-        title: Text('Preferences'),
-        elevation: 0.0,
-      ),
-      body: Container(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
+        appBar: new AppBar(
+          title: Text('Preferences'),
+          elevation: 0.0,
+        ),
+        body: Container(
         width: double.infinity,
         height: double.infinity,
         color: Theme.of(context).primaryColor,
@@ -127,6 +145,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
           ),
         ),
       ),
+      )
     );
   }
 
@@ -168,14 +187,14 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   void sendVerificationEmail() async {
-    _prefScaffold.currentState.showSnackBar(SnackBar(
-      content: Text('Resending verification email...'),
-    ));
     await resendVerificationEmail();
+    final snackBar = SnackBar(content: Text('Resending verification email...'), duration: const Duration(seconds: 1));
+    Scaffold.of(context).showSnackBar(snackBar);
     _showResendEmailDialog();
   }
 
   void _showResendEmailDialog() {
+    logger.log('Dialogging');
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(

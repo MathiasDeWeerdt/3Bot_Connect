@@ -182,10 +182,9 @@ class _AppSelectorState extends State<AppSelector> {
               }))
     ]);
   }
-    void sendVerificationEmail() async {
-    // _appSelectScaffold.currentState.showSnackBar(SnackBar(
-    //   content: Text('Resending verification email...'),
-    // )); @ivancone pls help
+  void sendVerificationEmail() async {
+    final snackbarResending = SnackBar(content: Text('Resending verification email...'), duration: Duration(seconds: 1));
+    Scaffold.of(context).showSnackBar(snackbarResending);
     await resendVerificationEmail();
     _showResendEmailDialog();
   }
@@ -236,6 +235,7 @@ class _AppSelectorState extends State<AppSelector> {
           widget.notifyParent(app['color']);
           logger.log("Webviews is showing");
           showButton = true;
+          lastAppUsed = app['id'];
           flutterWebViewPlugins[app['id']].show();
         } else {
           showDialog(

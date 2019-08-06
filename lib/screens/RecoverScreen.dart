@@ -76,7 +76,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     return bip39.mnemonicToEntropy(seedPhrase);
   }
 
-  Future<bool> isEmaiExisting(doubleName) async {
+  Future<bool> isEmailExisting(doubleName) async {
     requestHeaders['signature'] = 'application/json';
 
     http.Response response = await http.get(
@@ -126,7 +126,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
   }
 
   checkEmailIsSame(doubleName, emailFromForm) {
-    isEmaiExisting(doubleName).then((value) {
+    isEmailExisting(doubleName).then((value) {
       if (!value) {
         emailError = 'Email does not exist';
       } else {
@@ -231,6 +231,13 @@ class _RecoverScreenState extends State<RecoverScreen> {
     }
   }
 
+  bool validateEmailOnChange(String value) {
+    if (value.contains('@')) { 
+      return true;
+    }
+    return false;
+  }
+
   void initState() {
     super.initState();
   }
@@ -299,6 +306,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
               Padding(
                   padding: const EdgeInsets.only(top: 8.5),
                   child: TextFormField(
+                    //toFocus: emailController,//TODO
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -314,12 +322,19 @@ class _RecoverScreenState extends State<RecoverScreen> {
                       })),
               Padding(
                   padding: const EdgeInsets.only(top: 8.5),
-                  child: TextFormField(
+                  child: TextField(
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(), labelText: 'Email'),
-                    validator: validateEmail,
-                    controller: emailController,
+                        border: OutlineInputBorder(), 
+                        labelText: 'Email',
+                        suffixIcon: (validateEmail(emailController.text) != null && emailController.text.length > 0)
+                          ? Icon(Icons.error_outline, color: Colors.redAccent) 
+                          : null,
+                    ),
+                    controller: emailController, 
+                    onChanged: (text) {
+                      setState(() {});
+                    } 
                   )),
               Padding(
                   padding: const EdgeInsets.only(top: 8.5),

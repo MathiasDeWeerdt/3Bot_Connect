@@ -49,7 +49,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     requestHeaders['signature'] = 'application/json';
 
     http.Response response = await http.get(
-        '${config.threeBotApiUrl}/users/$doubleName',
+        '${config.threeBotApiUrl}/users/$doubleName.3bot',
         headers: requestHeaders);
 
     if (response.statusCode == 200) {
@@ -63,7 +63,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     requestHeaders['signature'] = 'application/json';
 
     var getEmailInfo = http.get(
-        '${config.openKycApiUrl}/users/$doubleName',
+        '${config.openKycApiUrl}/users/$doubleName.3bot',
         headers: requestHeaders);
 
     var emailHash = await getEmailInfo;
@@ -76,11 +76,11 @@ class _RecoverScreenState extends State<RecoverScreen> {
     return bip39.mnemonicToEntropy(seedPhrase);
   }
 
-  Future<bool> isEmaiExisting(doubleName) async {
+  Future<bool> isEmailExisting(doubleName) async {
     requestHeaders['signature'] = 'application/json';
 
     http.Response response = await http.get(
-        '${config.openKycApiUrl}/users/$doubleName',
+        '${config.openKycApiUrl}/users/$doubleName.3bot',
         headers: requestHeaders);
 
     if (response.statusCode == 200) {
@@ -126,7 +126,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
   }
 
   checkEmailIsSame(doubleName, emailFromForm) {
-    isEmaiExisting(doubleName).then((value) {
+    isEmailExisting(doubleName).then((value) {
       if (!value) {
         emailError = 'Email does not exist';
       } else {
@@ -198,7 +198,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
       prefs.setString('privatekey', base64.encode(key['sk']).toString());
       prefs.setString('publickey', base64.encode(key['pk']).toString());
       prefs.setString('email', emailFromForm);
-      prefs.setString('doubleName', doubleName);
+      prefs.setString('doubleName', doubleName + ".3bot");
       prefs.setString('phrase', seedPhrase);
       prefs.setBool('firstvalidation', false);
       prefs.setBool('emailVerified', _isVerified);
@@ -229,6 +229,13 @@ class _RecoverScreenState extends State<RecoverScreen> {
     } else {
       return null;
     }
+  }
+
+  bool validateEmailOnChange(String value) {
+    if (value.contains('@')) { 
+      return true;
+    }
+    return false;
   }
 
   void initState() {
@@ -299,6 +306,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
               Padding(
                   padding: const EdgeInsets.only(top: 8.5),
                   child: TextFormField(
+                    //toFocus: emailController,//TODO
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -314,12 +322,19 @@ class _RecoverScreenState extends State<RecoverScreen> {
                       })),
               Padding(
                   padding: const EdgeInsets.only(top: 8.5),
-                  child: TextFormField(
+                  child: TextField(
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(), labelText: 'Email'),
-                    validator: validateEmail,
-                    controller: emailController,
+                        border: OutlineInputBorder(), 
+                        labelText: 'Email',
+                        suffixIcon: (validateEmail(emailController.text) != null && emailController.text.length > 0)
+                          ? Icon(Icons.error_outline, color: Colors.redAccent) 
+                          : null,
+                    ),
+                    controller: emailController, 
+                    onChanged: (text) {
+                      setState(() {});
+                    } 
                   )),
               Padding(
                   padding: const EdgeInsets.only(top: 8.5),
@@ -336,7 +351,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                         return null;
                       })),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               Text(
                 userError,
@@ -349,26 +364,28 @@ class _RecoverScreenState extends State<RecoverScreen> {
               Text(seedPhraseError,
                   style: TextStyle(
                       color: Colors.red, fontWeight: FontWeight.bold)),
-              RaisedButton(
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(10)),
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  'Recover Account',
-                  style: TextStyle(color: Colors.white),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0, bottom: 64.0),
+                child: RaisedButton(
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(10)),
+                  padding: EdgeInsets.all(12),
+                  child: Text(
+                    'Recover Account',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Theme.of(context).accentColor,
+                  onPressed: () async {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    _autoValidate = true;
+                    doubleName = doubleNameController.text;
+                    emailFromForm = emailController.text;
+                    seedPhrase = seedPhrasecontroller.text;
+                    checkDoubleNameExistence(doubleName);
+                    checkEmailIsSame(doubleName, (emailFromForm.toLowerCase()));
+                    checkSeedPhrase(seedPhrase);
+                  },
                 ),
-                color: Theme.of(context).accentColor,
-                onPressed: () async {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                  _autoValidate = true;
-                  doubleName = doubleNameController.text;
-                  emailFromForm = emailController.text;
-                  seedPhrase = seedPhrasecontroller.text;
-                  doubleName += '.3bot';
-                  checkDoubleNameExistence(doubleName);
-                  checkEmailIsSame(doubleName, (emailFromForm.toLowerCase()));
-                  checkSeedPhrase(seedPhrase);
-                },
               ),
             ],
           ),

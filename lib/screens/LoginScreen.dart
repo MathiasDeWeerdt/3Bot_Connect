@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             topRight: Radius.circular(20.0))),
                     child: SingleChildScrollView(
                         child: Container(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
+                      padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -96,22 +96,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ])
                               : Container(),
                           SizedBox(
-                            height: 10,
+                            height: 20,
                           ),
                           Container(
                               width: double.infinity,
-                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                              padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
                               child: Center(
                                   child: Text(
                                 helperText,
                                 style: TextStyle(fontSize: 16.0),
                               ))),
                           PinField(callback: (p) => pinFilledIn(p)),
+                          SizedBox(
+                            height: 100,
+                          ),
                           FlatButton(
+                            padding: EdgeInsets.all(2),
                             child: Text(
                               "It wasn\'t me - cancel",
                               style: TextStyle(
-                                  fontSize: 14.0, color: Color(0xff0f296a)),
+                                  fontSize: 16.0, color: Color(0xff0f296a)),
                             ),
                             onPressed: () {
                               cancelIt();

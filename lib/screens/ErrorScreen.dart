@@ -27,7 +27,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Error'),
+        title: Text('Update required'),
         elevation: 0.0,
       ),
       body: Container(

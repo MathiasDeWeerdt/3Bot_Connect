@@ -20,6 +20,8 @@ Config config;
 LoggingService logger;
 bool showButton;
 List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
+int lastAppUsed;
+
 
 List<Map<String, dynamic>> apps = [
   {

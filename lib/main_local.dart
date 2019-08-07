@@ -7,9 +7,9 @@ import 'main.dart';
 void main() {
   var config = Config(
       name: '3bot local',
-      threeBotApiUrl: 'http://192.168.2.80:5000/api',
-      openKycApiUrl: 'http://192.168.2.80:5005',
-      threeBotFrontEndUrl: 'http://192.168.2.80:8080/',
+      threeBotApiUrl: 'http://192.168.2.212:5000/api',
+      openKycApiUrl: 'http://192.168.2.212:5005',
+      threeBotFrontEndUrl: 'http://192.168.2.212:8082/',
       child: new MyApp()
   );
   

@@ -99,7 +99,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                               trailing:
                                   !emailVerified ? Icon(Icons.refresh) : null,
                               leading: Icon(Icons.mail),
-                              title: Text(emailAdress),
+                              title: Text(emailAdress.toLowerCase()),
                               subtitle: !emailVerified
                                   ? Text(
                                       "Unverified",

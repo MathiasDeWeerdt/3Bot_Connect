@@ -35,7 +35,7 @@ void main() {
           'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false
-    }/*,
+    },
     {
       "content": Text(
         'OpenBrowser',
@@ -68,7 +68,7 @@ void main() {
       "subheading": '',
       "url": 'https://cowork-lochristi.threefold.work/',
       "bg": 'om.jpg',
-      "disabled": false,
+      "disabled": true,
       "initialUrl": 'https://cowork-lochristi.threefold.work/',
       "visible": false,
       "id": 2,
@@ -112,7 +112,7 @@ void main() {
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
-    }*/
+    }
   ];
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

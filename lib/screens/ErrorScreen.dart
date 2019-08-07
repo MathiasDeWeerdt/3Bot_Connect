@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 
@@ -16,11 +17,20 @@ class _ErrorScreenState extends State<ErrorScreen> {
   @override
   void initState() {
     super.initState();
+    hideWebviews();
     PackageInfo.fromPlatform().then((packageInfo) => {
           setState(() {
             version = packageInfo.version;
           })
         });
+  }
+
+  void hideWebviews() {
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        flutterWebViewPlugin.hide();
+      }
+    }
   }
 
   @override

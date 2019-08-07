@@ -6,12 +6,12 @@ import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
-import 'package:threebotlogin/widgets/SingleApp.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class PreferenceScreen extends StatefulWidget {
+  
   PreferenceScreen({Key key}) : super(key: key);
   _PreferenceScreenState createState() => _PreferenceScreenState();
+
 }
 
 class _PreferenceScreenState extends State<PreferenceScreen> {
@@ -32,15 +32,31 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     getUserValues();
   }
 
+  Future<bool> _onWillPop() {
+    var index = 0;
+    
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        if (index == lastAppUsed) {
+          flutterWebViewPlugin.show(); 
+          showButton = true;
+        }
+        index++;
+      }
+    }
+    return Future.value(true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _prefScaffold,
-      appBar: AppBar(
-        title: Text('Preferences'),
-        elevation: 0.0,
-      ),
-      body: Container(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
+        appBar: new AppBar(
+          title: Text('Preferences'),
+          elevation: 0.0,
+        ),
+        body: Container(
         width: double.infinity,
         height: double.infinity,
         color: Theme.of(context).primaryColor,
@@ -84,16 +100,16 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                               trailing:
                                   !emailVerified ? Icon(Icons.refresh) : null,
                               leading: Icon(Icons.mail),
-                              title: Text(emailAdress),
+                              title: Text(emailAdress.toLowerCase()),
                               subtitle: !emailVerified
                                   ? Text(
                                       "Unverified",
                                       style: TextStyle(color: Colors.grey),
                                     )
-                                  : null,
+                                  : Container(),
                               onTap: !emailVerified
-                               ? sendVerificationEmail 
-                               : null,
+                                  ? sendVerificationEmail
+                                  : null,
                             ),
                           ),
                           Material(
@@ -130,6 +146,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
           ),
         ),
       ),
+      )
     );
   }
 
@@ -140,7 +157,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             image: Icons.error,
             title: "Are you sure?",
             description: new Text(
-                "If you confirm, the account will be removed from the device. You can recover it later using the seed phrase."),
+                "If you confirm, your account will be removed from this device. You can always recover your account with your doublename, email and phrase."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Cancel"),
@@ -172,14 +189,14 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   void sendVerificationEmail() async {
-    _prefScaffold.currentState.showSnackBar(SnackBar(
-      content: Text('Resending verification email...'),
-    ));
     await resendVerificationEmail();
+    final snackBar = SnackBar(content: Text('Resending verification email...'), duration: const Duration(seconds: 1));
+    Scaffold.of(context).showSnackBar(snackBar);
     _showResendEmailDialog();
   }
 
   void _showResendEmailDialog() {
+    logger.log('Dialogging');
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/screens/ErrorScreen.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -128,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  pinFilledIn(p) async {
+ pinFilledIn(p) async {
     if (selectedImageId != -1 || isMobile()) {
       final pin = await getPin();
       if (pin == p) {
@@ -143,8 +145,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 await getKeys(widget.message['appId'], scope['doubleName']);
           }
         }
-        showScopeDialog(context, scope, widget.message['appId'], sendIt,
+        if (widget.message['appId'] != null) {
+          showScopeDialog(context, scope, widget.message['appId'], sendIt,
             cancelCallback: cancelIt);
+        } else {
+          Navigator.of(context).pop();
+        }
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('Oops... you entered the wrong pin'),

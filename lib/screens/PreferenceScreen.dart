@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart' as prefix0;
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -156,7 +157,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                       flutterWebViewPlugin.close();
                     }
                   }
-                  FlutterWebviewPlugin.resetWebviews();
+                  //FlutterWebviewPlugin.resetWebviews();
                   await clearData();
                   Navigator.popUntil(
                     context,

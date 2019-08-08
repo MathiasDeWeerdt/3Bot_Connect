@@ -239,6 +239,7 @@ class _AppSelectorState extends State<AppSelector> {
           widget.notifyParent(app['color']);
           logger.log("Webviews is showing");
           showButton = true;
+          lastAppUsed = app['id'];
           flutterWebViewPlugins[app['id']].show();
         } else {
           showDialog(

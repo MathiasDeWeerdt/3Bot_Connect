@@ -5,7 +5,6 @@ import 'config.dart';
 import 'main.dart';
 
 void main() async {
-  
   var config = Config(
       name: '3bot staging',
       threeBotApiUrl: 'https://login.staging.jimber.org/api',
@@ -37,7 +36,7 @@ void main() async {
       'color': 0xFF708fa0,
       'errorText': false
     },
-/*     {
+    {
       "content": Text(
         'NBH Digital Wallet',
         style: TextStyle(
@@ -59,7 +58,7 @@ void main() async {
       'localStorageKeys': true,
       'color': 0xFF34495e,
       'errorText': false
-    }, */
+    },
     {
       "content": Text(
         'OpenBrowser',
@@ -75,7 +74,7 @@ void main() async {
       "disabled": false,
       "initialUrl": 'https://broker.jimber.org/',
       "visible": false,
-      "id": 1,
+      "id": 2,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
@@ -95,7 +94,7 @@ void main() async {
       "disabled": true,
       "initialUrl": 'https://cowork-lochristi.threefold.work/',
       "visible": false,
-      "id": 2,
+      "id": 3,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
@@ -112,7 +111,7 @@ void main() async {
       "disabled": true,
       "initialUrl": 'https://cowork-lochristi.threefold.work',
       "visible": false,
-      "id": 3,
+      "id": 4,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false

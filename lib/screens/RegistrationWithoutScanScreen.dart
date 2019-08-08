@@ -101,8 +101,7 @@ class _RegistrationWithoutScanScreen
       });
     } else if (pin == value) {
       if (widget.resetPin) {
-        savePin(pin);
-
+        sendIt();
         Navigator.popUntil(context, ModalRoute.withName('/'));
         Navigator.of(context).pushNamed('/success');
       } else {
@@ -137,18 +136,26 @@ class _RegistrationWithoutScanScreen
     savePin(pin);
     savePrivateKey(privateKey);
     savePublicKey(publicKey);
-    saveEmail(email, false);
+
+    if(!widget.resetPin) {
+      saveEmail(email, false);
+    } else {
+      saveEmail(email, widget.initialData['emailVerified']);
+    }
+    
     saveDoubleName(doubleName);
     savePhrase(phrase);
 
-    var signedHash = signData(hash, privateKey);
-    var data = encrypt(jsonEncode(scope), publicKey, privateKey);
+    if(!widget.resetPin) {
+      var signedHash = signData(hash, privateKey);
+      var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
-    sendData(hash, await signedHash, await data, null).then((x) {
-      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-      Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.of(context).pushNamed('/success');
-    });
+      sendData(hash, await signedHash, await data, null).then((x) {
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.of(context).pushNamed('/success');
+      });
+    }
   }
 
   void _showDialog() {

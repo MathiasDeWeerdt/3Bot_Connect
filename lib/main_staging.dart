@@ -5,7 +5,6 @@ import 'config.dart';
 import 'main.dart';
 
 void main() async {
-  
   var config = Config(
       name: '3bot staging',
       threeBotApiUrl: 'https://login.staging.jimber.org/api',

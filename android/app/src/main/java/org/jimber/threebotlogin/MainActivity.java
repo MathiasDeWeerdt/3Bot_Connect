@@ -2,7 +2,6 @@ package org.jimber.threebotlogin.staging;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import android.view.WindowManager.LayoutParams;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

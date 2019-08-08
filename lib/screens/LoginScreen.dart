@@ -37,6 +37,7 @@ Future<bool> _onWillPop() {
     return Future.value(true);
   }
 
+
 class _LoginScreenState extends State<LoginScreen> {
   String helperText = 'Enter your pincode to log in';
   List<int> imageList = new List();
@@ -82,10 +83,19 @@ class _LoginScreenState extends State<LoginScreen> {
           elevation: 0.0,
         ),
         body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).primaryColor,
+          width: double.infinity,
+          height: double.infinity,
+          color: Theme.of(context).primaryColor,
+          child: Container(
             child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+              ),
+              child: SingleChildScrollView(
                 child: Container(
                     decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
@@ -136,9 +146,22 @@ class _LoginScreenState extends State<LoginScreen> {
                               _onWillPop();
                             },
                           ),
-                        ],
+                        ),
+                        onPressed: () {
+                          cancelIt();
+                          Navigator.of(context).pop();
+                          _onWillPop();
+                        },
                       ),
-                    )))))));
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   imageSelectedCallback(imageId) {
@@ -179,6 +202,20 @@ class _LoginScreenState extends State<LoginScreen> {
     cancelLogin(await getDoubleName());
     print("inside cancelIt");
     Navigator.pushNamed(context, '/');
+    print(lastAppUsed);
+    logger.log('LASTAPPUSED ${lastAppUsed}');
+    var index = 0;
+
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        if (index == lastAppUsed) {
+          logger.log('LASTAPPUSED ${lastAppUsed}');
+          flutterWebViewPlugin.show();
+          showButton = true;
+        }
+        index++;
+      }
+    }
   }
 
   sendIt() async {
@@ -189,8 +226,9 @@ class _LoginScreenState extends State<LoginScreen> {
     bool hashMatch = RegExp(r"[^A-Za-z0-9]+").hasMatch(state);
     print("hash match?? " + hashMatch.toString() + " false is ok");
     if (hashMatch) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('States can only be alphanumeric [^A-Za-z0-9]'),));
-      
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
+      ));
       // Navigator.popUntil(context, ModalRoute.withName('/'));
       // Navigator.pushNamed(context, '/success');
       return;

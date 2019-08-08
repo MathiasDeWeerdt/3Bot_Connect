@@ -22,11 +22,10 @@ sendScannedFlag(String hash, String deviceId) async {
   );
 }
 
-updateDeviceId(String deviceId, String doubleName) async {
-  String privatekey = await getPrivateKey();
-  String signedDeviceId = await signData(deviceId, privatekey);
+Future updateDeviceId(String deviceId, String doubleName, String privateKey) async {
+  String signedDeviceId = await signData(deviceId, privateKey);
 
-  http.put('$threeBotApiUrl/users/$doubleName/deviceid',
+  return http.put('$threeBotApiUrl/users/$doubleName/deviceid',
       body: json.encode({'signedDeviceId': signedDeviceId}),
       headers: requestHeaders);
 }
@@ -65,14 +64,16 @@ Future sendPublicKey(Map<String, Object> data) async {
       body: json.encode(data), headers: loginRequestHeaders);
 }
 
-Future checkLoginAttempts(String doubleName) async {
+Future checkLoginAttempts(String doubleName, {String privateKey = ''}) async {
+  if (privateKey == '') {
+    privateKey = await getPrivateKey();
+  }
   String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
-  String privatekey = await getPrivateKey();
   Map<String, dynamic> payload = {
     "timestamp": timestamp,
     "intention": "attempts"
   };
-  String signedPayload = await signData(jsonEncode(payload), privatekey);
+  String signedPayload = await signData(jsonEncode(payload), privateKey);
 
   Map<String, String> loginRequestHeaders = {
     'Content-type': 'application/json',
@@ -140,4 +141,9 @@ Future<int> checkVersionNumber(BuildContext context, String version) async {
 Future cancelLogin(doubleName) {
   return http.post('$threeBotApiUrl/users/$doubleName/cancel',
       body: null, headers: requestHeaders);
+}
+
+Future getUserInfo(doubleName) {
+  return http.get('$threeBotApiUrl/users/$doubleName',
+     headers: requestHeaders);
 }

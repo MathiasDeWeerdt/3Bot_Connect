@@ -173,6 +173,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                       flutterWebViewPlugin.close();
                     }
                   }
+                  //FlutterWebviewPlugin.resetWebviews();
                   await clearData();
                   Navigator.popUntil(
                     context,

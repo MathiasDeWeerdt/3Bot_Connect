@@ -14,6 +14,7 @@ Future checkVerificationStatus(String doubleName) async {
 }
 
 Future<http.Response> resendVerificationEmail() async {
+  // TODO: @MathiasDeWeerdt public_key is now app_publicKey 
   return http.post('$openKycApiUrl/users',
       body: json.encode({
         'user_id': await getDoubleName(),

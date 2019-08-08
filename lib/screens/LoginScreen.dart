@@ -58,68 +58,74 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text('Login'),
-          elevation: 0.0,
-        ),
-        body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).primaryColor,
-            child: Container(
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0))),
-                    child: SingleChildScrollView(
-                        child: Container(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          !isMobile()
-                              ? Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                      ImageButton(imageList[0], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[1], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[2], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[3], selectedImageId,
-                                          imageSelectedCallback),
-                                    ])
-                              : Container(),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                              child: Center(
-                                  child: Text(
-                                helperText,
-                                style: TextStyle(fontSize: 16.0),
-                              ))),
-                          PinField(callback: (p) => pinFilledIn(p)),
-                          FlatButton(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text('Login'),
+        elevation: 0.0,
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Theme.of(context).primaryColor,
+        child: Container(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    !isMobile()
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                                ImageButton(imageList[0], selectedImageId,
+                                    imageSelectedCallback),
+                                ImageButton(imageList[1], selectedImageId,
+                                    imageSelectedCallback),
+                                ImageButton(imageList[2], selectedImageId,
+                                    imageSelectedCallback),
+                                ImageButton(imageList[3], selectedImageId,
+                                    imageSelectedCallback),
+                              ])
+                        : Container(),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                        child: Center(
                             child: Text(
-                              "It wasn\'t me - cancel",
-                              style: TextStyle(
-                                  fontSize: 14.0, color: Color(0xff0f296a)),
-                            ),
-                            onPressed: () {
-                              cancelIt();
-                            },
-                          ),
-                        ],
+                          helperText,
+                          style: TextStyle(fontSize: 16.0),
+                        ))),
+                    PinField(callback: (p) => pinFilledIn(p)),
+                    FlatButton(
+                      child: Text(
+                        "It wasn\'t me - cancel",
+                        style:
+                            TextStyle(fontSize: 14.0, color: Color(0xff0f296a)),
                       ),
-                    ))))));
+                      onPressed: () {
+                        cancelIt();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   imageSelectedCallback(imageId) {
@@ -174,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
       ));
-      
+
       // Navigator.popUntil(context, ModalRoute.withName('/'));
       // Navigator.pushNamed(context, '/success');
       return;

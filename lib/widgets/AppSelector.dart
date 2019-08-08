@@ -114,8 +114,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         var jsToExecute =
             "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
-
-         sleep(const Duration(seconds: 1));
+        sleep(const Duration(seconds: 1));
         final res = await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
         final appid = apps[appId]['appid'];
         final redirecturl = apps[appId]['redirecturl'];
@@ -124,8 +123,6 @@ class _AppSelectorState extends State<AppSelector> {
         scope['keys'] = await getKeys(appid, scope['doubleName']);
 
         var encrypted = await encrypt(jsonEncode(scope), keys["publicKey"], privateKey);
-        print(jsonEncode(scope));
-
         var jsonData = jsonEncode(encrypted);
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
 
@@ -133,7 +130,6 @@ class _AppSelectorState extends State<AppSelector> {
         // loadUrl ='https://www.cam-recorder.com/';
 
         // Wrapped `setItem` into a func that would return some helpful info in case it throws.
-        print("Eval result: $res");
         flutterWebViewPlugins[appId].reloadUrl(loadUrl);
         print("Eval result: $res");
 
@@ -187,9 +183,8 @@ class _AppSelectorState extends State<AppSelector> {
     ]);
   }
   void sendVerificationEmail() async {
-    // _appSelectScaffold.currentState.showSnackBar(SnackBar(
-    //   content: Text('Resending verification email...'),
-    // )); @ivancone pls help
+    final snackbarResending = SnackBar(content: Text('Resending verification email...'), duration: Duration(seconds: 1));
+    Scaffold.of(context).showSnackBar(snackbarResending);
     await resendVerificationEmail();
     _showResendEmailDialog();
   }
@@ -233,6 +228,7 @@ class _AppSelectorState extends State<AppSelector> {
             }
             await launchApp(size, app['id']);
             flutterWebViewPlugins[app['id']].show();
+            showButton = true;
             prefs.setBool('firstvalidation', true);
           }
 
@@ -249,6 +245,7 @@ class _AppSelectorState extends State<AppSelector> {
                   title: "Service Unavailable",
                   description: new Text("Service Unavailable"),
                   actions: <Widget>[
+                    // usually buttons at the bottom of the dialog
                     FlatButton(
                       child: new Text("Ok"),
                       onPressed: () {

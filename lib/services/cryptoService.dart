@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
+import 'package:bip39/bip39.dart' as bip39;
 
 
 Future<Map<String, String>> generateKeyPair () async {
@@ -40,6 +41,29 @@ Future<String> signData(String data, String sk) async {
 //   }
 
 // }
+
+Future<Map<String, String>> getFromSeedPhrase(String seedPhrase) async {
+  String entropy = bip39.mnemonicToEntropy(seedPhrase);
+  var keys = await Sodium.cryptoSignSeedKeypair(toHex(entropy));
+
+  return {
+    'privateKey': base64.encode(keys['sk']),
+    'publicKey': base64.encode(keys['pk'])
+  };
+}
+
+Uint8List toHex(String input) {
+  double length = input.length / 2;
+  Uint8List bytes = new Uint8List(length.ceil());
+
+  for (var i = 0; i < bytes.length; i++) {
+    var x = input.substring(i * 2, i * 2 + 2);
+    bytes[i] = int.parse(x, radix: 16);
+  }
+
+  return bytes;
+}
+
 Future<Map<String, String>> encrypt(String data, String publicKey, String sk) async {
   var nonce = CryptoBox.generateNonce();
   var private = Sodium.cryptoSignEd25519SkToCurve25519(base64.decode(sk));

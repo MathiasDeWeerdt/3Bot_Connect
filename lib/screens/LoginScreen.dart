@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/screens/ErrorScreen.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -19,6 +21,22 @@ class LoginScreen extends StatefulWidget {
       : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
+}
+
+Future<bool> _onWillPop() {
+  var index = 0;
+
+  for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+    if (flutterWebViewPlugin != null) {
+      if (index == lastAppUsed) {
+        logger.log('LASTAPPUSED ${lastAppUsed}');
+        flutterWebViewPlugin.show();
+        showButton = true;
+      }
+      index++;
+    }
+  }
+  return Future.value(true);
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -57,69 +75,85 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: _scaffoldKey,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
         appBar: AppBar(
           title: Text('Login'),
           elevation: 0.0,
         ),
         body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).primaryColor,
+          width: double.infinity,
+          height: double.infinity,
+          color: Theme.of(context).primaryColor,
+          child: Container(
             child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+              ),
+              child: SingleChildScrollView(
                 child: Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0))),
-                    child: SingleChildScrollView(
-                        child: Container(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          !isMobile()
-                              ? Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                      ImageButton(imageList[0], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[1], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[2], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[3], selectedImageId,
-                                          imageSelectedCallback),
-                                    ])
-                              : Container(),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                              child: Center(
-                                  child: Text(
-                                helperText,
-                                style: TextStyle(fontSize: 16.0),
-                              ))),
-                          PinField(callback: (p) => pinFilledIn(p)),
-                          FlatButton(
-                            child: Text(
-                              "It wasn\'t me - cancel",
-                              style: TextStyle(
-                                  fontSize: 14.0, color: Color(0xff0f296a)),
-                            ),
-                            onPressed: () {
-                              cancelIt();
-                            },
-                          ),
-                        ],
+                  padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      !isMobile()
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                  ImageButton(imageList[0], selectedImageId,
+                                      imageSelectedCallback),
+                                  ImageButton(imageList[1], selectedImageId,
+                                      imageSelectedCallback),
+                                  ImageButton(imageList[2], selectedImageId,
+                                      imageSelectedCallback),
+                                  ImageButton(imageList[3], selectedImageId,
+                                      imageSelectedCallback),
+                                ])
+                          : Container(),
+                      SizedBox(
+                        height: 10,
                       ),
-                    ))))));
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                        child: Center(
+                          child: Text(
+                            helperText,
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                        ),
+                      ),
+                      PinField(
+                        callback: (p) => pinFilledIn(p),
+                      ),
+                      FlatButton(
+                        child: Text(
+                          "It wasn\'t me - cancel",
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: Color(0xff0f296a),
+                          ),
+                        ),
+                        onPressed: () {
+                          cancelIt();
+                          Navigator.of(context).pop();
+                          _onWillPop();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   imageSelectedCallback(imageId) {
@@ -143,8 +177,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 await getKeys(widget.message['appId'], scope['doubleName']);
           }
         }
-        showScopeDialog(context, scope, widget.message['appId'], sendIt,
-            cancelCallback: cancelIt);
+        if (widget.message['appId'] != null) {
+          showScopeDialog(context, scope, widget.message['appId'], sendIt,
+              cancelCallback: cancelIt);
+        } else {
+          Navigator.of(context).pop();
+          _onWillPop();
+        }
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text('Oops... you entered the wrong pin'),
@@ -161,6 +200,20 @@ class _LoginScreenState extends State<LoginScreen> {
     cancelLogin(await getDoubleName());
     print("inside cancelIt");
     Navigator.pushNamed(context, '/');
+    print(lastAppUsed);
+    logger.log('LASTAPPUSED ${lastAppUsed}');
+    var index = 0;
+
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        if (index == lastAppUsed) {
+          logger.log('LASTAPPUSED ${lastAppUsed}');
+          flutterWebViewPlugin.show();
+          showButton = true;
+        }
+        index++;
+      }
+    }
   }
 
   sendIt() async {
@@ -174,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
       ));
-      
+
       // Navigator.popUntil(context, ModalRoute.withName('/'));
       // Navigator.pushNamed(context, '/success');
       return;

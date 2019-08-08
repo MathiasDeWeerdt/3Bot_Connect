@@ -17,6 +17,8 @@ import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 
+
+
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
 
@@ -198,6 +200,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -219,6 +222,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               in flutterWebViewPlugins) {
                             if (flutterWebViewPlugin != null) {
                               flutterWebViewPlugin.hide();
+                              lastAppUsed = null;
                               showButton = false;
                             }
                           }
@@ -243,14 +247,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
                         if (flutterWebViewPlugin != null) {
                           flutterWebViewPlugin.hide();
-                          showButton = false;
                         }
                       }
                       setState(() {
                         hexColor = Color(0xFF0f296a);
                       });
 
-                      Navigator.pushNamed(context, '/playground');
+                      Navigator.pushNamed(context, '/preference');
                     },
                   );
                 } else

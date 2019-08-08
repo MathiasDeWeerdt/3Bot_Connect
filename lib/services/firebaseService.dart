@@ -79,6 +79,11 @@ Future openLogin(context, message) async {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
+          for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+            if (flutterWebViewPlugin != null) {
+              flutterWebViewPlugin.hide();
+            }
+          }
     } else if (data['type'] == 'email_verification') {
       getEmail().then((emailMap) async {
         if (!emailMap['verified']) {

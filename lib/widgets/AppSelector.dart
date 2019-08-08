@@ -114,7 +114,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         var jsToExecute =
             "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
-
+        sleep(const Duration(seconds: 1));
         final res = await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
         final appid = apps[appId]['appid'];
         final redirecturl = apps[appId]['redirecturl'];

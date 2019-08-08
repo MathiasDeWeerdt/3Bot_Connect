@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/screens/ErrorScreen.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -29,7 +28,6 @@ Future<bool> _onWillPop() {
   for (var flutterWebViewPlugin in flutterWebViewPlugins) {
     if (flutterWebViewPlugin != null) {
       if (index == lastAppUsed) {
-        logger.log('LASTAPPUSED ${lastAppUsed}');
         flutterWebViewPlugin.show();
         showButton = true;
       }
@@ -78,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: new Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text('Login'),
           elevation: 0.0,
@@ -97,55 +96,59 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               child: SingleChildScrollView(
                 child: Container(
-                  padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      !isMobile()
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                  ImageButton(imageList[0], selectedImageId,
-                                      imageSelectedCallback),
-                                  ImageButton(imageList[1], selectedImageId,
-                                      imageSelectedCallback),
-                                  ImageButton(imageList[2], selectedImageId,
-                                      imageSelectedCallback),
-                                  ImageButton(imageList[3], selectedImageId,
-                                      imageSelectedCallback),
-                                ])
-                          : Container(),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                        child: Center(
-                          child: Text(
-                            helperText,
-                            style: TextStyle(fontSize: 16.0),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0))),
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          !isMobile()
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                      ImageButton(imageList[0], selectedImageId,
+                                          imageSelectedCallback),
+                                      ImageButton(imageList[1], selectedImageId,
+                                          imageSelectedCallback),
+                                      ImageButton(imageList[2], selectedImageId,
+                                          imageSelectedCallback),
+                                      ImageButton(imageList[3], selectedImageId,
+                                          imageSelectedCallback),
+                                    ])
+                              : Container(),
+                          SizedBox(
+                            height: 10,
                           ),
-                        ),
-                      ),
-                      PinField(
-                        callback: (p) => pinFilledIn(p),
-                      ),
-                      FlatButton(
-                        child: Text(
-                          "It wasn\'t me - cancel",
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Color(0xff0f296a),
+                          Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                              child: Center(
+                                  child: Text(
+                                helperText,
+                                style: TextStyle(fontSize: 16.0),
+                              ))),
+                          PinField(callback: (p) => pinFilledIn(p)),
+                          FlatButton(
+                            child: Text(
+                              "It wasn\'t me - cancel",
+                              style: TextStyle(
+                                  fontSize: 14.0, color: Color(0xff0f296a)),
+                            ),
+                            onPressed: () {
+                              cancelIt();
+                              Navigator.of(context).pop();
+                              _onWillPop();
+                            },
                           ),
-                        ),
-                        onPressed: () {
-                          cancelIt();
-                          Navigator.of(context).pop();
-                          _onWillPop();
-                        },
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -177,22 +180,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 await getKeys(widget.message['appId'], scope['doubleName']);
           }
         }
-        if (widget.message['appId'] != null) {
+        if (selectedImageId == correctImage) {
           showScopeDialog(context, scope, widget.message['appId'], sendIt,
               cancelCallback: cancelIt);
         } else {
-          Navigator.of(context).pop();
-          _onWillPop();
+          _scaffoldKey.currentState.showSnackBar(
+              SnackBar(content: Text('Oops... that\'s the wrong emoji')));
         }
       } else {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text('Oops... you entered the wrong pin'),
-        ));
+        _scaffoldKey.currentState.showSnackBar(
+            SnackBar(content: Text('Oops... you entered the wrong pin')));
       }
     } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Please select an emoji'),
-      ));
+      _scaffoldKey.currentState
+          .showSnackBar(SnackBar(content: Text('Please select an emoji')));
     }
   }
 
@@ -248,9 +249,8 @@ class _LoginScreenState extends State<LoginScreen> {
         } catch (e) {}
       }
     } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Oops... you selected the wrong emoji'),
-      ));
+      _scaffoldKey.currentState.showSnackBar(
+          SnackBar(content: Text('Oops... you selected the wrong emoji')));
     }
   }
 

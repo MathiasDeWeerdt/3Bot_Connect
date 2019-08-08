@@ -17,8 +17,6 @@ import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 
-
-
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
 
@@ -55,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   refresh(colorData) {
     setState(() {
-      this.hexColor = Color(colorData);
+      hexColor = Color(colorData);
     });
   }
 
@@ -70,13 +68,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               if (keyboardUp)
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[lastAppUsed].resize(Rect.fromLTWH(0, 75, size.width, size.height - keyboardSize - 75), instance: lastAppUsed),
+                  flutterWebViewPlugins[lastAppUsed].resize(
+                      Rect.fromLTWH(
+                          0, 75, size.width, size.height - keyboardSize - 75),
+                      instance: lastAppUsed),
                   print(MediaQuery.of(context).size.height.toString())
                 }
               else
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[lastAppUsed].resize(Rect.fromLTWH(0, 75, size.width, size.height - keyboardSize - 75), instance: lastAppUsed),
+                  flutterWebViewPlugins[lastAppUsed].resize(
+                      Rect.fromLTWH(
+                          0, 75, size.width, size.height - keyboardSize - 75),
+                      instance: lastAppUsed),
                   print(keyboardSize)
                 }
             });
@@ -200,7 +204,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,7 +220,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         tooltip: 'Apps',
                         icon: const Icon(Icons.apps),
                         onPressed: () {
-                          SystemChannels.textInput.invokeMethod('TextInput.hide');
+                          SystemChannels.textInput
+                              .invokeMethod('TextInput.hide');
                           for (var flutterWebViewPlugin
                               in flutterWebViewPlugins) {
                             if (flutterWebViewPlugin != null) {
@@ -249,9 +253,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           flutterWebViewPlugin.hide();
                         }
                       }
-                      setState(() {
-                        hexColor = Color(0xFF0f296a);
-                      });
 
                       Navigator.pushNamed(context, '/preference');
                     },

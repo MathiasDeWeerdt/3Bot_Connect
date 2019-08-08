@@ -7,10 +7,8 @@ import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 
 class PreferenceScreen extends StatefulWidget {
-  
   PreferenceScreen({Key key}) : super(key: key);
   _PreferenceScreenState createState() => _PreferenceScreenState();
-
 }
 
 class _PreferenceScreenState extends State<PreferenceScreen> {
@@ -33,11 +31,11 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
 
   Future<bool> _onWillPop() {
     var index = 0;
-    
+
     for (var flutterWebViewPlugin in flutterWebViewPlugins) {
       if (flutterWebViewPlugin != null) {
         if (index == lastAppUsed) {
-          flutterWebViewPlugin.show(); 
+          flutterWebViewPlugin.show();
           showButton = true;
         }
         index++;
@@ -49,25 +47,16 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onWillPop,
-      child: new Scaffold(
-        appBar: new AppBar(
-          title: Text('Preferences'),
-          elevation: 0.0,
-        ),
-        body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Theme.of(context).primaryColor,
-        child: Container(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-            ),
+        onWillPop: _onWillPop,
+        child: new Scaffold(
+          appBar: new AppBar(
+            title: Text('Preferences'),
+            elevation: 0.0,
+          ),
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Theme.of(context).primaryColor,
             child: Container(
               child: Container(
                 decoration: BoxDecoration(
@@ -78,64 +67,79 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                   ),
                 ),
                 child: Container(
-                  padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
-                  child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
+                      ),
+                    ),
                     child: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      child: ListView(
-                        children: <Widget>[
-                          ListTile(
-                            title: Text("Profile"),
-                          ),
-                          Material(
-                            child: ListTile(
-                              leading: Icon(Icons.person),
-                              title: Text(doubleName),
-                            ),
-                          ),
-                          Material(
-                            child: ListTile(
-                              trailing:
-                                  !emailVerified ? Icon(Icons.refresh) : null,
-                              leading: Icon(Icons.mail),
-                              title: Text(emailAdress.toLowerCase()),
-                              subtitle: !emailVerified
-                                  ? Text(
-                                      "Unverified",
-                                      style: TextStyle(color: Colors.grey),
-                                    )
-                                  : Container(),
-                              onTap: !emailVerified
-                                  ? sendVerificationEmail
-                                  : null,
-                            ),
-                          ),
-                          Material(
-                            child: ListTile(
-                              trailing: Icon(Icons.visibility),
-                              leading: Icon(Icons.vpn_key),
-                              title: Text("Show Phrase"),
-                              onTap: _showPinDialog,
-                            ),
-                          ),
-                          ExpansionTile(
-                            title: Text("Advanced settings"),
+                      padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
+                      child: Center(
+                        child: Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: ListView(
                             children: <Widget>[
+                              ListTile(
+                                title: Text("Profile"),
+                              ),
                               Material(
                                 child: ListTile(
                                   leading: Icon(Icons.person),
-                                  title: Text(
-                                    "Remove Account From Device",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  trailing: Icon(Icons.remove_circle, color: Colors.red,),
-                                  onTap: _showDialog,
+                                  title: Text(doubleName),
                                 ),
+                              ),
+                              Material(
+                                child: ListTile(
+                                  trailing: !emailVerified
+                                      ? Icon(Icons.refresh)
+                                      : null,
+                                  leading: Icon(Icons.mail),
+                                  title: Text(emailAdress.toLowerCase()),
+                                  subtitle: !emailVerified
+                                      ? Text(
+                                          "Unverified",
+                                          style: TextStyle(color: Colors.grey),
+                                        )
+                                      : Container(),
+                                  onTap: !emailVerified
+                                      ? sendVerificationEmail
+                                      : null,
+                                ),
+                              ),
+                              Material(
+                                child: ListTile(
+                                  trailing: Icon(Icons.visibility),
+                                  leading: Icon(Icons.vpn_key),
+                                  title: Text("Show Phrase"),
+                                  onTap: _showPinDialog,
+                                ),
+                              ),
+                              ExpansionTile(
+                                title: Text("Advanced settings"),
+                                children: <Widget>[
+                                  Material(
+                                    child: ListTile(
+                                      leading: Icon(Icons.person),
+                                      title: Text(
+                                        "Remove Account From Device",
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                      trailing: Icon(
+                                        Icons.remove_circle,
+                                        color: Colors.red,
+                                      ),
+                                      onTap: _showDialog,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -143,10 +147,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
               ),
             ),
           ),
-        ),
-      ),
-      )
-    );
+        ));
   }
 
   void _showDialog() {
@@ -171,9 +172,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                     if (flutterWebViewPlugin != null) {
                       flutterWebViewPlugin.cleanCookies();
                       flutterWebViewPlugin.close();
+                      // flutterWebViewPlugin.resetWebviews();
                     }
                   }
-                  //FlutterWebviewPlugin.resetWebviews();
                   await clearData();
                   Navigator.popUntil(
                     context,
@@ -189,7 +190,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
 
   void sendVerificationEmail() async {
     await resendVerificationEmail();
-    final snackBar = SnackBar(content: Text('Resending verification email...'), duration: const Duration(seconds: 1));
+    final snackBar = SnackBar(
+        content: Text('Resending verification email...'),
+        duration: const Duration(seconds: 1));
     Scaffold.of(context).showSnackBar(snackBar);
     _showResendEmailDialog();
   }

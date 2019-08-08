@@ -135,7 +135,6 @@ class _RegistrationWithoutScanScreen
 
     savePin(pin);
     savePrivateKey(privateKey);
-    savePublicKey(publicKey);
 
     if(!widget.resetPin) {
       saveEmail(email, false);

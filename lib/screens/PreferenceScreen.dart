@@ -31,7 +31,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
 
   Future<bool> _onWillPop() {
     var index = 0;
-
     for (var flutterWebViewPlugin in flutterWebViewPlugins) {
       if (flutterWebViewPlugin != null) {
         if (index == lastAppUsed) {
@@ -110,14 +109,25 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                       : null,
                                 ),
                               ),
-                              Material(
-                                child: ListTile(
-                                  trailing: Icon(Icons.visibility),
-                                  leading: Icon(Icons.vpn_key),
-                                  title: Text("Show Phrase"),
-                                  onTap: _showPinDialog,
-                                ),
+
+                              FutureBuilder(
+                                future: getPhrase(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Material(
+                                      child: ListTile(
+                                        trailing: Icon(Icons.visibility),
+                                        leading: Icon(Icons.vpn_key),
+                                        title: Text("Show Phrase"),
+                                        onTap: _showPinDialog,
+                                      ),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
                               ),
+                              
                               ExpansionTile(
                                 title: Text("Advanced settings"),
                                 children: <Widget>[

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/screens/ErrorScreen.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -22,6 +21,21 @@ class LoginScreen extends StatefulWidget {
 
   _LoginScreenState createState() => _LoginScreenState();
 }
+
+Future<bool> _onWillPop() {
+    var index = 0;
+    
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        if (index == lastAppUsed) {
+          flutterWebViewPlugin.show(); 
+          showButton = true;
+        }
+        index++;
+      }
+    }
+    return Future.value(true);
+  }
 
 class _LoginScreenState extends State<LoginScreen> {
   String helperText = 'Enter your pincode to log in';
@@ -59,7 +73,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
           title: Text('Login'),
@@ -78,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             topRight: Radius.circular(20.0))),
                     child: SingleChildScrollView(
                         child: Container(
-                      padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
+                      padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -98,34 +114,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ])
                               : Container(),
                           SizedBox(
-                            height: 20,
+                            height: 10,
                           ),
                           Container(
                               width: double.infinity,
-                              padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
+                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
                               child: Center(
                                   child: Text(
                                 helperText,
                                 style: TextStyle(fontSize: 16.0),
                               ))),
                           PinField(callback: (p) => pinFilledIn(p)),
-                          SizedBox(
-                            height: 100,
-                          ),
                           FlatButton(
-                            padding: EdgeInsets.all(2),
                             child: Text(
                               "It wasn\'t me - cancel",
                               style: TextStyle(
-                                  fontSize: 16.0, color: Color(0xff0f296a)),
+                                  fontSize: 14.0, color: Color(0xff0f296a)),
                             ),
                             onPressed: () {
-                              cancelIt();
+                              Navigator.of(context).pop();
+                              _onWillPop();
                             },
                           ),
                         ],
                       ),
-                    ))))));
+                    )))))));
   }
 
   imageSelectedCallback(imageId) {
@@ -149,21 +162,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 await getKeys(widget.message['appId'], scope['doubleName']);
           }
         }
-        if (widget.message['appId'] != null) {
-          showScopeDialog(context, scope, widget.message['appId'], sendIt,
-            cancelCallback: cancelIt);
+        if (selectedImageId == correctImage) {
+          showScopeDialog(context, scope, widget.message['appId'], sendIt, cancelCallback: cancelIt);
         } else {
-          Navigator.of(context).pop();
+          _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Oops... that\'s the wrong emoji')));  
         }
       } else {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text('Oops... you entered the wrong pin'),
-        ));
+        _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Oops... you entered the wrong pin')));
       }
     } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Please select an emoji'),
-      ));
+      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Please select an emoji')));
     }
   }
 
@@ -181,9 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
     bool hashMatch = RegExp(r"[^A-Za-z0-9]+").hasMatch(state);
     print("hash match?? " + hashMatch.toString() + " false is ok");
     if (hashMatch) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
-      ));
+      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('States can only be alphanumeric [^A-Za-z0-9]'),));
       
       // Navigator.popUntil(context, ModalRoute.withName('/'));
       // Navigator.pushNamed(context, '/success');
@@ -205,9 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
         } catch (e) {}
       }
     } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Oops... you selected the wrong emoji'),
-      ));
+      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Oops... you selected the wrong emoji')));
     }
   }
 

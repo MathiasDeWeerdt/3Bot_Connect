@@ -23,6 +23,22 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+Future<bool> _onWillPop() {
+    var index = 0;
+    
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        if (index == lastAppUsed) {
+          logger.log('LASTAPPUSED ${lastAppUsed}');
+          flutterWebViewPlugin.show(); 
+          showButton = true;
+        }
+        index++;
+      }
+    }
+    return Future.value(true);
+  }
+
 class _LoginScreenState extends State<LoginScreen> {
   String helperText = 'Enter your pincode to log in';
   List<int> imageList = new List();
@@ -59,8 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: _scaffoldKey,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: new Scaffold(
         appBar: AppBar(
           title: Text('Login'),
           elevation: 0.0,
@@ -116,12 +133,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontSize: 14.0, color: Color(0xff0f296a)),
                             ),
                             onPressed: () {
-                              cancelIt();
+                              Navigator.of(context).pop();
+                              _onWillPop();
                             },
                           ),
                         ],
                       ),
-                    ))))));
+                    )))))));
   }
 
   imageSelectedCallback(imageId) {
@@ -150,6 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
             cancelCallback: cancelIt);
         } else {
           Navigator.of(context).pop();
+          _onWillPop();
         }
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -167,6 +186,20 @@ class _LoginScreenState extends State<LoginScreen> {
     cancelLogin(await getDoubleName());
     print("inside cancelIt");
     Navigator.pushNamed(context, '/');
+    print(lastAppUsed);
+    logger.log('LASTAPPUSED ${lastAppUsed}');
+    var index = 0;
+    
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        if (index == lastAppUsed) {
+          logger.log('LASTAPPUSED ${lastAppUsed}');
+          flutterWebViewPlugin.show(); 
+          showButton = true;
+        }
+        index++;
+      }
+    }
   }
 
   sendIt() async {

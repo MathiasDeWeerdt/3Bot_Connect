@@ -33,18 +33,12 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   String privateKey;
 
+
   String generateMd5(String input) {
     return md5.convert(utf8.encode(input)).toString();
   }
 
-  checkDoubleName(doubleName) async {
-    var userResponse = await getUserInfo(doubleName);
-    logger.log(userResponse);
-    if (userResponse.statusCode != 200) {
-      throw new Exception('User not found');
-    }
-  }
-
+// TODO: @MathiasDeWeerdt Double check this
   checkEmail(doubleName, emailFromForm) async {
     var emailVerificationResponse = await checkVerificationStatus(doubleName);
     logger.log(emailVerificationResponse);
@@ -76,6 +70,11 @@ class _RecoverScreenState extends State<RecoverScreen> {
     });
 
     var userKInfoResult = await getUserInfo(doubleName);
+  
+    if (userKInfoResult.statusCode != 200) {
+      throw new Exception('User not found');
+    }
+  
     var body = json.decode(userKInfoResult.body);
 
     if(body['publicKey'] != keys['publicKey']) {
@@ -84,14 +83,13 @@ class _RecoverScreenState extends State<RecoverScreen> {
   }
 
   continueRecoverAccount() async {
-    String deviceId = await messaging.getToken();
-    updateDeviceId(deviceId, doubleName, privateKey).then((onValue) {
+    updateDeviceId(await messaging.getToken(), doubleName, privateKey).then((onValue) {
       logger.log(onValue);
     }).catchError((e) {
       logger.log(e);
     });
 
-    var initialData = {
+    var registrationData = {
       "privateKey": privateKey,
       "doubleName": doubleName,
       "emailVerified": emailVerified,
@@ -103,7 +101,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                RegistrationWithoutScanScreen(initialData, resetPin: true)));
+                RegistrationWithoutScanScreen(registrationData, resetPin: true)));
   }
 
   checkSeedLength(seedPhrase) {
@@ -289,9 +287,8 @@ class _RecoverScreenState extends State<RecoverScreen> {
                   seedPhrase = seedPhrasecontroller.text;
                 });
                 try {
-                  await checkDoubleName(doubleName);
-                  await checkEmail(doubleName, (emailFromForm.toLowerCase()));
                   await checkSeedPhrase(doubleName, seedPhrase);
+                  await checkEmail(doubleName, (emailFromForm.toLowerCase()));
                   Navigator.pop(context);
                   await continueRecoverAccount();
                 } catch (e) {

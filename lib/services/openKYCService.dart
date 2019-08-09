@@ -8,6 +8,7 @@ import 'userService.dart';
 String openKycApiUrl = config.openKycApiUrl;
 String threeBotApiUrl = config.threeBotApiUrl;
 String threeBotFrontEndUrl = config.threeBotFrontEndUrl;
+
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
 Future getSignedEmailIdentifierFromOpenKYC(String doubleName) async {
@@ -29,13 +30,17 @@ Future getSignedEmailIdentifierFromOpenKYC(String doubleName) async {
 }
 
 Future verifySignedEmailIdentifier(String signedEmailIdentifier) async {
-  // requestHeaders['signature'] = await signData(doubleName, await getPrivateKey());
   return http.post('$openKycApiUrl/verify',
                     body: json.encode(
                       {
                         "signedEmailIdentifier": signedEmailIdentifier
                       }
                     ), headers: requestHeaders);
+}
+
+// TODO @MathiasDeWeerdt Refactor this and RecoverScreen!
+Future checkVerificationStatus(String doubleName) async {
+  return http.get('$openKycApiUrl/users/$doubleName', headers: requestHeaders);
 }
 
 Future<http.Response> resendVerificationEmail() async {

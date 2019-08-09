@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
+import 'package:bip39/bip39.dart' as bip39;
 
 
 Future<Map<String, String>> generateKeyPair() async {
@@ -21,7 +22,7 @@ Future<Map<String, String>> generateKeyPair() async {
   };
 }
 
-// There should be a better way to handle this. 
+  // requestHeaders['signature'] = await signData(doubleName, await getPrivateKey());
 Uint8List toHex(String input) {
   double length = input.length / 2;
   Uint8List bytes = new Uint8List(length.ceil());

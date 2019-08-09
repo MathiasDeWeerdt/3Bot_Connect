@@ -114,7 +114,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         var jsToExecute =
             "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
-
+        sleep(const Duration(seconds: 1));
         final res = await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
         final appid = apps[appId]['appid'];
         final redirecturl = apps[appId]['redirecturl'];
@@ -182,10 +182,9 @@ class _AppSelectorState extends State<AppSelector> {
               }))
     ]);
   }
-    void sendVerificationEmail() async {
-    // _appSelectScaffold.currentState.showSnackBar(SnackBar(
-    //   content: Text('Resending verification email...'),
-    // )); @ivancone pls help
+  void sendVerificationEmail() async {
+    final snackbarResending = SnackBar(content: Text('Resending verification email...'), duration: Duration(seconds: 1));
+    Scaffold.of(context).showSnackBar(snackbarResending);
     await resendVerificationEmail();
     _showResendEmailDialog();
   }
@@ -229,11 +228,14 @@ class _AppSelectorState extends State<AppSelector> {
             }
             await launchApp(size, app['id']);
             flutterWebViewPlugins[app['id']].show();
+            showButton = true;
             prefs.setBool('firstvalidation', true);
           }
 
           widget.notifyParent(app['color']);
           logger.log("Webviews is showing");
+          showButton = true;
+          lastAppUsed = app['id'];
           flutterWebViewPlugins[app['id']].show();
         } else {
           showDialog(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 
@@ -16,6 +17,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
   @override
   void initState() {
     super.initState();
+    hideWebviews();
     PackageInfo.fromPlatform().then((packageInfo) => {
           setState(() {
             version = packageInfo.version;
@@ -23,11 +25,19 @@ class _ErrorScreenState extends State<ErrorScreen> {
         });
   }
 
+  void hideWebviews() {
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        flutterWebViewPlugin.hide();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update required'),
+        title: Text('Error'),
         elevation: 0.0,
       ),
       body: Container(

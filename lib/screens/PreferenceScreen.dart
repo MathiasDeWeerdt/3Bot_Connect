@@ -29,27 +29,33 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     getUserValues();
   }
 
+  Future<bool> _onWillPop() {
+    var index = 0;
+    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      if (flutterWebViewPlugin != null) {
+        if (index == lastAppUsed) {
+          flutterWebViewPlugin.show();
+          showButton = true;
+        }
+        index++;
+      }
+    }
+    return Future.value(true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _prefScaffold,
-      appBar: AppBar(
-        title: Text('Preferences'),
-        elevation: 0.0,
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Theme.of(context).primaryColor,
-        child: Container(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-            ),
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: new Scaffold(
+          appBar: new AppBar(
+            title: Text('Preferences'),
+            elevation: 0.0,
+          ),
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Theme.of(context).primaryColor,
             child: Container(
               child: Container(
                 decoration: BoxDecoration(
@@ -60,63 +66,90 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                   ),
                 ),
                 child: Container(
-                  padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
-                  child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
+                      ),
+                    ),
                     child: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      child: ListView(
-                        children: <Widget>[
-                          ListTile(
-                            title: Text("Profile"),
-                          ),
-                          Material(
-                            child: ListTile(
-                              leading: Icon(Icons.person),
-                              title: Text(doubleName),
-                            ),
-                          ),
-                          Material(
-                            child: ListTile(
-                              trailing:
-                                  !emailVerified ? Icon(Icons.refresh) : null,
-                              leading: Icon(Icons.mail),
-                              title: Text(emailAdress),
-                              subtitle: !emailVerified
-                                  ? Text(
-                                      "Unverified",
-                                      style: TextStyle(color: Colors.grey),
-                                    )
-                                  : Container(),
-                              onTap: !emailVerified
-                                  ? sendVerificationEmail
-                                  : null,
-                            ),
-                          ),
-                          Material(
-                            child: ListTile(
-                              trailing: Icon(Icons.visibility),
-                              leading: Icon(Icons.vpn_key),
-                              title: Text("Seed Phrase"),
-                              onTap: _showPinDialog,
-                            ),
-                          ),
-                          ExpansionTile(
-                            title: Text("Advanced settings"),
+                      padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
+                      child: Center(
+                        child: Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: ListView(
                             children: <Widget>[
+                              ListTile(
+                                title: Text("Profile"),
+                              ),
                               Material(
                                 child: ListTile(
-                                  leading: Icon(Icons.remove_circle),
-                                  title: Text(
-                                    "Remove Account From Device",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  onTap: _showDialog,
+                                  leading: Icon(Icons.person),
+                                  title: Text(doubleName),
                                 ),
+                              ),
+                              Material(
+                                child: ListTile(
+                                  trailing: !emailVerified
+                                      ? Icon(Icons.refresh)
+                                      : null,
+                                  leading: Icon(Icons.mail),
+                                  title: Text(emailAdress.toLowerCase()),
+                                  subtitle: !emailVerified
+                                      ? Text(
+                                          "Unverified",
+                                          style: TextStyle(color: Colors.grey),
+                                        )
+                                      : Container(),
+                                  onTap: !emailVerified
+                                      ? sendVerificationEmail
+                                      : null,
+                                ),
+                              ),
+
+                              FutureBuilder(
+                                future: getPhrase(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Material(
+                                      child: ListTile(
+                                        trailing: Icon(Icons.visibility),
+                                        leading: Icon(Icons.vpn_key),
+                                        title: Text("Show Phrase"),
+                                        onTap: _showPinDialog,
+                                      ),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              ),
+                              
+                              ExpansionTile(
+                                title: Text("Advanced settings"),
+                                children: <Widget>[
+                                  Material(
+                                    child: ListTile(
+                                      leading: Icon(Icons.person),
+                                      title: Text(
+                                        "Remove Account From Device",
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                      trailing: Icon(
+                                        Icons.remove_circle,
+                                        color: Colors.red,
+                                      ),
+                                      onTap: _showDialog,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -124,9 +157,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   void _showDialog() {
@@ -136,7 +167,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             image: Icons.error,
             title: "Are you sure?",
             description: new Text(
-                "If you confirm, you won't be able to login with the current account again (for now). However, this acccount still exists."),
+                "If you confirm, your account will be removed from this device. You can always recover your account with your doublename, email and phrase."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Cancel"),
@@ -151,6 +182,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                     if (flutterWebViewPlugin != null) {
                       flutterWebViewPlugin.cleanCookies();
                       flutterWebViewPlugin.close();
+                      // flutterWebViewPlugin.resetWebviews();
                     }
                   }
                   await clearData();
@@ -167,14 +199,16 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   void sendVerificationEmail() async {
-    _prefScaffold.currentState.showSnackBar(SnackBar(
-      content: Text('Resending verification email...'),
-    ));
     await resendVerificationEmail();
+    final snackBar = SnackBar(
+        content: Text('Resending verification email...'),
+        duration: const Duration(seconds: 1));
+    Scaffold.of(context).showSnackBar(snackBar);
     _showResendEmailDialog();
   }
 
   void _showResendEmailDialog() {
+    logger.log('Dialogging');
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(

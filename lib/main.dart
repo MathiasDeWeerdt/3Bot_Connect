@@ -18,7 +18,9 @@ String pk;
 String deviceId;
 Config config;
 LoggingService logger;
+bool showButton;
 List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
+int lastAppUsed;
 
 List<Map<String, dynamic>> apps = [
   {
@@ -44,9 +46,9 @@ List<Map<String, dynamic>> apps = [
   }*/
 ];
 
-
 void init() async {
   logger = new LoggingService();
+  showButton = false;
 
   pk = await getPrivateKey();
 

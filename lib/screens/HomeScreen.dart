@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
@@ -13,6 +15,7 @@ import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -37,14 +40,51 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     });
 
     super.initState();
+    KeyboardVisibilityNotification().addNewListener(
+      onChange: (bool visible) {
+        print(visible);
+
+        webViewResizer(visible);
+        print("alex is hier");
+      },
+    );
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
   }
 
   refresh(colorData) {
     setState(() {
-      this.hexColor = Color(colorData);
+      hexColor = Color(colorData);
     });
+  }
+
+  Future<void> webViewResizer(keyboardUp) async {
+    double keyboardSize;
+    var size = MediaQuery.of(context).size;
+    print(MediaQuery.of(context).size.height.toString());
+
+    Future.delayed(
+        Duration(milliseconds: 100),
+        () => {
+              if (keyboardUp)
+                {
+                  keyboardSize = MediaQuery.of(context).viewInsets.bottom,
+                  flutterWebViewPlugins[lastAppUsed].resize(
+                      Rect.fromLTWH(
+                          0, 75, size.width, size.height - keyboardSize - 75),
+                      instance: lastAppUsed),
+                  print(MediaQuery.of(context).size.height.toString())
+                }
+              else
+                {
+                  keyboardSize = MediaQuery.of(context).viewInsets.bottom,
+                  flutterWebViewPlugins[lastAppUsed].resize(
+                      Rect.fromLTWH(
+                          0, 75, size.width, size.height - keyboardSize - 75),
+                      instance: lastAppUsed),
+                  print(keyboardSize)
+                }
+            });
   }
 
   Future<Null> initUniLinks() async {
@@ -221,19 +261,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             future: getDoubleName(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
-                return IconButton(
-                    tooltip: 'Apps',
-                    icon: const Icon(Icons.apps),
-                    onPressed: () {
-                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-                        if (flutterWebViewPlugin != null) {
-                          flutterWebViewPlugin.hide();
-                        }
-                      }
-                      setState(() {
-                        hexColor = Color(0xFF0f296a);
-                      });
-                    });
+                return Visibility(
+                    visible: showButton,
+                    child: IconButton(
+                        tooltip: 'Apps',
+                        icon: const Icon(Icons.apps),
+                        onPressed: () {
+                          SystemChannels.textInput
+                              .invokeMethod('TextInput.hide');
+                          for (var flutterWebViewPlugin
+                              in flutterWebViewPlugins) {
+                            if (flutterWebViewPlugin != null) {
+                              flutterWebViewPlugin.hide();
+                              lastAppUsed = null;
+                              showButton = false;
+                            }
+                          }
+                          setState(() {
+                            hexColor = Color(0xFF0f296a);
+                          });
+                        }));
               } else
                 return Container();
             }),
@@ -247,14 +294,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     icon: Icon(Icons.settings),
                     tooltip: 'Settings',
                     onPressed: () {
+                      SystemChannels.textInput.invokeMethod('TextInput.hide');
                       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
                         if (flutterWebViewPlugin != null) {
                           flutterWebViewPlugin.hide();
                         }
                       }
-                      setState(() {
-                        hexColor = Color(0xFF0f296a);
-                      });
 
                       Navigator.pushNamed(context, '/preference');
                     },
@@ -322,7 +367,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           padding: EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
           child: Text(
             "Scan QR code",
-            style: TextStyle(color: Colors.white,),
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
           color: Theme.of(context).accentColor,
           onPressed: () {

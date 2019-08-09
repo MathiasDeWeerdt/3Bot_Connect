@@ -119,8 +119,8 @@ Future openLogin(context, message) async {
                           FlatButton(
                             child: new Text("Ok"),
                             onPressed: () {
-                              // Navigator.pop(context);
-                              // Navigator.popUntil(context, ModalRoute.withName('/'));
+                              // Navigator.popUntil(context, ModalRoute.withName("/"));
+                              // Navigator.pushNamed(context, '/');
 
                               Navigator.pushAndRemoveUntil(
                                 context, 

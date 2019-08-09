@@ -39,25 +39,25 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
 // TODO: @MathiasDeWeerdt Double check this
   checkEmail(doubleName, emailFromForm) async {
-    var emailVerificationResponse = await checkVerificationStatus(doubleName);
-    logger.log(emailVerificationResponse);
-    if (emailVerificationResponse.statusCode != 200) {
-      throw new Exception('Email does not exist');
-    } else {
-      var response = jsonDecode(emailVerificationResponse.body);
-      String emailFormHashed = generateMd5(emailFromForm);
-      String emailHashKyc = response['email'];
+    // var emailVerificationResponse = await checkVerificationStatus(doubleName);
+    // logger.log(emailVerificationResponse);
+    // if (emailVerificationResponse.statusCode != 200) {
+    //   throw new Exception('Email does not exist');
+    // } else {
+    //   var response = jsonDecode(emailVerificationResponse.body);
+    //   String emailFormHashed = generateMd5(emailFromForm);
+    //   String emailHashKyc = response['email'];
 
-      if (emailFormHashed != emailHashKyc) {
-        throw new Exception('Email does not correspond with doublename');
-      }
+    //   if (emailFormHashed != emailHashKyc) {
+    //     throw new Exception('Email does not correspond with doublename');
+    //   }
 
-      if (response['verified'] == 1) {
-        setState(() {
-          emailVerified = true;
-        });
-      }
-    }
+    //   if (response['verified'] == 1) {
+    //     setState(() {
+    //       emailVerified = true;
+    //     });
+    //   }
+    // }
   }
 
   checkSeedPhrase(doubleName, seedPhrase) async {
@@ -295,10 +295,14 @@ class _RecoverScreenState extends State<RecoverScreen> {
                   seedPhrase = seedPhrasecontroller.text;
                 });
                 try {
-                  await checkSeedPhrase(doubleName, seedPhrase);
-                  await checkEmail(doubleName, (emailFromForm.toLowerCase()));
-                  Navigator.pop(context);
-                  await continueRecoverAccount();
+                  if(emailFromForm != null && emailFromForm.isNotEmpty) {
+                    await checkSeedPhrase(doubleName, seedPhrase);
+                    // await checkEmail(doubleName, (emailFromForm.toLowerCase()));
+                    Navigator.pop(context);
+                    await continueRecoverAccount();
+                  } else {
+                    throw new Exception('Please enter an email.');
+                  }
                 } catch (e) {
                   Navigator.pop(context);
                   logger.log(e);

@@ -48,6 +48,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     return WillPopScope(
         onWillPop: _onWillPop,
         child: new Scaffold(
+          key: _prefScaffold,
           appBar: new AppBar(
             title: Text('Preferences'),
             elevation: 0.0,
@@ -203,7 +204,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     final snackBar = SnackBar(
         content: Text('Resending verification email...'),
         duration: const Duration(seconds: 1));
-    Scaffold.of(context).showSnackBar(snackBar);
+    _prefScaffold.currentState.showSnackBar(snackBar);
     _showResendEmailDialog();
   }
 

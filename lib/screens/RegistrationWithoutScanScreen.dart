@@ -135,8 +135,12 @@ class _RegistrationWithoutScanScreen
     var phrase = widget.initialData['phrase'];
 
     savePin(pin);
-    savePrivateKey(privateKey);
-    savePublicKey(publicKey);
+    
+    Map<String, String> keys = await generateKeysFromSeedPhrase(phrase);
+
+    savePrivateKey(keys['privateKey']);
+    savePublicKey(keys['publicKey']);
+
     saveEmail(email, false);
     saveDoubleName(doubleName);
     savePhrase(phrase);

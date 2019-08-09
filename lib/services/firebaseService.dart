@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:threebotlogin/screens/HomeScreen.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
@@ -27,9 +29,11 @@ void initFirebaseMessagingListener(context) async {
     },
   );
 
-  _firebaseMessaging.requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
-  
-  _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+  _firebaseMessaging.requestNotificationPermissions(
+      const IosNotificationSettings(sound: true, badge: true, alert: true));
+
+  _firebaseMessaging.onIosSettingsRegistered
+      .listen((IosNotificationSettings settings) {
     logger.log("Settings registered: $settings");
   });
 }
@@ -41,7 +45,7 @@ Future openLogin(context, message) async {
 
   if (Platform.isIOS) {
     data = message;
-  } 
+  }
 
   if (data['logintoken'] != null) {
     logger.log('---------------');
@@ -80,14 +84,59 @@ Future openLogin(context, message) async {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginScreen(data)));
     } else if (data['type'] == 'email_verification') {
-      getEmail().then((emailMap) async {
-        if (!emailMap['verified']) {
-          checkVerificationStatus(await getDoubleName())
-              .then((newEmailMap) async {
-            logger.log("newEmailMap.body: ");
-            logger.log(newEmailMap.body);
-            var body = jsonDecode(newEmailMap.body);
-            saveEmailVerified(body['verified'] == 1);
+      getEmail().then((email) async {
+        if (email['email'] != null && (await getSignedEmailIdentifier()) == null) {
+          var tmpDoubleName = await getDoubleName();
+
+          getSignedEmailIdentifierFromOpenKYC(tmpDoubleName).then((response) async {
+            var body = jsonDecode(response.body);
+
+            var signedEmailIdentifier = body["signed_email_identifier"];
+
+            if(signedEmailIdentifier != null && signedEmailIdentifier.isNotEmpty) {
+              logger.log("Received signedEmailIdentifier: " + signedEmailIdentifier);
+
+              var vsei = json.decode((await verifySignedEmailIdentifier(signedEmailIdentifier)).body);
+
+              if(vsei != null && vsei["email"] == email["email"] && vsei["identifier"] == tmpDoubleName) {
+                logger.log("Verified signedEmailIdentifier authenticity, saving data.");
+                await saveEmail(vsei["email"], true);
+                await saveSignedEmailIdentifier(signedEmailIdentifier);
+
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => CustomDialog(
+                        image: Icons.email,
+                        title: "Email verified",
+                        description: new Text("Your email has been verfied!"),
+                        actions: <Widget>[
+                          // usually buttons at the bottom of the dialog
+                          FlatButton(
+                            child: new Text("Ok"),
+                            onPressed: () {
+                              // Navigator.pop(context);
+                              // Navigator.popUntil(context, ModalRoute.withName('/'));
+
+                              Navigator.pushAndRemoveUntil(
+                                context, 
+                                MaterialPageRoute(
+                                  builder: (context) => HomeScreen()
+                                ), 
+                                ModalRoute.withName("/")
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                );
+              } else {
+                logger.log("Couldn't verify authenticity, saving unverified email.");
+                await saveEmail(email["email"], false);
+                await removeSignedEmailIdentifier();
+              }
+            } else {
+              logger.log("No valid signed email has been found, please redo the verification process.");
+            }
           });
         }
       });

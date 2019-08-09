@@ -153,18 +153,21 @@ class _ScanScreenState extends State<RegistrationScreen>
     });
 
     var hash = qrData['hash'];
-    var privateKey = qrData['privateKey'];
+    // var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
     var phrase = qrData['phrase'];
+
+    Map<String, String> keys = await generateKeysFromSeedPhrase(phrase);
+
     if (hash == null ||
-        privateKey == null ||
+        keys['privateKey'] == null ||
         doubleName == null ||
         email == null ||
         phrase == null) {
       showError();
     } else {
-      var signedDeviceId = signData(deviceId, privateKey);
+      var signedDeviceId = signData(deviceId, keys['privateKey']);
       sendScannedFlag(hash, await signedDeviceId).then((response) {
         sliderAnimationController.forward();
         setState(() {
@@ -213,21 +216,25 @@ class _ScanScreenState extends State<RegistrationScreen>
   saveValues() async {
     logger.log('save values');
     var hash = qrData['hash'];
-    var privateKey = qrData['privateKey'];
+    // var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
-    var publicKey = qrData['appPublicKey'];
+    var appPublicKey = qrData['appPublicKey'];
     var phrase = qrData['phrase'];
 
     savePin(pin);
-    savePrivateKey(privateKey);
-    savePublicKey(publicKey);
+
+    Map<String, String> keys = await generateKeysFromSeedPhrase(phrase);
+
+    savePrivateKey(keys['privateKey']);
+    savePublicKey(keys['publicKey']);
+
     saveEmail(email, false);
     saveDoubleName(doubleName);
     savePhrase(phrase);
 
-    var signedHash = signData(hash, privateKey);
-    var data = encrypt(jsonEncode(scope), publicKey, privateKey);
+    var signedHash = signData(hash, keys['privateKey']);
+    var data = encrypt(jsonEncode(scope), appPublicKey, keys['privateKey']);
 
     sendData(hash, await signedHash, await data, null).then((x) {
       Navigator.popUntil(context, ModalRoute.withName('/'));

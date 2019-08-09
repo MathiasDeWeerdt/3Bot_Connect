@@ -38,7 +38,7 @@ class _AppSelectorState extends State<AppSelector> {
   void initState() {
     super.initState();
     for (var app in apps) {
-      logger.log("adding app webplugin " + app['id'].toString());
+      // logger.log("adding app webplugin " + app['id'].toString());
       flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin();
     }
   }
@@ -176,7 +176,7 @@ class _AppSelectorState extends State<AppSelector> {
               scrollDirection: Axis.horizontal,
               itemCount: apps.length,
               itemBuilder: (BuildContext ctxt, int index) {
-                logger.log("adding app " + index.toString() + " call 2");
+                // logger.log("adding app " + index.toString() + " call 2");
 
                 return SingleApp(apps[index], updateApp);
               }))

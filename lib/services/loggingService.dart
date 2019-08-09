@@ -4,9 +4,9 @@ class LoggingService {
   bool debug = true;
   bool writeToFile = false;
 
-  void log(Object s) {
+  void log(Object s, [Object o, Object o2]) {
     if (debug) {
-      print("[" + getDateTime() + "]: " + s.toString());
+      print("[" + getDateTime() + "]: " + s.toString() + ((o != null) ? ", " + o.toString() : "") + ((o2 != null) ? ", " + o2.toString() : ""));
     }
 
     if (writeToFile) {

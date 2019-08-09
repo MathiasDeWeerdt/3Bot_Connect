@@ -261,10 +261,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     });
     getEmail().then((emailMap) {
       setState(() {
-        email = emailMap;
-        if (email['email'] != null || email['verified']) {
-          emailAdress = email['email'];
-          emailVerified = email['verified'];
+        if (emailMap['email'] != null) {
+          emailAdress = emailMap['email'];
+          emailVerified = emailMap['verified'];
         }
       });
     });

@@ -10,10 +10,32 @@ String threeBotApiUrl = config.threeBotApiUrl;
 String threeBotFrontEndUrl = config.threeBotFrontEndUrl;
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
-Future checkVerificationStatus(String doubleName) async {
-  requestHeaders['signature'] =
-      await signData(doubleName, await getPrivateKey());
-  return http.get('$openKycApiUrl/users/$doubleName', headers: requestHeaders);
+Future getSignedEmailIdentifierFromOpenKYC(String doubleName) async {
+  String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
+  String privatekey = await getPrivateKey();
+
+  Map<String, dynamic> payload = {
+    "timestamp": timestamp,
+    "intention": "get-signedemailidentifier"
+  };
+  String signedPayload = await signData(jsonEncode(payload), privatekey);
+
+  Map<String, String> loginRequestHeaders = {
+    'Content-type': 'application/json',
+    'Jimber-Authorization': signedPayload
+  };
+
+  return http.get('$openKycApiUrl/users/$doubleName', headers: loginRequestHeaders);
+}
+
+Future verifySignedEmailIdentifier(String signedEmailIdentifier) async {
+  // requestHeaders['signature'] = await signData(doubleName, await getPrivateKey());
+  return http.post('$openKycApiUrl/verify',
+                    body: json.encode(
+                      {
+                        "signedEmailIdentifier": signedEmailIdentifier
+                      }
+                    ), headers: requestHeaders);
 }
 
 Future<http.Response> resendVerificationEmail() async {

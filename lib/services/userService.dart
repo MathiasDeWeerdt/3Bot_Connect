@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:core';
 
 import 'package:http/http.dart';
@@ -62,6 +63,13 @@ Future<String> getDoubleName() async {
   return prefs.getString('doubleName');
 }
 
+Future removeEmail() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  prefs.remove('email');
+  prefs.remove('emailVerified');
+}
+
 Future saveEmail(String email, bool verified) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('email');
@@ -71,19 +79,28 @@ Future saveEmail(String email, bool verified) async {
   prefs.setBool('emailVerified', verified);
 }
 
-Future saveEmailVerified(bool verified) async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.remove('emailVerified');
-  prefs.setBool('emailVerified', verified);
-}
-
 Future<Map<String, Object>> getEmail() async {
   final prefs = await SharedPreferences.getInstance();
-
+  
   return {
     'email': prefs.getString('email'),
-    'verified': prefs.getBool('emailVerified')
+    'verified': prefs.getBool('emailVerified') != null && prefs.getBool('emailVerified') && prefs.getString('signedEmailIdentifier') != null && prefs.getString('signedEmailIdentifier').isNotEmpty
   };
+}
+
+Future removeSignedEmailIdentifier() async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove("signedEmailIdentifier");
+}
+
+Future saveSignedEmailIdentifier(signedEmailIdentifier) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('signedEmailIdentifier', signedEmailIdentifier);
+}
+
+Future<String> getSignedEmailIdentifier() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('signedEmailIdentifier');
 }
 
 Future<Map<String, Object>> getKeys(String appId, String doubleName) async {
@@ -104,22 +121,14 @@ Future<String> getLoginToken() async {
 
 Future<void> clearData() async {
   final prefs = await SharedPreferences.getInstance();
-  
+
   Response response = await removeDeviceId(prefs.getString('doubleName'));
 
-  if(response.statusCode == 200) {
-      print("Removing account");
-      prefs.remove('pin');
-      prefs.remove('privatekey');
-      prefs.remove('publickey');
-      prefs.remove('email');
-      prefs.remove('emailVerified');
-      prefs.remove('doubleName');
-      prefs.remove('firstvalidation');
-      prefs.remove('loginToken');
-      prefs.remove('phrase');
-    } else {
-      // Handle this error?
-      print("Something went wrong while removing your account");
-    }
+  if (response.statusCode == 200) {
+    print("Removing account");
+    prefs.clear();
+  } else {
+    // Handle this error?
+    print("Something went wrong while removing your account");
+  }
 }

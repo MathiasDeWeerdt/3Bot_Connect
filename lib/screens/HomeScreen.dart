@@ -45,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         print(visible);
 
         webViewResizer(visible);
-        print("alex is hier");
       },
     );
     WidgetsBinding.instance.addObserver(this);
@@ -69,19 +68,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               if (keyboardUp)
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[lastAppUsed].resize(
+                  flutterWebViewPlugins[keyboardUsedApp].resize(
                       Rect.fromLTWH(
                           0, 75, size.width, size.height - keyboardSize - 75),
-                      instance: lastAppUsed),
+                      instance: keyboardUsedApp),
                   print(MediaQuery.of(context).size.height.toString())
                 }
               else
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[lastAppUsed].resize(
+                  flutterWebViewPlugins[keyboardUsedApp].resize(
                       Rect.fromLTWH(
-                          0, 75, size.width, size.height - keyboardSize - 75),
-                      instance: lastAppUsed),
+                          0, 75, size.width, size.height - 75),
+                      instance: keyboardUsedApp),
                   print(keyboardSize)
                 }
             });

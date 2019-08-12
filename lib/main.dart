@@ -21,6 +21,7 @@ LoggingService logger;
 bool showButton;
 List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
 int lastAppUsed;
+int keyboardUsedApp;
 
 List<Map<String, dynamic>> apps = [
   {

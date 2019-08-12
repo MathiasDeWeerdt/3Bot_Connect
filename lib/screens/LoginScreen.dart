@@ -254,7 +254,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool isMobile() {
-    return (widget.message['mobile'] == 'true' || widget.message['mobile']);
+     var mobile = widget.message['mobile'];
+
+     if(mobile is String) {
+      return mobile == 'true';
+    } else if(mobile is bool) {
+      return mobile == true;
+    }
+
+     return false;
+    // return (widget.message['mobile'] == 'true' || widget.message['mobile'] == true);
   }
 
   bool isNumeric(String s) {

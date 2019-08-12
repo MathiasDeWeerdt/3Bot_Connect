@@ -180,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 await getKeys(widget.message['appId'], scope['doubleName']);
           }
         }
-        if (selectedImageId == correctImage) {
+        if (isMobile() || selectedImageId == correctImage) {
           showScopeDialog(context, scope, widget.message['appId'], sendIt,
               cancelCallback: cancelIt);
         } else {

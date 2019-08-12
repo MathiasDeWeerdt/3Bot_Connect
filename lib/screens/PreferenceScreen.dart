@@ -279,6 +279,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 child: new Text("Close"),
                 onPressed: () {
                   Navigator.pop(context);
+                  setState(() {});
                 },
               ),
             ],

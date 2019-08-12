@@ -253,14 +253,29 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // TODO: This should be reworked. Too dirty!
   bool isMobile() {
-    return (widget.message['mobile'] == 'true' || widget.message['mobile']);
+    var mobile = widget.message['mobile'];
+
+    if(mobile is String) {
+      return mobile == 'true';
+    } else if(mobile is bool) {
+      return mobile == true;
+    }
+
+    return false;
   }
 
+  // TODO: isDouble seems like a better name?
   bool isNumeric(String s) {
     if (s == null) {
       return false;
     }
-    return double.tryParse(s) != null;
+
+    try {
+      return double.tryParse(s) != null;
+    } catch(e) {
+      return false;
+    }
   }
 }

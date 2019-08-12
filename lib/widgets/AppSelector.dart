@@ -234,6 +234,7 @@ class _AppSelectorState extends State<AppSelector> {
           logger.log("Webviews is showing");
           showButton = true;
           lastAppUsed = app['id'];
+          keyboardUsedApp = app['id'];
           flutterWebViewPlugins[app['id']].show();
         } else {
           showDialog(

@@ -110,7 +110,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                       : null,
                                 ),
                               ),
-
                               FutureBuilder(
                                 future: getPhrase(),
                                 builder: (context, snapshot) {
@@ -128,7 +127,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                   }
                                 },
                               ),
-                              
                               ExpansionTile(
                                 title: Text("Advanced settings"),
                                 children: <Widget>[
@@ -200,11 +198,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   void sendVerificationEmail() async {
-    await resendVerificationEmail();
-    final snackBar = SnackBar(
-        content: Text('Resending verification email...'),
-        duration: const Duration(seconds: 1));
+    final snackBar = SnackBar(content: Text('Resending verification email...'));
     _prefScaffold.currentState.showSnackBar(snackBar);
+    await resendVerificationEmail();
     _showResendEmailDialog();
   }
 
@@ -221,6 +217,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 child: new Text("Ok"),
                 onPressed: () {
                   Navigator.pop(context);
+                  setState(() {});
                 },
               ),
             ],
@@ -281,6 +278,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 child: new Text("Close"),
                 onPressed: () {
                   Navigator.pop(context);
+                  setState(() {});
                 },
               ),
             ],

@@ -198,10 +198,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   void sendVerificationEmail() async {
-    await resendVerificationEmail();
-    final snackBar = SnackBar(
-        content: Text('Resending verification email...'));
+    final snackBar = SnackBar(content: Text('Resending verification email...'));
     _prefScaffold.currentState.showSnackBar(snackBar);
+    await resendVerificationEmail();
     _showResendEmailDialog();
   }
 

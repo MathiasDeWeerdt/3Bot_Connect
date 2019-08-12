@@ -44,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         print(visible);
 
         webViewResizer(visible);
-        print("alex is hier");
       },
     );
     WidgetsBinding.instance.addObserver(this);

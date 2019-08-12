@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_sodium/flutter_sodium.dart';
-import 'package:password_hash/password_hash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +31,7 @@ class _AppSelectorState extends State<AppSelector> {
       'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
   bool isLaunched = false;
 
-  final _appSelectScaffold = GlobalKey<ScaffoldState>();
+  // final _appSelectScaffold = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -107,7 +105,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         var keys = await generateKeyPair();
 
-        final state = RandomString(15);
+        final state = randomString(15);
 
         final privateKey = await getPrivateKey();
         final signedHash = signData(state, privateKey);

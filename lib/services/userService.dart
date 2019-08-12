@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:core';
 
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 
 import '3botService.dart';

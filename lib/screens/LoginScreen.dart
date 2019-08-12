@@ -202,13 +202,13 @@ class _LoginScreenState extends State<LoginScreen> {
     print("inside cancelIt");
     Navigator.pushNamed(context, '/');
     print(lastAppUsed);
-    logger.log('LASTAPPUSED ${lastAppUsed}');
+    logger.log('LASTAPPUSED $lastAppUsed');
     var index = 0;
 
     for (var flutterWebViewPlugin in flutterWebViewPlugins) {
       if (flutterWebViewPlugin != null) {
         if (index == lastAppUsed) {
-          logger.log('LASTAPPUSED ${lastAppUsed}');
+          logger.log('LASTAPPUSED $lastAppUsed');
           flutterWebViewPlugin.show();
           showButton = true;
         }
@@ -261,6 +261,6 @@ class _LoginScreenState extends State<LoginScreen> {
     if (s == null) {
       return false;
     }
-    return double.parse(s, (e) => null) != null;
+    return double.tryParse(s) != null;
   }
 }

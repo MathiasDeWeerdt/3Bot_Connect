@@ -6,11 +6,8 @@ import 'package:flutter_sodium/flutter_sodium.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:password_hash/password_hash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
-import 'package:bip39/bip39.dart' as bip39;
-
 
 Future<Map<String, String>> generateKeyPair() async {
   // var keys = await Sodium.crypto_sign_seed_keypair();

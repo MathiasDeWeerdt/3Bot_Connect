@@ -6,7 +6,6 @@ import 'package:crypto/crypto.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
-import 'package:threebotlogin/services/openKYCService.dart';
 import 'RegistrationWithoutScanScreen.dart';
 
 class RecoverScreen extends StatefulWidget {
@@ -35,29 +34,6 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   String generateMd5(String input) {
     return md5.convert(utf8.encode(input)).toString();
-  }
-
-// TODO: @MathiasDeWeerdt Double check this
-  checkEmail(doubleName, emailFromForm) async {
-    // var emailVerificationResponse = await checkVerificationStatus(doubleName);
-    // logger.log(emailVerificationResponse);
-    // if (emailVerificationResponse.statusCode != 200) {
-    //   throw new Exception('Email does not exist');
-    // } else {
-    //   var response = jsonDecode(emailVerificationResponse.body);
-    //   String emailFormHashed = generateMd5(emailFromForm);
-    //   String emailHashKyc = response['email'];
-
-    //   if (emailFormHashed != emailHashKyc) {
-    //     throw new Exception('Email does not correspond with doublename');
-    //   }
-
-    //   if (response['verified'] == 1) {
-    //     setState(() {
-    //       emailVerified = true;
-    //     });
-    //   }
-    // }
   }
 
   checkSeedPhrase(doubleName, seedPhrase) async {

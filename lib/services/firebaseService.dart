@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/screens/HomeScreen.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
@@ -115,20 +114,10 @@ Future openLogin(context, message) async {
                         title: "Email verified",
                         description: new Text("Your email has been verfied!"),
                         actions: <Widget>[
-                          // usually buttons at the bottom of the dialog
                           FlatButton(
                             child: new Text("Ok"),
                             onPressed: () {
-                              // Navigator.popUntil(context, ModalRoute.withName("/"));
-                              // Navigator.pushNamed(context, '/');
-
-                              Navigator.pushAndRemoveUntil(
-                                context, 
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen()
-                                ), 
-                                ModalRoute.withName("/")
-                              );
+                              Navigator.popUntil(context, ModalRoute.withName("/"));
                             },
                           ),
                         ],

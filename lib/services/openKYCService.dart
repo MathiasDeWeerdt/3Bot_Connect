@@ -38,7 +38,6 @@ Future verifySignedEmailIdentifier(String signedEmailIdentifier) async {
                     ), headers: requestHeaders);
 }
 
-// TODO @MathiasDeWeerdt Refactor this and RecoverScreen!
 Future checkVerificationStatus(String doubleName) async {
   return http.get('$openKycApiUrl/users/$doubleName', headers: requestHeaders);
 }

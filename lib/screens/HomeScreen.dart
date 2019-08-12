@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -179,12 +178,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         logger.log("sei: " + sei.toString());
 
-        // if(sei == null) {
-        //   logger.log("We've detected an old verified account, updating data ...");
-        //   // TODO email["verified"]
-
-          
-        // } else {
           if(sei != null && sei.isNotEmpty && email["email"] != null && email["verified"]) {
             logger.log("Email is verified and we have a signed email to verify this verification to a third party");
 
@@ -230,7 +223,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               }
             });
           }
-        // }
 
         if (mounted) {
           setState(() {

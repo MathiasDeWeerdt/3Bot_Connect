@@ -90,7 +90,7 @@ Future openLogin(context, message) async {
     } else if (data['type'] == 'email_verification') {
       getEmail().then((email) async {
         if (email['email'] != null && (await getSignedEmailIdentifier()) == null) {
-          var tmpDoubleName = await getDoubleName();
+          var tmpDoubleName = (await getDoubleName()).toLowerCase();
 
           getSignedEmailIdentifierFromOpenKYC(tmpDoubleName).then((response) async {
             var body = jsonDecode(response.body);

@@ -97,21 +97,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   checkWhatPageToOpen(Uri link) {
-    setState(() {
-      openPendingLoginAttempt = false;
-    });
-
     if (link.host == 'register') {
       logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
         resetPin: false,
-      ));
-    } else if (link.host == 'login') {
-      logger.log('Login via link');
-      openPage(LoginScreen(
-        link.queryParameters,
-        closeWhenLoggedIn: true,
       ));
     }
     logger.log('==============');
@@ -128,13 +118,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         logger.log("Checking if there are login attempts.");
         try {
           if (attempt.body != '' && openPendingLoginAttempt) {
-            logger.log("Found a login a attempt, opening ...");
+            logger.log("Found a login attempt, opening ...");
             Navigator.popUntil(context, ModalRoute.withName('/'));
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => LoginScreen(
                       jsonDecode(attempt.body),
+                      closeWhenLoggedIn: true
                     ),
               ),
             );
@@ -166,10 +157,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         initFirebaseMessagingListener(context);
       }
 
-      initUniLinks();
-
       String tmpDoubleName = await getDoubleName();
+
       checkIfThereAreLoginAttempts(tmpDoubleName);
+      await initUniLinks();
 
       if (tmpDoubleName != null) {
         var sei = await getSignedEmailIdentifier();

@@ -97,21 +97,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   checkWhatPageToOpen(Uri link) {
-    setState(() {
-      openPendingLoginAttempt = false;
-    });
-
     if (link.host == 'register') {
       logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
         resetPin: false,
-      ));
-    } else if (link.host == 'login') {
-      logger.log('Login via link');
-      openPage(LoginScreen(
-        link.queryParameters,
-        closeWhenLoggedIn: true,
       ));
     }
     logger.log('==============');
@@ -140,6 +130,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               MaterialPageRoute(
                 builder: (context) => LoginScreen(
                       jsonDecode(attempt.body),
+                      closeWhenLoggedIn: true
                     ),
               ),
             );
@@ -171,9 +162,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (initFirebase) {
         initFirebaseMessagingListener(context);
       }
-      initUniLinks();
+      
       String dn = await getDoubleName();
+
       checkIfThereAreLoginAttempts(dn);
+      initUniLinks();
+
       if (dn != null || dn != '') {
         getEmail().then((emailMap) async {
           if (emailMap['verified'] != null && !emailMap['verified']) {

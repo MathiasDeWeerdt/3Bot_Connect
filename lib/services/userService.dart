@@ -109,15 +109,7 @@ Future<void> clearData() async {
 
   if(response.statusCode == 200) {
       print("Removing account");
-      prefs.remove('pin');
-      prefs.remove('privatekey');
-      prefs.remove('publickey');
-      prefs.remove('email');
-      prefs.remove('emailVerified');
-      prefs.remove('doubleName');
-      prefs.remove('firstvalidation');
-      prefs.remove('loginToken');
-      prefs.remove('phrase');
+      prefs.clear();
     } else {
       // Handle this error?
       print("Something went wrong while removing your account");

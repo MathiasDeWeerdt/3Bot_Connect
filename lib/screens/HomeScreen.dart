@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
+  String initialLink;
   Color hexColor = Color(0xff0f296a);
 
   @override
@@ -38,6 +39,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         email = e;
       });
     });
+
+    if(initialLink == null) {
+      getLinksStream().listen((String incomingLink) {
+        checkWhatPageToOpen(Uri.parse(incomingLink));
+      });
+    }
+
     super.initState();
     KeyboardVisibilityNotification().addNewListener(
       onChange: (bool visible) {
@@ -86,14 +94,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Future<Null> initUniLinks() async {
-    String initialLink = await getInitialLink();
+    initialLink = await getInitialLink();
+
     if (initialLink != null) {
       checkWhatPageToOpen(Uri.parse(initialLink));
-    } else {
-      getLinksStream().listen((String incomingLink) {
-        checkWhatPageToOpen(Uri.parse(incomingLink));
-      });
-    }
+    } 
   }
 
   checkWhatPageToOpen(Uri link) {
@@ -166,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       String dn = await getDoubleName();
 
       checkIfThereAreLoginAttempts(dn);
+
       initUniLinks();
 
       if (dn != null || dn != '') {

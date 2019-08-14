@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -183,7 +184,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     ));
   }
 
-  pinFilledIn(String value) {
+  pinFilledIn(String value) async {
     if (pin == null) {
       setState(() {
         pin = value;
@@ -206,8 +207,11 @@ class _ScanScreenState extends State<RegistrationScreen>
           scope['keys'] = {'keys': qrData['keys']};
         }
       }
-      // showScopeDialog(context, scope, qrData['appId'], saveValues);
-      print('Starting dialog...');
+      
+
+      // initialize scopePermissions
+      saveScopePermissions(jsonEncode(HashMap()));
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -218,7 +222,6 @@ class _ScanScreenState extends State<RegistrationScreen>
           );
         },
       );
-      // PreferenceDialog(scope, qrData['appId'], saveValues);
     }
   }
 

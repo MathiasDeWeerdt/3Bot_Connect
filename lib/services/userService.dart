@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:core';
 
 import 'package:http/http.dart';
@@ -122,4 +123,15 @@ Future<void> clearData() async {
       // Handle this error?
       print("Something went wrong while removing your account");
     }
+}
+
+Future saveScopePermissions(scopePermissions) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('scopePermissions');
+  prefs.setString('scopePermissions', scopePermissions);
+}
+
+Future<String> getScopePermissions() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('scopePermissions');
 }

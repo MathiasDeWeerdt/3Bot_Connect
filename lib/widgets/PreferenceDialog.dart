@@ -1,4 +1,8 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 class PreferenceDialog extends StatefulWidget {
@@ -16,7 +20,33 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
   bool _value = true;
   bool _isDisabled = false;
 
-  Widget scopeList(context, Map<dynamic, dynamic> scope) {
+  @override
+  void initState() {
+    handleInitPermissions();
+    super.initState();
+  }
+
+  void handleInitPermissions() async {
+      var initialMap = jsonDecode(await getScopePermissions());
+
+      if (!initialMap.containsKey(widget.appId)) {
+        var newHashMap = new HashMap();
+        initialMap[widget.appId] = newHashMap;
+        var keysOfScope = widget.scope.keys.toList();
+        keysOfScope.forEach((var value) {
+            newHashMap[value] = {'enabled': true, 'required': false};
+        });
+        print(initialMap);
+      }
+  }
+
+  Future<bool> getPermissions(scope) async {
+    print(scope);
+    jsonDecode(await getScopePermissions());
+    return true;
+  }
+
+  Widget scopeList(context, Map<dynamic, dynamic> scope) async{
     var keys = scope.keys.toList();
     //print(scope);
     return ListView.builder(
@@ -31,7 +61,7 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
           }
           return Container(
             child: SwitchListTile(
-              value: _value,
+              value: await getPermissions("test"),
               activeColor: (!_isDisabled) ? Theme.of(context).primaryColor : Colors.grey,
               onChanged: (bool val) {setState(() {
                 print(_isDisabled);

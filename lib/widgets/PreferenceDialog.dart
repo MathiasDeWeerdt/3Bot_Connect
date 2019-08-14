@@ -17,38 +17,29 @@ class PreferenceDialog extends StatefulWidget {
 }
 
 class _PreferenceDialogState extends State<PreferenceDialog> {
-  bool _value = true;
-  bool _isDisabled = false;
 
   @override
   void initState() {
-    handleInitPermissions();
+
     super.initState();
   }
 
-  void handleInitPermissions() async {
-      var initialMap = jsonDecode(await getScopePermissions());
-
-      if (!initialMap.containsKey(widget.appId)) {
-        var newHashMap = new HashMap();
-        initialMap[widget.appId] = newHashMap;
-        var keysOfScope = widget.scope.keys.toList();
-        keysOfScope.forEach((var value) {
-            newHashMap[value] = {'enabled': true, 'required': false};
-        });
-        print(initialMap);
-      }
+  Future<dynamic> getPermissions(app, scope) async {
+    var json = jsonDecode(await getScopePermissions());
+    var sc = scope[0];
+    return json[app][sc];
   }
 
-  Future<bool> getPermissions(scope) async {
-    print(scope);
-    jsonDecode(await getScopePermissions());
-    return true;
+  Future<dynamic> changePermission(app, scope, value) async {
+    var json = jsonDecode(await getScopePermissions());
+    var sc = scope[0];
+    json[app][sc]['enabled'] = value;
+    print(json[app][sc]['enabled']);
+    saveScopePermissions(jsonEncode(json));
   }
 
-  Widget scopeList(context, Map<dynamic, dynamic> scope) async{
+  Widget scopeList(context, Map<dynamic, dynamic> scope) {
     var keys = scope.keys.toList();
-    //print(scope);
     return ListView.builder(
         itemCount: scope.length,
         shrinkWrap: true,
@@ -59,24 +50,25 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
           } else if (keys[index] == 'keys') {
             val = 'Cryptographic key pair';
           }
-          return Container(
-            child: SwitchListTile(
-              value: await getPermissions("test"),
-              activeColor: (!_isDisabled) ? Theme.of(context).primaryColor : Colors.grey,
-              onChanged: (bool val) {setState(() {
-                print(_isDisabled);
-                if (!_isDisabled) {
-                  print('bools on ${val}');
-                  _value = val;
-                }
-              });},
-              title: Text(
-                keys[index]?.toUpperCase(),
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(val),
-            ),
-          );
+          return FutureBuilder(
+              future: getPermissions(widget.appId, [keys[index]]),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return SwitchListTile(
+                  value: snapshot.data['enabled'],
+                  activeColor: (!snapshot.data['required']) ? Theme.of(context).primaryColor : Colors.grey,
+                  onChanged: (bool val) {setState(() {
+                    if (!snapshot.data['required']) {
+                      changePermission(widget.appId, [keys[index]], val);
+                    }
+                  });},
+                  title: Text(
+                    keys[index]?.toUpperCase(),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(val),
+                );
+              },
+            );
         });
   }
 

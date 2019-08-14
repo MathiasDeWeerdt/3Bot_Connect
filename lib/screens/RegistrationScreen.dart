@@ -211,6 +211,20 @@ class _ScanScreenState extends State<RegistrationScreen>
 
       // initialize scopePermissions
       saveScopePermissions(jsonEncode(HashMap()));
+      
+       var theMap = jsonDecode(await getScopePermissions());
+
+      if (!theMap.containsKey(qrData['appId'])) {
+        var newHashMap = new HashMap();
+        theMap[qrData['appId']] = newHashMap;
+        var keysOfScope = scope.keys.toList();
+        keysOfScope.forEach((var value) {
+          // ToDo: Specifying for standards like doublename
+          newHashMap[value] = {'enabled': true, 'required': false};
+        });
+        saveScopePermissions(jsonEncode(theMap));
+        print('theMap: $theMap');
+      }
 
       showDialog(
         context: context,

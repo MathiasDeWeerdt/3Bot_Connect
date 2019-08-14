@@ -7,8 +7,8 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/widgets/PreferenceDialog.dart';
 import 'package:threebotlogin/widgets/Scanner.dart';
-import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final Widget registrationScreen;
@@ -206,7 +206,19 @@ class _ScanScreenState extends State<RegistrationScreen>
           scope['keys'] = {'keys': qrData['keys']};
         }
       }
-      showScopeDialog(context, scope, qrData['appId'], saveValues);
+      // showScopeDialog(context, scope, qrData['appId'], saveValues);
+      print('Starting dialog...');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return PreferenceDialog(
+            scope,
+            qrData['appId'],
+            saveValues,
+          );
+        },
+      );
+      // PreferenceDialog(scope, qrData['appId'], saveValues);
     }
   }
 
@@ -244,22 +256,22 @@ class _ScanScreenState extends State<RegistrationScreen>
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            image: Icons.error,
-            title: "Steps",
-            description: new Text(
-              _stepsList,
-              textAlign: TextAlign.center,
-              textScaleFactor: 1.2,
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Continue"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+        image: Icons.error,
+        title: "Steps",
+        description: new Text(
+          _stepsList,
+          textAlign: TextAlign.center,
+          textScaleFactor: 1.2,
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Continue"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
+        ],
+      ),
     );
   }
 }

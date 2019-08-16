@@ -20,7 +20,6 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
 
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -31,10 +30,11 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
   }
 
   Future<dynamic> changePermission(app, scope, value) async {
+    // todo: check if app exists ??
     var json = jsonDecode(await getScopePermissions());
+    print(json);
     var sc = scope[0];
     json[app][sc]['enabled'] = value;
-    print(json[app][sc]['enabled']);
     saveScopePermissions(jsonEncode(json));
   }
 
@@ -53,20 +53,24 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
           return FutureBuilder(
               future: getPermissions(widget.appId, [keys[index]]),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                return SwitchListTile(
-                  value: snapshot.data['enabled'],
-                  activeColor: (!snapshot.data['required']) ? Theme.of(context).primaryColor : Colors.grey,
-                  onChanged: (bool val) {setState(() {
-                    if (!snapshot.data['required']) {
-                      changePermission(widget.appId, [keys[index]], val);
-                    }
-                  });},
-                  title: Text(
-                    keys[index]?.toUpperCase(),
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(val),
-                );
+                if (snapshot.hasData) {
+                  return SwitchListTile(
+                    value: snapshot.data['enabled'],
+                    activeColor: (!snapshot.data['required']) ? Theme.of(context).primaryColor : Colors.grey,
+                    onChanged: (bool val) {setState(() {
+                      if (!snapshot.data['required']) {
+                        changePermission(widget.appId, [keys[index]], val);
+                      }
+                    });},
+                    title: Text(
+                      keys[index]?.toUpperCase(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(val),
+                  );
+                } else {
+                  return new Container();
+                }
               },
             );
         });

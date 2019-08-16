@@ -8,6 +8,7 @@ import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
+import 'package:threebotlogin/widgets/PreferenceDialog.dart';
 import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -181,8 +182,18 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         }
         if (isMobile() || selectedImageId == correctImage) {
-          showScopeDialog(context, scope, widget.message['appId'], sendIt,
-              cancelCallback: cancelIt);
+          //showScopeDialog(context, scope, widget.message['appId'], sendIt, cancelCallback: cancelIt);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return PreferenceDialog(
+                scope,
+                widget.message['appId'],
+                sendIt,
+                //cancelIt
+              );
+            },
+          );
         } else {
           _scaffoldKey.currentState.showSnackBar(
               SnackBar(content: Text('Oops... that\'s the wrong emoji')));

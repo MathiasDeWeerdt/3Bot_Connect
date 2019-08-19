@@ -121,7 +121,6 @@ class _RegistrationWithoutScanScreen
           }
         }
 
-        //showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
         showDialog(
             context: context,
             builder: (BuildContext context) {

@@ -57,14 +57,18 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
                   return SwitchListTile(
                     value: snapshot.data['enabled'],
                     activeColor: (!snapshot.data['required']) ? Theme.of(context).primaryColor : Colors.grey,
-                    onChanged: (bool val) {setState(() {
-                      if (!snapshot.data['required']) {
-                        changePermission(widget.appId, [keys[index]], val);
-                      }
-                    });},
+                    onChanged: (snapshot.data['required']) 
+                        ? null 
+                        : (bool val) {setState(() {
+                          if (!snapshot.data['required']) {
+                            changePermission(widget.appId, [keys[index]], val);
+                          }
+                        }
+                      );
+                    },
                     title: Text(
-                      keys[index]?.toUpperCase(),
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      (snapshot.data['required']) ? keys[index]?.toUpperCase() + ' *' : keys[index]?.toUpperCase(),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                     subtitle: Text(val),
                   );

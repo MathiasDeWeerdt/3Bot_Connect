@@ -208,33 +208,38 @@ class _ScanScreenState extends State<RegistrationScreen>
         }
       }
       
-
-      // initialize scopePermissions
-      saveScopePermissions(jsonEncode(HashMap()));
-      var initialPermissions = jsonDecode(await getScopePermissions());
-
-      if (!initialPermissions.containsKey(qrData['appId'])) {
-        var newHashMap = new HashMap();
-        initialPermissions[qrData['appId']] = newHashMap;
-        var keysOfScope = scope.keys.toList();
-        keysOfScope.forEach((var value) {
-          // ToDo: Specifying for standards like doublename
-          newHashMap[value] = {'enabled': true, 'required': false};
-        });
-        saveScopePermissions(jsonEncode(initialPermissions));
-      }
-      
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return PreferenceDialog(
-            scope,
-            qrData['appId'],
-            saveValues,
-          );
-        },
-      );
+      openPreferencesDialog();
     }
+  }
+
+  void openPreferencesDialog() async {
+    if (await getScopePermissions() == null) {
+      saveScopePermissions(jsonEncode(HashMap()));
+    }
+    
+    var initialPermissions = jsonDecode(await getScopePermissions());
+
+    if (!initialPermissions.containsKey(qrData['appId'])) {
+      var newHashMap = new HashMap();
+      initialPermissions[qrData['appId']] = newHashMap;
+      var keysOfScope = scope.keys.toList();
+      keysOfScope.forEach((var value) {
+        if (value == 'doubleName') newHashMap[value] = {'enabled': true, 'required': true};
+        else newHashMap[value] = {'enabled': true, 'required': false};
+      });
+      saveScopePermissions(jsonEncode(initialPermissions));
+    }
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return PreferenceDialog(
+          scope,
+          qrData['appId'],
+          saveValues,
+        );
+      },
+    );
   }
 
   saveValues() async {

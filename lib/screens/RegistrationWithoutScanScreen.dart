@@ -125,9 +125,9 @@ class _RegistrationWithoutScanScreen
             context: context,
             builder: (BuildContext context) {
               return PreferenceDialog(
-                scope,
-                widget.initialData['appId'],
-                sendIt,
+                scope: scope,
+                appId: widget.initialData['appId'],
+                callback: sendIt,
               );
             },
           );

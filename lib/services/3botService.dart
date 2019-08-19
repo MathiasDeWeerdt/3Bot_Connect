@@ -31,7 +31,6 @@ Future updateDeviceId(String deviceId, String doubleName, String privateKey) asy
 }
 
 Future sendData(String hash, String signedHash, data, selectedImageId) {
-  print(data);
   return http.post('$threeBotApiUrl/sign',
       body: json.encode({
         'hash': hash,

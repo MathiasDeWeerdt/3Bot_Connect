@@ -187,10 +187,10 @@ class _LoginScreenState extends State<LoginScreen> {
             context: context,
             builder: (BuildContext context) {
               return PreferenceDialog(
-                scope,
-                widget.message['appId'],
-                sendIt,
-                //cancelIt
+                scope: scope,
+                appId: widget.message['appId'],
+                callback: sendIt,
+                cancel: cancelIt
               );
             },
           );
@@ -245,6 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     var signedHash = signData(state, await getPrivateKey());
+    scope = await refineScope(scope);
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);
@@ -262,6 +263,19 @@ class _LoginScreenState extends State<LoginScreen> {
       _scaffoldKey.currentState.showSnackBar(
           SnackBar(content: Text('Oops... you selected the wrong emoji')));
     }
+  }
+
+  dynamic refineScope(scope) async {
+    // TODO
+    print('scope $scope');
+    var json = jsonDecode(await getScopePermissions());
+    print('json $json');
+    var permissions = json[scope['keys']['appId']];
+    /*
+    permissions.keys.toList().forEach((var value) {
+      print(value);
+    });*/
+    return scope;
   }
 
   bool isMobile() {

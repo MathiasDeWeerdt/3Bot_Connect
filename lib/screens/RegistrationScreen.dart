@@ -41,85 +41,86 @@ class _ScanScreenState extends State<RegistrationScreen>
   }
 
   Widget content() {
+    double height = MediaQuery.of(context).size.height;
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Container(
-          color: Colors.transparent,
-          child: Container(
-            decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0))),
-            padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
-            width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                SizedBox(
-                  width: 60.0,
-                ),
-                Text(
-                  'REGISTRATION',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 21.0),
-                ),
-                FloatingActionButton(
-                  tooltip: "What should I do?",
-                  mini: true,
-                  onPressed: () {
-                    _showInformation();
-                  },
-                  child: Icon(Icons.help_outline),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Container(
-          color: Theme.of(context).primaryColor,
-          child: Container(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
             color: Colors.transparent,
             child: Container(
               decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20.0),
                       topRight: Radius.circular(20.0))),
-              padding: EdgeInsets.only(top: 12.0, bottom: 12.0),
+              padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
               width: double.infinity,
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
-                    child: Center(
-                      child: Text(
-                        helperText,
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                    ),
+                  SizedBox(
+                    width: 60.0,
                   ),
-                  AnimatedContainer(
-                    duration: Duration(milliseconds: 100),
-                    padding: EdgeInsets.only(bottom: 24.0),
-                    curve: Curves.bounceInOut,
-                    width: double.infinity,
-                    child: qrData != ''
-                        ? PinField(callback: (p) => pinFilledIn(p))
-                        : null,
+                  Text(
+                    'REGISTRATION',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 21.0),
+                  ),
+                  FloatingActionButton(
+                    tooltip: "What should I do?",
+                    mini: true,
+                    onPressed: () {
+                      _showInformation();
+                    },
+                    child: Icon(Icons.help_outline),
                   ),
                 ],
               ),
             ),
           ),
-        )
-      ],
-    );
+          Container(
+            color: Theme.of(context).primaryColor,
+            child: Container(
+              color: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0))),
+                padding: EdgeInsets.only(top: 12.0, bottom: 12.0),
+                width: double.infinity,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.only(top: height/100, bottom: 12),
+                      child: Center(
+                        child: Text(
+                          helperText,
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ),
+                    ),
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 100),
+                      padding: EdgeInsets.only(bottom: 12),
+                      curve: Curves.bounceInOut,
+                      width: double.infinity,
+                      child: qrData != ''
+                          ? PinField(callback: (p) => pinFilledIn(p))
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
+      );
   }
 
   @override
@@ -234,9 +235,9 @@ class _ScanScreenState extends State<RegistrationScreen>
       context: context,
       builder: (BuildContext context) {
         return PreferenceDialog(
-          scope,
-          qrData['appId'],
-          saveValues,
+          scope: scope,
+          appId: qrData['appId'],
+          callback: saveValues,
         );
       },
     );

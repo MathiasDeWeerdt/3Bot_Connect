@@ -18,9 +18,10 @@ class _PinFieldState extends State<PinField> {
     const double maxSize = 7;
     double size = input.length > i ? maxSize : 1;
     double margin = (maxSize * 2 - size) / 2;
+    double height = MediaQuery.of(context).size.height;
     return AnimatedContainer(
-      margin: EdgeInsets.all(margin),
-      height: size,
+      margin: EdgeInsets.all(height/120),
+      height: height/50,
       width: size,
       decoration: BoxDecoration(color: Colors.black, shape: BoxShape.circle),
       duration: Duration(milliseconds: 100),
@@ -29,14 +30,16 @@ class _PinFieldState extends State<PinField> {
   }
 
   Widget buildNumberPin(String buttonText, BuildContext context,
-      {Color backgroundColor: Colors.blueGrey}) {
+    {Color backgroundColor: Colors.blueGrey}) {
     var onPressedMethod = () => handleInput(buttonText);
+    double height = MediaQuery.of(context).size.height;
+    
     if (buttonText == 'OK')
       onPressedMethod = input.length >= widget.pinLength ? () => onOk() : null;
     if (buttonText == 'C')
       onPressedMethod = input.length >= 1 ? () => onClear() : null;
     return Container(
-        padding: EdgeInsets.only(top: 12, bottom: 12),
+        padding: EdgeInsets.only(top: height/136, bottom: height/136),
         child: Center(
             child: RawMaterialButton(
           padding: EdgeInsets.all(12),

@@ -6,12 +6,13 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 class PreferenceDialog extends StatefulWidget {
-  PreferenceDialog(this.scope, this.appId, this.callback, {Key key})
+  PreferenceDialog({Key key, @required this.scope, @required this.appId, @required this.callback, this.cancel})
       : super(key: key);
 
   final scope;
   final appId;
   final callback;
+  final cancel;
 
   _PreferenceDialogState createState() => _PreferenceDialogState();
 }
@@ -30,7 +31,6 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
   }
 
   Future<dynamic> changePermission(app, scope, value) async {
-    // todo: check if app exists ??
     var json = jsonDecode(await getScopePermissions());
     print(json);
     var sc = scope[0];
@@ -40,7 +40,10 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
 
   Widget scopeList(context, Map<dynamic, dynamic> scope) {
     var keys = scope.keys.toList();
-    return ListView.builder(
+    return Container(
+      height: MediaQuery.of(context).size.height / 3.5,
+      child: ListView.builder(
+        scrollDirection: Axis.vertical,
         itemCount: scope.length,
         shrinkWrap: true,
         itemBuilder: (BuildContext ctxt, index) {
@@ -50,6 +53,7 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
           } else if (keys[index] == 'keys') {
             val = 'Cryptographic key pair';
           }
+          
           return FutureBuilder(
               future: getPermissions(widget.appId, [keys[index]]),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -77,7 +81,8 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
                 }
               },
             );
-        });
+        }),
+      );
   }
 
   @override
@@ -88,8 +93,7 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
       actions: <Widget>[
         FlatButton(
           child: Text("Cancel"),
-          onPressed: () =>
-              Navigator.popUntil(context, ModalRoute.withName('/')),
+          onPressed: (widget.cancel != null) ? widget.cancel : () => Navigator.popUntil(context, ModalRoute.withName('/'))
         ),
         FlatButton(
           child: Text("Ok"),

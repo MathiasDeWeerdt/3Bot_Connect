@@ -42,6 +42,11 @@ Future<String> signData(String data, String sk) async {
 
 // }
 
+Future<String> generateSeedPhrase() async {
+  String phrase = bip39.generateMnemonic(strength: 256);
+  return phrase;
+}
+
 Future<Map<String, String>> getFromSeedPhrase(String seedPhrase) async {
   String entropy = bip39.mnemonicToEntropy(seedPhrase);
   var keys = await Sodium.cryptoSignSeedKeypair(toHex(entropy));

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:threebotlogin/main.dart' as prefix0;
+import 'package:threebotlogin/main.dart';
 
 import '../main.dart';
 

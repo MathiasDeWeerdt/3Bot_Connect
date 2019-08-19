@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_sodium/flutter_sodium.dart';
-import 'package:password_hash/password_hash.dart';
+// import 'package:flutter_sodium/flutter_sodium.dart';
+// import 'package:password_hash/password_hash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +107,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         var keys = await generateKeyPair();
 
-        final state = RandomString(15);
+        final state = randomString(15);
 
         final privateKey = await getPrivateKey();
         final signedHash = signData(state, privateKey);

@@ -16,6 +16,7 @@ import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
+import 'package:community_material_icon/community_material_icon.dart';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -61,28 +62,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     var size = MediaQuery.of(context).size;
     print(MediaQuery.of(context).size.height.toString());
 
-    Future.delayed(
-        Duration(milliseconds: 100),
-        () => {
-              if (keyboardUp)
-                {
-                  keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(
-                          0, 75, size.width, size.height - keyboardSize - 75),
-                      instance: keyboardUsedApp),
-                  print(MediaQuery.of(context).size.height.toString())
-                }
-              else
-                {
-                  keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(
-                          0, 75, size.width, size.height - 75),
-                      instance: keyboardUsedApp),
-                  print(keyboardSize)
-                }
-            });
+    if (keyboardUsedApp == 0) {
+      Future.delayed(
+          Duration(milliseconds: 100),
+          () => {
+                if (keyboardUp)
+                  {
+                    keyboardSize = MediaQuery.of(context).viewInsets.bottom,
+                    flutterWebViewPlugins[keyboardUsedApp].resize(
+                        Rect.fromLTWH(
+                            0, 75, size.width, size.height - keyboardSize - 75),
+                        instance: keyboardUsedApp),
+                    print(MediaQuery.of(context).size.height.toString())
+                  }
+                else
+                  {
+                    keyboardSize = MediaQuery.of(context).viewInsets.bottom,
+                    flutterWebViewPlugins[keyboardUsedApp].resize(
+                        Rect.fromLTWH(0, 75, size.width, size.height - 75),
+                        instance: keyboardUsedApp),
+                    print(keyboardSize)
+                  }
+              });
+    }
   }
 
   Future<Null> initUniLinks() async {
@@ -305,43 +307,76 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Column notRegistered(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text('You are not registered yet.'),
-        SizedBox(
-          height: 20,
+        Expanded(
+          child: Container(),
+          flex: 1,
         ),
-        RaisedButton(
-          shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(10),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
-          child: Text(
-            "Scan QR code",
-            style: TextStyle(
-              color: Colors.white,
+        Expanded(
+          child: Container(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('You are not registered yet.',
+                      style: TextStyle(fontSize: 24)),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  RaisedButton(
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30),
+                    ),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
+                    color: Theme.of(context).accentColor,
+                    child: Text(
+                      'Register Now!',
+                      style: TextStyle(color: Colors.white, fontSize: 22),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/registration');
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-          color: Theme.of(context).accentColor,
-          onPressed: () {
-            Navigator.pushNamed(context, '/scan');
-          },
+          flex: 5,
         ),
-        RaisedButton(
-          shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(10),
+        Expanded(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: IconButton(
+                    icon: new Icon(
+                      CommunityMaterialIcons.qrcode,
+                      size: 32,
+                    ),
+                    tooltip: 'Opens QR Scanner',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/scan');
+                    },
+                  ),
+                ),
+                flex: 2,
+              ),
+              Expanded(
+                child: Container(
+                  child: FlatButton(
+                    child: Text('Recover account'),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/recover');
+                    },
+                  ),
+                ),
+                flex: 2,
+              ),
+            ],
           ),
-          padding: EdgeInsets.all(12),
-          child: Text(
-            "Recover Account",
-            style: TextStyle(color: Colors.white),
-          ),
-          color: Theme.of(context).accentColor,
-          onPressed: () {
-            Navigator.pushNamed(context, '/recover');
-          },
-        )
+          flex: 1,
+        ),
       ],
     );
   }

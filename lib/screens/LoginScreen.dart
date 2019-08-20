@@ -182,7 +182,6 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         }
         if (isMobile() || selectedImageId == correctImage) {
-          //showScopeDialog(context, scope, widget.message['appId'], sendIt, cancelCallback: cancelIt);
           showDialog(
             context: context,
             builder: (BuildContext context) {

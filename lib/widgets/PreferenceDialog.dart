@@ -40,7 +40,6 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
 
   Widget scopeList(context, Map<dynamic, dynamic> scope) {
     var keys = scope.keys.toList();
-    print(MediaQuery.of(context).size.height);
     return Container(
       height: (MediaQuery.of(context).size.height < 450 ) ? MediaQuery.of(context).size.height / 3.5 : null,
       child: ListView.builder(
@@ -60,7 +59,7 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   return SwitchListTile(
-                    value: snapshot.data['enabled'],
+                    value: (snapshot.data['required']) ? true :snapshot.data['enabled'],
                     activeColor: (!snapshot.data['required']) ? Theme.of(context).primaryColor : Colors.grey,
                     onChanged: (snapshot.data['required']) 
                         ? null 

@@ -159,6 +159,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
     var phrase = qrData['phrase'];
+    
     if (hash == null ||
         privateKey == null ||
         doubleName == null ||
@@ -200,26 +201,24 @@ class _ScanScreenState extends State<RegistrationScreen>
       scope['doubleName'] = qrData['doubleName'];
 
       if (qrData['scope'] != null) {
-        if (qrData['scope'].contains('user:email')) {
-          scope['email'] = {'email': qrData['email'], 'verified': false};
-        }
-
-        if (qrData['scope'].contains('user:keys')) {
-          scope['keys'] = {'keys': qrData['keys']};
-        }
+        print(jsonDecode(qrData['scope']));
+        var scopeFromQR = jsonDecode(qrData['scope']);
+        
+        if (scopeFromQR.containsKey('email')) scope['email'] = {'email': qrData['email'], 'verified': false};
+        if (scopeFromQR.containsKey('keys')) scope['keys'] = {'keys': qrData['keys']};
       }
-      
-      if (qrData['appId'] != null) {
-        openPreferencesDialog();
-      } else {
-        showError();
-      }
+      // Werkt nog niet met bovenste uit example
+      openPreferencesDialog(jsonDecode(qrData['scope']));
     }
   }
 
-  void openPreferencesDialog() async {
+  void openPreferencesDialog(scopeFromQR) async {
     if (await getScopePermissions() == null) {
       saveScopePermissions(jsonEncode(HashMap()));
+    }
+
+    if (qrData['appId'] == null) {
+      qrData['appId'] = '3bot';
     }
     
     var initialPermissions = jsonDecode(await getScopePermissions());
@@ -227,11 +226,13 @@ class _ScanScreenState extends State<RegistrationScreen>
     if (!initialPermissions.containsKey(qrData['appId'])) {
       var newHashMap = new HashMap();
       initialPermissions[qrData['appId']] = newHashMap;
-      var keysOfScope = scope.keys.toList();
-      keysOfScope.forEach((var value) {
-        if (value == 'doubleName') newHashMap[value] = {'enabled': true, 'required': true};
-        else newHashMap[value] = {'enabled': true, 'required': false};
-      });
+
+      if (scopeFromQR != null) {
+        scopeFromQR.keys.toList().forEach((var value) {
+          newHashMap[value] = {'enabled': true, 'required': isRequired(value, scopeFromQR)};
+        });
+      }
+      print(initialPermissions);
       saveScopePermissions(jsonEncode(initialPermissions));
     }
     
@@ -239,12 +240,19 @@ class _ScanScreenState extends State<RegistrationScreen>
       context: context,
       builder: (BuildContext context) {
         return PreferenceDialog(
+          //scope: initialPermissions[qrData['appId']],
           scope: scope,
           appId: qrData['appId'],
           callback: saveValues,
         );
       },
     );
+  }
+
+  bool isRequired(value, scopeFromQR) {
+    bool flag = false;
+    if (scopeFromQR[value]) flag = scopeFromQR[value];
+    return flag;
   }
 
   saveValues() async {

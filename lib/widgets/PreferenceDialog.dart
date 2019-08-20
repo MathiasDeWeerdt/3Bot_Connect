@@ -40,8 +40,9 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
 
   Widget scopeList(context, Map<dynamic, dynamic> scope) {
     var keys = scope.keys.toList();
+    print(MediaQuery.of(context).size.height);
     return Container(
-      height: MediaQuery.of(context).size.height / 3.5,
+      height: (MediaQuery.of(context).size.height < 450 ) ? MediaQuery.of(context).size.height / 3.5 : null,
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         itemCount: scope.length,

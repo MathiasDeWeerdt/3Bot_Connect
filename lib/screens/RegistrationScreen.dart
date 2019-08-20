@@ -209,7 +209,11 @@ class _ScanScreenState extends State<RegistrationScreen>
         }
       }
       
-      openPreferencesDialog();
+      if (qrData['appId'] != null) {
+        openPreferencesDialog();
+      } else {
+        showError();
+      }
     }
   }
 

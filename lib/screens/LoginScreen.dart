@@ -213,13 +213,11 @@ class _LoginScreenState extends State<LoginScreen> {
     print("inside cancelIt");
     Navigator.pushNamed(context, '/');
     print(lastAppUsed);
-    logger.log('LASTAPPUSED ${lastAppUsed}');
     var index = 0;
 
     for (var flutterWebViewPlugin in flutterWebViewPlugins) {
       if (flutterWebViewPlugin != null) {
         if (index == lastAppUsed) {
-          logger.log('LASTAPPUSED ${lastAppUsed}');
           flutterWebViewPlugin.show();
           showButton = true;
         }
@@ -271,9 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   dynamic refineScope(scope) async {
     var json = jsonDecode(await getScopePermissions());
-    print('json $json');
-    //var permissions = json[scope['keys']['appId']];
-    var permissions = json[scope['appId']['appId']];
+    var permissions = json[scope['keys']['appId']];
     var keysOfPermissions = permissions.keys.toList();
 
     keysOfPermissions.forEach((var value) {

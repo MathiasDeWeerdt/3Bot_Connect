@@ -23,9 +23,9 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-Future<bool> _onWillPop() {
+Future<bool> _onWillPop() async {
   var index = 0;
-
+  cancelLogin(await getDoubleName());
   for (var flutterWebViewPlugin in flutterWebViewPlugins) {
     if (flutterWebViewPlugin != null) {
       if (index == lastAppUsed) {
@@ -245,7 +245,11 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     var signedHash = signData(state, await getPrivateKey());
-    scope = await refineScope(scope);
+
+    try {
+      scope = await refineScope(scope);
+    } catch (exception) {}
+    
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);
@@ -266,15 +270,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   dynamic refineScope(scope) async {
-    // TODO
-    print('scope $scope');
     var json = jsonDecode(await getScopePermissions());
     print('json $json');
-    var permissions = json[scope['keys']['appId']];
-    /*
-    permissions.keys.toList().forEach((var value) {
-      print(value);
-    });*/
+    //var permissions = json[scope['keys']['appId']];
+    var permissions = json[scope['appId']['appId']];
+    var keysOfPermissions = permissions.keys.toList();
+
+    keysOfPermissions.forEach((var value) {
+      if (!permissions[value]['enabled']) {
+        scope.remove(value);
+      }
+    });
+
     return scope;
   }
 

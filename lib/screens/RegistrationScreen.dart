@@ -198,17 +198,20 @@ class _ScanScreenState extends State<RegistrationScreen>
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
+      var scopeFromQR;
       scope['doubleName'] = qrData['doubleName'];
 
       if (qrData['scope'] != null) {
         print(jsonDecode(qrData['scope']));
-        var scopeFromQR = jsonDecode(qrData['scope']);
+        scopeFromQR = jsonDecode(qrData['scope']);
         
         if (scopeFromQR.containsKey('email')) scope['email'] = {'email': qrData['email'], 'verified': false};
         if (scopeFromQR.containsKey('keys')) scope['keys'] = {'keys': qrData['keys']};
+        
+        openPreferencesDialog(jsonDecode(qrData['scope']));
+      } else {
+        openPreferencesDialog({'doubleName': true});
       }
-      // Werkt nog niet met bovenste uit example
-      openPreferencesDialog(jsonDecode(qrData['scope']));
     }
   }
 

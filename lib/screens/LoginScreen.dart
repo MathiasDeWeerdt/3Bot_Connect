@@ -171,14 +171,13 @@ class _LoginScreenState extends State<LoginScreen> {
       final pin = await getPin();
       if (pin == p) {
         scope['doubleName'] = await getDoubleName();
+
         if (widget.message['scope'] != null) {
-          if (widget.message['scope'].contains('user:email')) {
+          if (jsonDecode(widget.message['scope']).containsKey('email')) {
             scope['email'] = await getEmail();
           }
-
-          if (widget.message['scope'].contains('user:keys')) {
-            scope['keys'] =
-                await getKeys(widget.message['appId'], scope['doubleName']);
+          if (jsonDecode(widget.message['scope']).containsKey('keys')) {
+            scope['keys'] = await getKeys(widget.message['appId'], scope['doubleName']);
           }
         }
         if (isMobile() || selectedImageId == correctImage) {

@@ -119,6 +119,7 @@ Future<void> clearData() async {
       prefs.remove('firstvalidation');
       prefs.remove('loginToken');
       prefs.remove('phrase');
+      prefs.remove('scopePermissions');
     } else {
       // Handle this error?
       print("Something went wrong while removing your account");

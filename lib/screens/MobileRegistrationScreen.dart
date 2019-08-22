@@ -90,12 +90,12 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
         loadingDialog();
         var response = await finishRegistration(doubleNameController.text,
             emailController.text, 'random', keys['publicKey']);
+
+        print(response.statusCode);
         if (response.statusCode == 200) {
           registrationToPin();
         } else {
           Navigator.popAndPushNamed(context, '/');
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text('Something went wrong')));
         }
         break;
       default:

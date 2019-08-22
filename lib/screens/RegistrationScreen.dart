@@ -225,6 +225,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveEmail(email, false);
     saveDoubleName(doubleName);
     savePhrase(phrase);
+    saveFingerprint(false);
 
     var signedHash = signData(hash, privateKey);
     var data = encrypt(jsonEncode(scope), publicKey, privateKey);

@@ -24,6 +24,7 @@ bool showButton;
 List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
 int lastAppUsed;
 int keyboardUsedApp;
+bool finger = false;
 
 List<Map<String, dynamic>> apps = [
   {

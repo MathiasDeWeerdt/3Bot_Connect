@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
 import 'package:threebotlogin/screens/PreferenceScreen.dart';
 import 'package:threebotlogin/services/loggingService.dart';
 import 'config.dart';
@@ -11,6 +12,7 @@ import 'package:threebotlogin/screens/ErrorScreen.dart';
 import 'package:threebotlogin/screens/RecoverScreen.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:threebotlogin/services/userService.dart';
+import 'package:threebotlogin/screens/ChangePinScreen.dart';
 
 FirebaseMessaging messaging = FirebaseMessaging();
 List<CameraDescription> cameras;
@@ -22,6 +24,7 @@ bool showButton;
 List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
 int lastAppUsed;
 int keyboardUsedApp;
+bool finger = false;
 
 List<Map<String, dynamic>> apps = [
   {
@@ -92,7 +95,9 @@ class MyApp extends StatelessWidget {
         '/success': (context) => SuccessfulScreen(),
         '/error': (context) => ErrorScreen(),
         '/recover': (context) => RecoverScreen(),
-        '/preference': (context) => PreferenceScreen()
+        '/preference': (context) => PreferenceScreen(),
+        '/changepin': (context) => ChangePinScreen(),
+        '/registration': (context) => MobileRegistrationScreen()
       },
     );
   }

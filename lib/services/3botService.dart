@@ -146,3 +146,16 @@ Future getUserInfo(doubleName) {
   return http.get('$threeBotApiUrl/users/$doubleName',
      headers: requestHeaders);
 }
+
+Future<http.Response> finishRegistration(String doubleName, String email, String sid, String publicKey) async {
+
+  logger.log(doubleName + ' ' + sid + ' ' + email + ' ' + publicKey);
+
+  return http.post('$threeBotApiUrl/mobileregistration', body: json.encode({
+    'doubleName' : doubleName+'.3bot',
+    'sid' : sid,
+    'email' : email,
+    'public_key' : publicKey,
+  }),
+  headers: requestHeaders);
+}

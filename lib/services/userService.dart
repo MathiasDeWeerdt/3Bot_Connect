@@ -3,7 +3,6 @@ import 'dart:core';
 
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 
 import '3botService.dart';
@@ -92,6 +91,18 @@ Future<Map<String, Object>> getKeys(String appId, String doubleName) async {
   return await generateDerivedKeypair(appId, doubleName);
 }
 
+Future saveFingerprint(fingerprint) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('fingerprint');
+  prefs.setBool('fingerprint', fingerprint);
+}
+
+Future getFingerprint() async {
+  final prefs = await SharedPreferences.getInstance();
+  print(prefs);
+  return prefs.getBool('fingerprint');
+}
+
 Future saveLoginToken(loginToken) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('loginToken');
@@ -103,29 +114,6 @@ Future<String> getLoginToken() async {
   return prefs.getString('loginToken');
 }
 
-Future<void> clearData() async {
-  final prefs = await SharedPreferences.getInstance();
-  
-  Response response = await removeDeviceId(prefs.getString('doubleName'));
-
-  if(response.statusCode == 200) {
-      print("Removing account");
-      prefs.remove('pin');
-      prefs.remove('privatekey');
-      prefs.remove('publickey');
-      prefs.remove('email');
-      prefs.remove('emailVerified');
-      prefs.remove('doubleName');
-      prefs.remove('firstvalidation');
-      prefs.remove('loginToken');
-      prefs.remove('phrase');
-      prefs.remove('scopePermissions');
-    } else {
-      // Handle this error?
-      print("Something went wrong while removing your account");
-    }
-}
-
 Future saveScopePermissions(scopePermissions) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('scopePermissions');
@@ -135,4 +123,18 @@ Future saveScopePermissions(scopePermissions) async {
 Future<String> getScopePermissions() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString('scopePermissions');
+}
+
+Future<void> clearData() async {
+  final prefs = await SharedPreferences.getInstance();
+  
+  Response response = await removeDeviceId(prefs.getString('doubleName'));
+
+  if(response.statusCode == 200) {
+      print("Removing account");
+      prefs.clear();
+    } else {
+      // Handle this error?
+      print("Something went wrong while removing your account");
+    }
 }

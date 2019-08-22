@@ -59,63 +59,63 @@ void main() async {
     //   'color': 0xFF34495e,
     //   'errorText': false
     // },
-    {
-      "content": Text(
-        'OpenBrowser',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org/',
-      "bg": 'jimber.png',
-      "disabled": false,
-      "initialUrl": 'https://broker.jimber.org/',
-      "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false
-    },
-    {
-      "content": Text(
-        'FreeFlowConnect',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://cowork-lochristi.threefold.work/',
-      "bg": 'om.jpg',
-      "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work/',
-      "visible": false,
-      "id": 2,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false
-    },
-    {
-      "content": Icon(
-        Icons.add_circle,
-        size: 75,
-        color: Colors.white,
-      ),
-      "subheading": 'New Application',
-      "bg": 'example.jpg',
-      "url": 'https://jimber.org/app',
-      "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work',
-      "visible": false,
-      "id": 3,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false
-    }
+    // {
+    //   "content": Text(
+    //     'OpenBrowser',
+    //     style: TextStyle(
+    //       color: Colors.white,
+    //       fontSize: 20,
+    //     ),
+    //     textAlign: TextAlign.center,
+    //   ),
+    //   "subheading": 'By Jimber',
+    //   "url": 'https://broker.jimber.org/',
+    //   "bg": 'jimber.png',
+    //   "disabled": false,
+    //   "initialUrl": 'https://broker.jimber.org/',
+    //   "visible": false,
+    //   "id": 1,
+    //   'cookieUrl': '',
+    //   'color': 0xFF0f296a,
+    //   'errorText': false
+    // },
+    // {
+    //   "content": Text(
+    //     'FreeFlowConnect',
+    //     style: TextStyle(
+    //       color: Colors.white,
+    //       fontSize: 20,
+    //     ),
+    //     textAlign: TextAlign.center,
+    //   ),
+    //   "subheading": '',
+    //   "url": 'https://cowork-lochristi.threefold.work/',
+    //   "bg": 'om.jpg',
+    //   "disabled": true,
+    //   "initialUrl": 'https://cowork-lochristi.threefold.work/',
+    //   "visible": false,
+    //   "id": 2,
+    //   'cookieUrl': '',
+    //   'color': 0xFF0f296a,
+    //   'errorText': false
+    // },
+    // {
+    //   "content": Icon(
+    //     Icons.add_circle,
+    //     size: 75,
+    //     color: Colors.white,
+    //   ),
+    //   "subheading": 'New Application',
+    //   "bg": 'example.jpg',
+    //   "url": 'https://jimber.org/app',
+    //   "disabled": true,
+    //   "initialUrl": 'https://cowork-lochristi.threefold.work',
+    //   "visible": false,
+    //   "id": 3,
+    //   'cookieUrl': '',
+    //   'color': 0xFF0f296a,
+    //   'errorText': false
+    // }
   ];
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

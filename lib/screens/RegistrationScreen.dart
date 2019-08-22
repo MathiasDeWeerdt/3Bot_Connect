@@ -272,6 +272,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveEmail(email, false);
     saveDoubleName(doubleName);
     savePhrase(phrase);
+    saveFingerprint(false);
 
     try {
       var signedHash = signData(hash, privateKey);

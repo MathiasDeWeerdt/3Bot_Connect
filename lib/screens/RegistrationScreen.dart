@@ -160,8 +160,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     var email = qrData['email'];
     var phrase = qrData['phrase'];
     
-    if (hash == null ||
-        privateKey == null ||
+    if (privateKey == null ||
         doubleName == null ||
         email == null ||
         phrase == null) {
@@ -221,7 +220,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     }
 
     if (qrData['appId'] == null) {
-      qrData['appId'] = '3bot';
+      qrData['appId'] = 'threefold';
     }
     
     var initialPermissions = jsonDecode(await getScopePermissions());
@@ -274,13 +273,18 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveDoubleName(doubleName);
     savePhrase(phrase);
 
-    var signedHash = signData(hash, privateKey);
-    var data = encrypt(jsonEncode(scope), publicKey, privateKey);
+    try {
+      var signedHash = signData(hash, privateKey);
+      var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
-    sendData(hash, await signedHash, await data, null).then((x) {
+      sendData(hash, await signedHash, await data, null).then((x) {
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.of(context).pushNamed('/success');
+      });
+    } catch (exception) { 
       Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.of(context).pushNamed('/success');
-    });
+      showError();
+    }
   }
 
   _showInformation() {

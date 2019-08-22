@@ -128,7 +128,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                 },
                               ),
                               ExpansionTile(
-                                title: Text("Advanced settings"),
+                                title: Text("Advanced settings", style: TextStyle(color: Colors.black),),
                                 children: <Widget>[
                                   Material(
                                     child: ListTile(

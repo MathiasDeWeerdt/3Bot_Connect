@@ -6,19 +6,25 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 class PreferenceDialog extends StatefulWidget {
-  PreferenceDialog({Key key, @required this.scope, @required this.appId, @required this.callback, this.cancel})
+  PreferenceDialog(
+      {Key key,
+      @required this.scope,
+      @required this.appId,
+      this.callback,
+      this.cancel,
+      this.type})
       : super(key: key);
 
   final scope;
   final appId;
   final callback;
   final cancel;
+  final type;
 
   _PreferenceDialogState createState() => _PreferenceDialogState();
 }
 
 class _PreferenceDialogState extends State<PreferenceDialog> {
-
   @override
   void initState() {
     super.initState();
@@ -40,39 +46,50 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
 
   Widget scopeList(context, Map<dynamic, dynamic> scope) {
     var keys = scope.keys.toList();
+
     return Container(
-      height: (MediaQuery.of(context).size.height < 450 ) ? MediaQuery.of(context).size.height / 3.5 : null,
+      height: (MediaQuery.of(context).size.height < 450)
+          ? MediaQuery.of(context).size.height / 3.5
+          : null,
       child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: scope.length,
-        shrinkWrap: true,
-        itemBuilder: (BuildContext ctxt, index) {
-          var val = scope[keys[index]];
-          if (keys[index] == 'email') {
-            val = scope[keys[index]]['email'];
-          } else if (keys[index] == 'keys') {
-            val = 'Cryptographic key pair';
-          }
-          
-          return FutureBuilder(
+          scrollDirection: Axis.vertical,
+          itemCount: scope.length,
+          shrinkWrap: true,
+          itemBuilder: (BuildContext ctxt, index) {
+            var val = scope[keys[index]];
+            if (keys[index] == 'email') {
+              val = scope[keys[index]]['email'];
+            } else if (keys[index] == 'keys') {
+              val = 'Cryptographic key pair';
+            }
+
+            return FutureBuilder(
               future: getPermissions(widget.appId, [keys[index]]),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   return SwitchListTile(
-                    value: (snapshot.data['required']) ? true :snapshot.data['enabled'],
-                    activeColor: (!snapshot.data['required']) ? Theme.of(context).primaryColor : Colors.grey,
-                    onChanged: (snapshot.data['required']) 
-                        ? null 
-                        : (bool val) {setState(() {
-                          if (!snapshot.data['required']) {
-                            changePermission(widget.appId, [keys[index]], val);
-                          }
-                        }
-                      );
-                    },
+                    value: (snapshot.data['required'])
+                        ? true
+                        : snapshot.data['enabled'],
+                    activeColor: (!snapshot.data['required'])
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
+                    onChanged: (snapshot.data['required'])
+                        ? null
+                        : (bool val) {
+                            setState(() {
+                              if (!snapshot.data['required']) {
+                                changePermission(
+                                    widget.appId, [keys[index]], val);
+                              }
+                            });
+                          },
                     title: Text(
-                      (snapshot.data['required']) ? keys[index]?.toUpperCase() + ' *' : keys[index]?.toUpperCase(),
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      (snapshot.data['required'])
+                          ? keys[index]?.toUpperCase() + ' *'
+                          : keys[index]?.toUpperCase(),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                     subtitle: Text(val),
                   );
@@ -81,8 +98,8 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
                 }
               },
             );
-        }),
-      );
+          }),
+    );
   }
 
   @override
@@ -90,16 +107,20 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
     return CustomDialog(
       title: '${widget.appId} \n would like to access',
       description: scopeList(context, widget.scope),
-      actions: <Widget>[
-        FlatButton(
-          child: Text("Cancel"),
-          onPressed: (widget.cancel != null) ? widget.cancel : () => Navigator.popUntil(context, ModalRoute.withName('/'))
-        ),
-        FlatButton(
-          child: Text("Ok"),
-          onPressed: widget.callback,
-        )
-      ],
+      actions: (widget.type != 'login' || widget.type == null)
+          ? <Widget>[
+              FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: (widget.cancel != null)
+                      ? widget.cancel
+                      : () => Navigator.popUntil(
+                          context, ModalRoute.withName('/'))),
+              FlatButton(
+                child: Text("Ok"),
+                onPressed: widget.callback,
+              )
+            ]
+          : null,
     );
   }
 }

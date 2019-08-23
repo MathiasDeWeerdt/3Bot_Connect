@@ -9,7 +9,6 @@ import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/PreferenceDialog.dart';
-import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class RegistrationWithoutScanScreen extends StatefulWidget {
   final Widget registrationWithoutScanScreen;

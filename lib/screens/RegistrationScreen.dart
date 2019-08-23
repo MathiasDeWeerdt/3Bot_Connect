@@ -43,84 +43,84 @@ class _ScanScreenState extends State<RegistrationScreen>
   Widget content() {
     double height = MediaQuery.of(context).size.height;
     return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0))),
+            padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                SizedBox(
+                  width: 60.0,
+                ),
+                Text(
+                  'REGISTRATION',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 21.0),
+                ),
+                FloatingActionButton(
+                  tooltip: "What should I do?",
+                  mini: true,
+                  onPressed: () {
+                    _showInformation();
+                  },
+                  child: Icon(Icons.help_outline),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          color: Theme.of(context).primaryColor,
+          child: Container(
             color: Colors.transparent,
             child: Container(
               decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20.0),
                       topRight: Radius.circular(20.0))),
-              padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 24.0),
+              padding: EdgeInsets.only(top: 12.0, bottom: 12.0),
               width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: <Widget>[
-                  SizedBox(
-                    width: 60.0,
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.only(top: height / 100, bottom: 12),
+                    child: Center(
+                      child: Text(
+                        helperText,
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
                   ),
-                  Text(
-                    'REGISTRATION',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 21.0),
-                  ),
-                  FloatingActionButton(
-                    tooltip: "What should I do?",
-                    mini: true,
-                    onPressed: () {
-                      _showInformation();
-                    },
-                    child: Icon(Icons.help_outline),
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 100),
+                    padding: EdgeInsets.only(bottom: 12),
+                    curve: Curves.bounceInOut,
+                    width: double.infinity,
+                    child: qrData != ''
+                        ? PinField(callback: (p) => pinFilledIn(p))
+                        : null,
                   ),
                 ],
               ),
             ),
           ),
-          Container(
-            color: Theme.of(context).primaryColor,
-            child: Container(
-              color: Colors.transparent,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0))),
-                padding: EdgeInsets.only(top: 12.0, bottom: 12.0),
-                width: double.infinity,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.only(top: height/100, bottom: 12),
-                      child: Center(
-                        child: Text(
-                          helperText,
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                      ),
-                    ),
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 100),
-                      padding: EdgeInsets.only(bottom: 12),
-                      curve: Curves.bounceInOut,
-                      width: double.infinity,
-                      child: qrData != ''
-                          ? PinField(callback: (p) => pinFilledIn(p))
-                          : null,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
-        ],
-      );
+        )
+      ],
+    );
   }
 
   @override
@@ -159,7 +159,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
     var phrase = qrData['phrase'];
-    
+
     if (privateKey == null ||
         doubleName == null ||
         email == null ||
@@ -203,10 +203,12 @@ class _ScanScreenState extends State<RegistrationScreen>
       if (qrData['scope'] != null) {
         print(jsonDecode(qrData['scope']));
         scopeFromQR = jsonDecode(qrData['scope']);
-        
-        if (scopeFromQR.containsKey('email')) scope['email'] = {'email': qrData['email'], 'verified': false};
-        if (scopeFromQR.containsKey('keys')) scope['keys'] = {'keys': qrData['keys']};
-        
+
+        if (scopeFromQR.containsKey('email'))
+          scope['email'] = {'email': qrData['email'], 'verified': false};
+        if (scopeFromQR.containsKey('keys'))
+          scope['keys'] = {'keys': qrData['keys']};
+
         openPreferencesDialog(jsonDecode(qrData['scope']));
       } else {
         openPreferencesDialog({'doubleName': true});
@@ -222,7 +224,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     if (qrData['appId'] == null) {
       qrData['appId'] = 'threefold';
     }
-    
+
     var initialPermissions = jsonDecode(await getScopePermissions());
 
     if (!initialPermissions.containsKey(qrData['appId'])) {
@@ -231,13 +233,16 @@ class _ScanScreenState extends State<RegistrationScreen>
 
       if (scopeFromQR != null) {
         scopeFromQR.keys.toList().forEach((var value) {
-          newHashMap[value] = {'enabled': true, 'required': isRequired(value, scopeFromQR)};
+          newHashMap[value] = {
+            'enabled': true,
+            'required': isRequired(value, scopeFromQR)
+          };
         });
       }
       print(initialPermissions);
       saveScopePermissions(jsonEncode(initialPermissions));
     }
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -282,7 +287,7 @@ class _ScanScreenState extends State<RegistrationScreen>
         Navigator.popUntil(context, ModalRoute.withName('/'));
         Navigator.of(context).pushNamed('/success');
       });
-    } catch (exception) { 
+    } catch (exception) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       showError();
     }

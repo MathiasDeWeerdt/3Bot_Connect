@@ -10,15 +10,18 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/widgets/PreferenceDialog.dart';
-import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
+  final Widget scopeList;
   final message;
   final bool closeWhenLoggedIn;
 
   LoginScreen(this.message,
-      {Key key, this.loginScreen, this.closeWhenLoggedIn = false})
+      {Key key,
+      this.loginScreen,
+      this.closeWhenLoggedIn = false,
+      this.scopeList})
       : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
@@ -46,11 +49,14 @@ class _LoginScreenState extends State<LoginScreen> {
   var correctImage = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var scope = Map();
+  bool cancelBtnVisible = false;
 
   bool showPinfield = false;
   bool showScopeAndEmoji = false;
 
   bool _isAuthenticated;
+
+  // PreferenceDialog scopeListc = new PreferenceDialog(scope, appId, callback);
 
   @override
   void initState() {
@@ -81,19 +87,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  // TODO: Check if fingerprint is active
-  // TODO: If fingerprint is active, authenticate
-  // TODO: else fingerprint not active, show pinfield
-  // TODO: if Authenticate is true, show scope and show emotes
-  // TODO: else authentica is false, show pinfield
-  // TODO: if pinfield is shown, ask for pin
-  // TODO: when pin is correct, show scope and show emotes
-  // TODO: when pin is incorrectly, ask again
-  // TODO: when pinfield is shown, let user click 'it wasn't me'
-  // TODO: when clicked on emoji make a check
-  // TODO: when check is true, send data
-  // TODO: when check is false, show new emojis and repeat
-
   isFingerPrintActive() {
     checkFingerPrintActive();
   }
@@ -118,8 +111,23 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  finishLogin() {
-    print('all the scopes');
+  finishLogin() async {
+    // making scope
+    scope['doubleName'] = await getDoubleName();
+    print('widget ${widget.message['scope']}');
+    if (widget.message['scope'] != null) {
+      if (jsonDecode(widget.message['scope']).containsKey('email')) {
+        scope['email'] = await getEmail();
+      }
+
+      if (jsonDecode(widget.message['scope']).containsKey('keys')) {
+        scope['keys'] =
+            await getKeys(widget.message['appId'], scope['doubleName']);
+      }
+    }
+    print('scope $scope');
+    cancelBtnVisible = true;
+
     setState(() {
       showScopeAndEmoji = true;
       showPinfield = false;
@@ -144,23 +152,6 @@ class _LoginScreenState extends State<LoginScreen> {
       'E',
       'F'
     ];
-    final List<int> colorCodes = <int>[
-      600,
-      500,
-      100,
-      600,
-      500,
-      100,
-      600,
-      500,
-      100,
-      600,
-      500,
-      100,
-      600,
-      500,
-      100,
-    ];
 
     return Container(
       child: Padding(
@@ -168,21 +159,28 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: <Widget>[
             Expanded(
-              flex: 7,
-              child: SizedBox(
-                height: 200.0,
-                child: new ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: entries.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      height: 50,
-                      color: Colors.amber[colorCodes[index]],
-                      child: Center(child: Text('Entry ${entries[index]}')),
-                    );
-                  },
+              flex: 1,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  child: Text(
+                    'Please select your preferred scopes and the asked emoji to continue',
+                    style: TextStyle(fontSize: 18.0),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
+            ),
+            Expanded(
+              flex: 7,
+              child: SizedBox(
+                  height: 200.0,
+                  child: PreferenceDialog(
+                    scope: scope,
+                    appId: widget.message['appId'],
+                    callback: cancelIt,
+                    type: 'login',
+                  )),
             ),
             Expanded(
               flex: 2,
@@ -257,18 +255,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             showScopeAndEmoji ? scopeEmojiView() : Container(),
                       ),
                     ),
-                    Expanded(
-                      child: FlatButton(
-                        child: Text(
-                          "It wasn\'t me - cancel",
-                          style: TextStyle(
-                              fontSize: 14.0, color: Color(0xff0f296a)),
+                    Visibility(
+                      visible: cancelBtnVisible,
+                      child: Expanded(
+                        flex: 0,
+                        child: FlatButton(
+                          child: Text(
+                            "It wasn\'t me - cancel",
+                            style: TextStyle(
+                                fontSize: 14.0, color: Color(0xff0f296a)),
+                          ),
+                          onPressed: () {
+                            cancelIt();
+                            Navigator.of(context).pop();
+                            _onWillPop();
+                          },
                         ),
-                        onPressed: () {
-                          cancelIt();
-                          Navigator.of(context).pop();
-                          _onWillPop();
-                        },
                       ),
                     ),
                   ],
@@ -289,9 +291,14 @@ class _LoginScreenState extends State<LoginScreen> {
     if (selectedImageId != -1 || isMobile()) {
       if (isMobile() || selectedImageId == correctImage) {
         setState(() {
+          print('send it again');
           sendIt();
         });
       } else {
+        setState(() {
+          print('send it again');
+          sendIt();
+        });
         _scaffoldKey.currentState.showSnackBar(
             SnackBar(content: Text('Oops... that\'s the wrong emoji')));
       }
@@ -307,6 +314,10 @@ class _LoginScreenState extends State<LoginScreen> {
       print('Onto showing scopes and emojis');
       return finishLogin();
     } else {
+      setState(() {
+        print('send it again');
+        sendIt();
+      });
       _scaffoldKey.currentState.showSnackBar(
           SnackBar(content: Text('Oops... you entered the wrong pin')));
     }
@@ -349,7 +360,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       scope = await refineScope(scope);
     } catch (exception) {}
-    
+
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);
@@ -364,6 +375,10 @@ class _LoginScreenState extends State<LoginScreen> {
         } catch (e) {}
       }
     } else {
+      setState(() {
+        print('send it again');
+        sendIt();
+      });
       _scaffoldKey.currentState.showSnackBar(
           SnackBar(content: Text('Oops... you selected the wrong emoji')));
     }

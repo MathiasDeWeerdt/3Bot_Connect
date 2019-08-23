@@ -120,7 +120,7 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 18,
                   ),
                   Text(
                     'Your pincode has been changed!',
@@ -149,7 +149,8 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(50),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 100.0, vertical: 15.0),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 100.0, vertical: 15.0),
                   child: Text(
                     'Close',
                     style: TextStyle(

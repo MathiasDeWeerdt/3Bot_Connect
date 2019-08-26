@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
+  String initialLink;
   Color hexColor = Color(0xff0f296a);
 
   @override
@@ -39,6 +40,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         email = e;
       });
     });
+
+    if(initialLink == null) {
+      getLinksStream().listen((String incomingLink) {
+        checkWhatPageToOpen(Uri.parse(incomingLink));
+      });
+    }
+
     super.initState();
     KeyboardVisibilityNotification().addNewListener(
       onChange: (bool visible) {
@@ -88,32 +96,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Future<Null> initUniLinks() async {
-    String initialLink = await getInitialLink();
+    initialLink = await getInitialLink();
+
     if (initialLink != null) {
       checkWhatPageToOpen(Uri.parse(initialLink));
-    } else {
-      getLinksStream().listen((String incomingLink) {
-        checkWhatPageToOpen(Uri.parse(incomingLink));
-      });
-    }
+    } 
   }
 
   checkWhatPageToOpen(Uri link) {
-    setState(() {
-      openPendingLoginAttempt = false;
-    });
-
     if (link.host == 'register') {
       logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
         resetPin: false,
-      ));
-    } else if (link.host == 'login') {
-      logger.log('Login via link');
-      openPage(LoginScreen(
-        link.queryParameters,
-        closeWhenLoggedIn: true,
       ));
     }
     logger.log('==============');
@@ -142,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               MaterialPageRoute(
                 builder: (context) => LoginScreen(
                       jsonDecode(attempt.body),
+                      closeWhenLoggedIn: true
                     ),
               ),
             );
@@ -173,9 +169,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (initFirebase) {
         initFirebaseMessagingListener(context);
       }
-      initUniLinks();
+      
       String dn = await getDoubleName();
+
       checkIfThereAreLoginAttempts(dn);
+
+      initUniLinks();
+
       if (dn != null || dn != '') {
         getEmail().then((emailMap) async {
           if (emailMap['verified'] != null && !emailMap['verified']) {

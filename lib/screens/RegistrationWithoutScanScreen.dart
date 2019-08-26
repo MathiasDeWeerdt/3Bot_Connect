@@ -8,6 +8,7 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:uni_links/uni_links.dart';
 import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class RegistrationWithoutScanScreen extends StatefulWidget {
@@ -122,6 +123,7 @@ class _RegistrationWithoutScanScreen
 
         showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
       }
+      removeInitialLink();
     }
   }
 
@@ -168,6 +170,7 @@ class _RegistrationWithoutScanScreen
               FlatButton(
                 child: new Text("Cancel"),
                 onPressed: () {
+                  removeInitialLink();
                   Navigator.pop(context);
                   Navigator.pushReplacementNamed(context, '/preference');
                 },
@@ -176,6 +179,7 @@ class _RegistrationWithoutScanScreen
                 child: new Text("Continue"),
                 onPressed: () async {
                   Navigator.pop(context);
+                  removeInitialLink();
                   clearData();
                   sendScannedFlag(
                       widget.initialData['state'],

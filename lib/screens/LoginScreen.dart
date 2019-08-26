@@ -200,7 +200,8 @@ class _LoginScreenState extends State<LoginScreen> {
   cancelIt() async {
     cancelLogin(await getDoubleName());
     print("inside cancelIt");
-    Navigator.pushNamed(context, '/');
+    // Navigator.pushNamed(context, '/');
+    Navigator.popUntil(context, ModalRoute.withName('/'));
     print(lastAppUsed);
     logger.log('LASTAPPUSED ${lastAppUsed}');
     var index = 0;

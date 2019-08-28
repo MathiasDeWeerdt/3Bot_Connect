@@ -168,16 +168,14 @@ class _AppSelectorState extends State<AppSelector> {
       }
     });
 
-    return Stack(children: <Widget>[
-      Container(
+    return Container(
           height: 0.7 * size.height,
           child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: apps.length,
               itemBuilder: (BuildContext ctxt, int index) {
                 return SingleApp(apps[index], updateApp);
-              }))
-    ]);
+              }));
   }
 
   void sendVerificationEmail() async {

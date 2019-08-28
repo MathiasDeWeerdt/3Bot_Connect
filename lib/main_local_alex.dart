@@ -5,9 +5,6 @@ import 'main.dart';
 
 void main() async {
 
-  // generateDerivedKeypair('hello');
-  // await generateDerivedKeypair("hello2", "");
-
   var config = Config(
       name: '3bot local',
       threeBotApiUrl: 'http://dev.jimber.org:5000/api',

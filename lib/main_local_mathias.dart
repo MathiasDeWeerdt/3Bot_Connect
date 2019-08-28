@@ -4,18 +4,13 @@ import 'config.dart';
 import 'main.dart';
 
 void main() async {
-
-  // generateDerivedKeypair('hello');
-  // await generateDerivedKeypair("hello2", "");
-
   var config = Config(
       name: '3bot local',
       threeBotApiUrl: 'http://192.168.2.60:5000/api',
       openKycApiUrl: 'http://192.168.2.60:5005',
       threeBotFrontEndUrl: 'http://192.168.2.60:8081/',
-      child: new MyApp()
-  );
-  
+      child: new MyApp());
+
   init();
 
   apps = [
@@ -37,46 +32,6 @@ void main() async {
       'cookieUrl':
           'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
-      'errorText': false
-    },
-    {
-      "content": Text(
-        'OpenBrowser',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org/',
-      "bg": 'jimber.png',
-      "disabled": false,
-      "initialUrl": 'https://broker.jimber.org/',
-      "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false
-    },
-    {
-      "content": Text(
-        'FreeflowConnect',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://cowork-lochristi.threefold.work/',
-      "bg": 'om.jpg',
-      "disabled": false,
-      "initialUrl": 'https://cowork-lochristi.threefold.work/',
-      "visible": false,
-      "id": 2,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
       'errorText': false
     },
     {

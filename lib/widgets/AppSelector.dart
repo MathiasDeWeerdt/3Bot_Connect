@@ -32,7 +32,6 @@ class _AppSelectorState extends State<AppSelector> {
       'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
   bool isLaunched = false;
 
-  // final _appSelectScaffold = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -129,9 +128,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         loadUrl =
             'https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
-        // loadUrl ='https://www.cam-recorder.com/';
 
-        // Wrapped `setItem` into a func that would return some helpful info in case it throws.
         flutterWebViewPlugins[appId].reloadUrl(loadUrl);
         print("Eval result: $res");
 

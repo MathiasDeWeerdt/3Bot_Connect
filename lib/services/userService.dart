@@ -154,7 +154,6 @@ Future<void> clearData() async {
     print("Removing account");
     prefs.clear();
   } else {
-    // Handle this error?
     print("Something went wrong while removing your account");
   }
 }

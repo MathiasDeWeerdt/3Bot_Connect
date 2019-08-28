@@ -54,8 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showPinfield = false;
   bool showScopeAndEmoji = false;
 
-  // PreferenceDialog scopeListc = new PreferenceDialog(scope, appId, callback);
-
   @override
   void initState() {
     super.initState();

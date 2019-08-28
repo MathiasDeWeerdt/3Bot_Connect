@@ -3,28 +3,33 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/services/fingerprintService.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
-import 'package:threebotlogin/widgets/scopeDialog.dart';
+import 'package:threebotlogin/widgets/PreferenceDialog.dart';
 
 class LoginScreen extends StatefulWidget {
   final Widget loginScreen;
+  final Widget scopeList;
   final message;
   final bool closeWhenLoggedIn;
 
   LoginScreen(this.message,
-      {Key key, this.loginScreen, this.closeWhenLoggedIn = false})
+      {Key key,
+      this.loginScreen,
+      this.closeWhenLoggedIn = false,
+      this.scopeList})
       : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-Future<bool> _onWillPop() {
+Future<bool> _onWillPop() async {
   var index = 0;
-
+  cancelLogin(await getDoubleName());
   for (var flutterWebViewPlugin in flutterWebViewPlugins) {
     if (flutterWebViewPlugin != null) {
       if (index == lastAppUsed) {
@@ -38,12 +43,19 @@ Future<bool> _onWillPop() {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String helperText = 'Enter your pincode to log in';
+  String helperText = '';
   List<int> imageList = new List();
   var selectedImageId = -1;
   var correctImage = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var scope = Map();
+  bool cancelBtnVisible = false;
+
+  bool showPinfield = false;
+  bool showScopeAndEmoji = false;
+
+
+  // PreferenceDialog scopeListc = new PreferenceDialog(scope, appId, callback);
 
   @override
   void initState() {
@@ -66,9 +78,129 @@ class _LoginScreenState extends State<LoginScreen> {
         generated++;
       }
     }
+
+    isFingerPrintActive();
+
     setState(() {
       imageList.shuffle();
     });
+  }
+
+  isFingerPrintActive() {
+    checkFingerPrintActive();
+  }
+
+  checkFingerPrintActive() async {
+    bool isValue = await getFingerprint();
+
+    if (isValue) {
+      bool isAuthenticate = await authenticate();
+
+      if (isAuthenticate) {
+        // Show scopes + emmoji
+        print('inside authenticate');
+        return finishLogin();
+      }
+    }
+    // Show Pinfield
+    print('showing pinfield');
+    setState(() {
+      helperText = 'Enter your pincode to log in';
+      showPinfield = true;
+    });
+  }
+
+  finishLogin() async {
+    // making scope
+    scope['doubleName'] = await getDoubleName();
+    print('widget ${widget.message['scope']}');
+    if (widget.message['scope'] != null) {
+      if (jsonDecode(widget.message['scope']).containsKey('email')) {
+        scope['email'] = await getEmail();
+      }
+
+      if (jsonDecode(widget.message['scope']).containsKey('keys')) {
+        scope['keys'] = await getKeys(widget.message['appId'], scope['doubleName']);
+      }
+    }
+    print('scope $scope');
+    cancelBtnVisible = true;
+
+    setState(() {
+      showScopeAndEmoji = true;
+      showPinfield = false;
+    });
+  }
+
+  Widget scopeEmojiView() {
+    final List<String> entries = <String>[
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+      'F'
+    ];
+
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 24.0, left: 24.0),
+                  child: Text(
+                    'Please select your preferred scopes and the asked emoji to continue',
+                    style: TextStyle(fontSize: 18.0),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 7,
+              child: SizedBox(
+                  height: 200.0,
+                  child: PreferenceDialog(
+                    scope: scope,
+                    appId: widget.message['appId'],
+                    callback: cancelIt,
+                    type: 'login',
+                  )),
+            ),
+            Expanded(
+              flex: 2,
+              child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        ImageButton(imageList[0], selectedImageId,
+                            imageSelectedCallback),
+                        ImageButton(imageList[1], selectedImageId,
+                            imageSelectedCallback),
+                        ImageButton(imageList[2], selectedImageId,
+                            imageSelectedCallback),
+                        ImageButton(imageList[3], selectedImageId,
+                            imageSelectedCallback),
+                      ])),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -94,62 +226,52 @@ class _LoginScreenState extends State<LoginScreen> {
                   topRight: Radius.circular(20.0),
                 ),
               ),
-              child: SingleChildScrollView(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0))),
-                  child: SingleChildScrollView(
-                    child: Container(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 30.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          !isMobile()
-                              ? Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                      ImageButton(imageList[0], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[1], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[2], selectedImageId,
-                                          imageSelectedCallback),
-                                      ImageButton(imageList[3], selectedImageId,
-                                          imageSelectedCallback),
-                                    ])
-                              : Container(),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                              child: Center(
-                                  child: Text(
-                                helperText,
-                                style: TextStyle(fontSize: 16.0),
-                              ))),
-                          PinField(callback: (p) => pinFilledIn(p)),
-                          FlatButton(
-                            child: Text(
-                              "It wasn\'t me - cancel",
-                              style: TextStyle(
-                                  fontSize: 14.0, color: Color(0xff0f296a)),
-                            ),
-                            onPressed: () {
-                              cancelIt();
-                              Navigator.of(context).pop();
-                              _onWillPop();
-                            },
-                          ),
-                        ],
+              child: Container(
+                child: Column(
+                  children: <Widget>[
+                    Visibility(
+                      visible: showPinfield,
+                      child: Expanded(
+                        flex: 2,
+                        child: Center(child: Text(helperText)),
                       ),
                     ),
-                  ),
+                    Visibility(
+                      visible: showPinfield,
+                      child: Expanded(
+                        flex: 6,
+                        child: showPinfield
+                            ? PinField(callback: (p) => pinFilledIn(p))
+                            : Container(),
+                      ),
+                    ),
+                    Visibility(
+                      visible: showScopeAndEmoji,
+                      child: Expanded(
+                        flex: 6,
+                        child:
+                            showScopeAndEmoji ? scopeEmojiView() : Container(),
+                      ),
+                    ),
+                    Visibility(
+                      visible: cancelBtnVisible,
+                      child: Expanded(
+                        flex: 0,
+                        child: FlatButton(
+                          child: Text(
+                            "It wasn\'t me - cancel",
+                            style: TextStyle(
+                                fontSize: 14.0, color: Color(0xff0f296a)),
+                          ),
+                          onPressed: () {
+                            cancelIt();
+                            Navigator.of(context).pop();
+                            _onWillPop();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -163,33 +285,20 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       selectedImageId = imageId;
     });
-  }
 
-  pinFilledIn(p) async {
     if (selectedImageId != -1 || isMobile()) {
-      final pin = await getPin();
-      if (pin == p) {
-        scope['doubleName'] = await getDoubleName();
-        if (widget.message['scope'] != null) {
-          if (widget.message['scope'].contains('user:email')) {
-            scope['email'] = await getEmail();
-          }
-
-          if (widget.message['scope'].contains('user:keys')) {
-            scope['keys'] =
-                await getKeys(widget.message['appId'], scope['doubleName']);
-          }
-        }
-        if (isMobile() || selectedImageId == correctImage) {
-          showScopeDialog(context, scope, widget.message['appId'], sendIt,
-              cancelCallback: cancelIt);
-        } else {
-          _scaffoldKey.currentState.showSnackBar(
-              SnackBar(content: Text('Oops... that\'s the wrong emoji')));
-        }
+      if (isMobile() || selectedImageId == correctImage) {
+        setState(() {
+          print('send it again');
+          sendIt();
+        });
       } else {
+        setState(() {
+          print('send it again');
+          // sendIt();
+        });
         _scaffoldKey.currentState.showSnackBar(
-            SnackBar(content: Text('Oops... you entered the wrong pin')));
+            SnackBar(content: Text('Oops... that\'s the wrong emoji')));
       }
     } else {
       _scaffoldKey.currentState
@@ -197,18 +306,29 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  pinFilledIn(p) async {
+    final pin = await getPin();
+    if (pin == p) {
+      print('Onto showing scopes and emojis');
+      return finishLogin();
+    } else {
+      setState(() {
+        print('send it again');
+        sendIt();
+      });
+      _scaffoldKey.currentState.showSnackBar(
+          SnackBar(content: Text('Oops... you entered the wrong pin')));
+    }
+  }
+
   cancelIt() async {
     cancelLogin(await getDoubleName());
-    print("inside cancelIt");
     Navigator.pushNamed(context, '/');
-    print(lastAppUsed);
-    logger.log('LASTAPPUSED ${lastAppUsed}');
     var index = 0;
 
     for (var flutterWebViewPlugin in flutterWebViewPlugins) {
       if (flutterWebViewPlugin != null) {
         if (index == lastAppUsed) {
-          logger.log('LASTAPPUSED ${lastAppUsed}');
           flutterWebViewPlugin.show();
           showButton = true;
         }
@@ -234,6 +354,11 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     var signedHash = signData(state, await getPrivateKey());
+
+    try {
+      scope = await refineScope(scope);
+    } catch (exception) {}
+
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     sendData(state, await signedHash, await data, selectedImageId);
@@ -248,21 +373,39 @@ class _LoginScreenState extends State<LoginScreen> {
         } catch (e) {}
       }
     } else {
+      setState(() {
+        print('send it again');
+        sendIt();
+      });
       _scaffoldKey.currentState.showSnackBar(
           SnackBar(content: Text('Oops... you selected the wrong emoji')));
     }
   }
 
-  bool isMobile() {
-     var mobile = widget.message['mobile'];
+  dynamic refineScope(scope) async {
+    var json = jsonDecode(await getScopePermissions());
+    var permissions = json[scope['keys']['appId']];
+    var keysOfPermissions = permissions.keys.toList();
 
-     if(mobile is String) {
+    keysOfPermissions.forEach((var value) {
+      if (!permissions[value]['enabled']) {
+        scope.remove(value);
+      }
+    });
+
+    return scope;
+  }
+
+  bool isMobile() {
+    var mobile = widget.message['mobile'];
+
+    if (mobile is String) {
       return mobile == 'true';
-    } else if(mobile is bool) {
+    } else if (mobile is bool) {
       return mobile == true;
     }
 
-     return false;
+    return false;
     // return (widget.message['mobile'] == 'true' || widget.message['mobile'] == true);
   }
 

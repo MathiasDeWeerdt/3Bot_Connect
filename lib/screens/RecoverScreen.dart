@@ -7,6 +7,7 @@ import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
+import 'package:threebotlogin/services/toolsService.dart';
 import 'RegistrationWithoutScanScreen.dart';
 
 class RecoverScreen extends StatefulWidget {
@@ -112,23 +113,6 @@ class _RecoverScreenState extends State<RecoverScreen> {
     } else if (seedLength > 24) {
       throw new Exception('Seed phrase is too long');
     }
-  }
-
-  String validateEmail(String value) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = new RegExp(pattern);
-    if (!regex.hasMatch(value)) {
-      return 'Enter Valid Email';
-    }
-    return null;
-  }
-
-  bool validateEmailOnChange(String value) {
-    if (value.contains('@')) {
-      return true;
-    }
-    return false;
   }
 
   void initState() {

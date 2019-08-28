@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 import 'dart:io';
-import 'package:flutter_sodium/flutter_sodium.dart';
-import 'package:password_hash/password_hash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
@@ -29,23 +29,21 @@ class AppSelector extends StatefulWidget {
 
 class _AppSelectorState extends State<AppSelector> {
   String kAndroidUserAgent =
-      //'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36';
       'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
   bool isLaunched = false;
 
-  final _appSelectScaffold = GlobalKey<ScaffoldState>();
+  // final GlobalKey<ScaffoldState> _appSelectScaffold = GlobalKey<ScaffoldState>();
+  
   @override
   void initState() {
     super.initState();
     for (var app in apps) {
-      // logger.log("adding app webplugin " + app['id'].toString());
       flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin();
     }
   }
 
-  Future launchApp(size, appId) async {
+  Future<void> launchApp(size, appId) async {
     try {
-      //final url = 'https://freeflowpages.com/user/auth/external?authclient=3bot';
       var url = apps[appId]['cookieUrl'];
       var loadUrl = apps[appId]['url'];
 
@@ -60,7 +58,8 @@ class _AppSelectorState extends State<AppSelector> {
         final response = await client.send(request);
         logger.log('-----');
         logger.log(response.headers);
-        final state = Uri.decodeFull(response.headers['location'].split("&state=")[1]);
+        final state =
+            Uri.decodeFull(response.headers['location'].split("&state=")[1]);
         final privateKey = await getPrivateKey();
         final signedHash = signData(state, privateKey);
 
@@ -83,7 +82,8 @@ class _AppSelectorState extends State<AppSelector> {
           scopeData['email'] = await getEmail();
         }
 
-        var jsonData = jsonEncode((await encrypt(jsonEncode(scopeData), publickey, privateKey)));
+        var jsonData = jsonEncode(
+            (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
         loadUrl =
             'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
@@ -107,7 +107,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         var keys = await generateKeyPair();
 
-        final state = RandomString(15);
+        final state = randomString(15);
 
         final privateKey = await getPrivateKey();
         final signedHash = signData(state, privateKey);
@@ -115,18 +115,21 @@ class _AppSelectorState extends State<AppSelector> {
         var jsToExecute =
             "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
         sleep(const Duration(seconds: 1));
-        final res = await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
+        final res =
+            await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
         final appid = apps[appId]['appid'];
         final redirecturl = apps[appId]['redirecturl'];
         var scope = {};
         scope['doubleName'] = await getDoubleName();
         scope['keys'] = await getKeys(appid, scope['doubleName']);
 
-        var encrypted = await encrypt(jsonEncode(scope), keys["publicKey"], privateKey);
+        var encrypted =
+            await encrypt(jsonEncode(scope), keys["publicKey"], privateKey);
         var jsonData = jsonEncode(encrypted);
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
 
-        loadUrl ='https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+        loadUrl =
+            'https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
         // loadUrl ='https://www.cam-recorder.com/';
 
         // Wrapped `setItem` into a func that would return some helpful info in case it throws.
@@ -176,14 +179,15 @@ class _AppSelectorState extends State<AppSelector> {
               scrollDirection: Axis.horizontal,
               itemCount: apps.length,
               itemBuilder: (BuildContext ctxt, int index) {
-                // logger.log("adding app " + index.toString() + " call 2");
-
                 return SingleApp(apps[index], updateApp);
               }))
     ]);
   }
+
   void sendVerificationEmail() async {
-    final snackbarResending = SnackBar(content: Text('Resending verification email...'), duration: Duration(seconds: 1));
+    final snackbarResending = SnackBar(
+        content: Text('Resending verification email...'),
+        duration: Duration(seconds: 1));
     Scaffold.of(context).showSnackBar(snackbarResending);
     await resendVerificationEmail();
     _showResendEmailDialog();
@@ -193,22 +197,22 @@ class _AppSelectorState extends State<AppSelector> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            image: Icons.check,
-            title: "Email has been resend.",
-            description: new Text("A new verification email has been send."),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Ok"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+        image: Icons.check,
+        title: "Email has been resend.",
+        description: new Text("A new verification email has been send."),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Ok"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
+        ],
+      ),
     );
   }
 
-  Future updateApp(app) async {
+  Future<void> updateApp(app) async {
     if (!app['disabled']) {
       final emailVer = await getEmail();
       if (emailVer['verified']) {
@@ -242,55 +246,9 @@ class _AppSelectorState extends State<AppSelector> {
           showDialog(
             context: context,
             builder: (BuildContext context) => CustomDialog(
-                  image: Icons.error,
-                  title: "Service Unavailable",
-                  description: new Text("Service Unavailable"),
-                  actions: <Widget>[
-                    // usually buttons at the bottom of the dialog
-                    FlatButton(
-                      child: new Text("Ok"),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-          );
-        }
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => CustomDialog(
-                image: Icons.error,
-                title: "Please verify email",
-                description:
-                    new Text("Please verify email before using this app"),
-                actions: <Widget>[
-                  // usually buttons at the bottom of the dialog
-                  FlatButton(
-                    child: new Text("Ok"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  FlatButton(
-                    child: new Text("Resend email"),
-                    onPressed: () {
-                      sendVerificationEmail();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-        );
-      }
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
               image: Icons.error,
-              title: "Coming soon",
-              description: new Text("This will be available soon."),
+              title: "Service Unavailable",
+              description: new Text("Service Unavailable"),
               actions: <Widget>[
                 // usually buttons at the bottom of the dialog
                 FlatButton(
@@ -301,6 +259,51 @@ class _AppSelectorState extends State<AppSelector> {
                 ),
               ],
             ),
+          );
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => CustomDialog(
+            image: Icons.error,
+            title: "Please verify email",
+            description: new Text("Please verify email before using this app"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              FlatButton(
+                child: new Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: new Text("Resend email"),
+                onPressed: () {
+                  sendVerificationEmail();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => CustomDialog(
+          image: Icons.error,
+          title: "Coming soon",
+          description: new Text("This will be available soon."),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: new Text("Ok"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       );
     }
   }

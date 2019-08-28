@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/services/fingerprintService.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
@@ -20,6 +21,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_down);
   String emailAdress = '';
   final _prefScaffold = GlobalKey<ScaffoldState>();
+  bool biometricsCheck = false;
 
   var thiscolor = Colors.green;
 
@@ -27,6 +29,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   void initState() {
     super.initState();
     getUserValues();
+    checkBiometrics();
   }
 
   Future<bool> _onWillPop() {
@@ -119,7 +122,14 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                         trailing: Icon(Icons.visibility),
                                         leading: Icon(Icons.vpn_key),
                                         title: Text("Show Phrase"),
-                                        onTap: _showPinDialog,
+                                        onTap: () async {
+                                          if (!finger) {
+                                            _showPinDialog('phrase');
+                                          } else {
+                                            var isValue = await authenticate();
+                                            isValue ? _showPhrase() : null;
+                                          }
+                                        },
                                       ),
                                     );
                                   } else {
@@ -127,8 +137,35 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                   }
                                 },
                               ),
+                              Visibility(
+                                visible: biometricsCheck,
+                                child: Material(
+                                  child: SwitchListTile(
+                                    secondary: Icon(Icons.fingerprint),
+                                    value: finger,
+                                    title: Text("Fingerprint"),
+                                    activeColor: Theme.of(context).accentColor,
+                                    onChanged: (bool newValue) {
+                                      _chooseDialogFingerprint(newValue);
+                                      finger = newValue;
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Material(
+                                child: ListTile(
+                                  leading: Icon(Icons.lock),
+                                  title: Text("Change pincode"),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/changepin');
+                                  },
+                                ),
+                              ),
                               ExpansionTile(
-                                title: Text("Advanced settings"),
+                                title: Text(
+                                  "Advanced settings",
+                                  style: TextStyle(color: Colors.black),
+                                ),
                                 children: <Widget>[
                                   Material(
                                     child: ListTile(
@@ -157,6 +194,80 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             ),
           ),
         ));
+  }
+
+  checkBiometrics() async {
+    biometricsCheck =  await checkBiometricsAvailable();
+    return biometricsCheck;
+  }
+
+  void _chooseDialogFingerprint(isValue) async {
+    if (isValue) {
+      _showEnabledFingerprint();
+    } else {
+      _showPinDialog('fingerprint');
+    }
+  }
+
+  void _showEnabledFingerprint() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+            image: Icons.error,
+            title: "Enable Fingerprint",
+            description: new Text(
+                "If you enable fingerprint, anyone who has a registered fingerprint on this device will have access to your account."),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Cancel"),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  finger = false;
+                  await saveFingerprint(false);
+                  setState(() {});
+                },
+              ),
+              FlatButton(
+                child: new Text("Yes"),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await saveFingerprint(true);
+                  setState(() {});
+                },
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _showDisableFingerprint() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+            image: Icons.error,
+            title: "Disable Fingerprint",
+            description: new Text(
+                "Are you sure you want to deactivate fingerprint as authentication method?"),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  finger = true;
+                  setState(() {});
+                },
+              ),
+              FlatButton(
+                child: new Text("Yes"),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await saveFingerprint(false);
+                  setState(() {});
+                },
+              ),
+            ],
+          ),
+    );
   }
 
   void _showDialog() {
@@ -189,7 +300,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                     context,
                     ModalRoute.withName('/'),
                   );
-                  // setState(() {});
                 },
               ),
             ],
@@ -225,7 +335,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     );
   }
 
-  void _showPinDialog() {
+  void _showPinDialog(callbackParam) {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
@@ -235,6 +345,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
               padding: EdgeInsets.only(bottom: 32.0),
               child: PinField(
                 callback: checkPin,
+                callbackParam: callbackParam,
               ),
             ),
           ),
@@ -248,16 +359,24 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     ));
   }
 
-  Future checkPin(pin) async {
+  void checkPin(pin, callbackParam) async {
     if (pin == await getPin()) {
       Navigator.pop(context);
-      _showPhrase();
+      switch (callbackParam) {
+        case 'phrase':
+          _showPhrase();
+          break;
+        case 'fingerprint':
+          _showDisableFingerprint();
+          break;
+      }
     } else {
       Navigator.pop(context);
       _prefScaffold.currentState.showSnackBar(SnackBar(
         content: Text('Pin invalid'),
       ));
     }
+    setState(() {});
   }
 
   void _showPhrase() async {
@@ -303,6 +422,15 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     getPhrase().then((seedPhrase) {
       setState(() {
         phrase = seedPhrase;
+      });
+    });
+    getFingerprint().then((fingerprint) {
+      setState(() {
+        if (fingerprint == null) {
+          finger = false;
+        } else {
+          finger = fingerprint;
+        }
       });
     });
   }

@@ -28,14 +28,14 @@ void main() {
       "subheading": 'Where privacy and social media co-exist.',
       "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://www2.freeflowpages.com/',
+      "initialUrl": 'https://freeflowpages.com/',
       "visible": false,
       "id": 0,
       'cookieUrl':
-          'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
+          'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false
-    }/*,
+    },/*
     {
       "content": Text(
         'OpenBrowser',
@@ -55,7 +55,7 @@ void main() {
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
-    },
+    },*/
     {
       "content": Text(
         'FreeflowConnect',
@@ -71,7 +71,7 @@ void main() {
       "disabled": false,
       "initialUrl": 'https://cowork-lochristi.threefold.work/',
       "visible": false,
-      "id": 2,
+      "id": 1,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
@@ -91,7 +91,7 @@ void main() {
       "disabled": false,
       "initialUrl": 'https://wallet.staging.jimber.org',
       "visible": false,
-      "id": 3,
+      "id": 2,
       'cookieUrl': '',
       'color': 0xFF34495e,
       'errorText': false
@@ -108,11 +108,11 @@ void main() {
       "disabled": true,
       "initialUrl": 'https://cowork-lochristi.threefold.work',
       "visible": false,
-      "id": 4,
+      "id": 3,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
-    }*/
+    }
   ];
   
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

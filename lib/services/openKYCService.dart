@@ -26,19 +26,16 @@ Future getSignedEmailIdentifierFromOpenKYC(String doubleName) async {
     'Jimber-Authorization': signedPayload
   };
 
-  return http.get('$openKycApiUrl/users/$doubleName', headers: loginRequestHeaders);
+  return http.get('$openKycApiUrl/users/$doubleName',
+      headers: loginRequestHeaders);
 }
 
 Future verifySignedEmailIdentifier(String signedEmailIdentifier) async {
   return http.post('$openKycApiUrl/verify',
-                    body: json.encode(
-                      {
-                        "signedEmailIdentifier": signedEmailIdentifier
-                      }
-                    ), headers: requestHeaders);
+      body: json.encode({"signedEmailIdentifier": signedEmailIdentifier}),
+      headers: requestHeaders);
 }
 
-// TODO @MathiasDeWeerdt Refactor this and RecoverScreen!
 Future checkVerificationStatus(String doubleName) async {
   return http.get('$openKycApiUrl/users/$doubleName', headers: requestHeaders);
 }
@@ -51,6 +48,14 @@ Future<http.Response> resendVerificationEmail() async {
         'callback_url': threeBotFrontEndUrl + "verifyemail",
         'public_key': await getPublicKey(),
         'resend': 'true'
+      }),
+      headers: requestHeaders);
+}
+
+Future<http.Response> sendVerificationEmail() async {
+  return http.post('$openKycApiUrl/users',
+      body: json.encode({
+        'user_id': await getDoubleName(),
       }),
       headers: requestHeaders);
 }

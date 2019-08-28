@@ -1,14 +1,13 @@
-import 'dart:convert';
+import 'dart:async';
 import 'dart:core';
 
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/services/cryptoService.dart';
 
 import '3botService.dart';
+import 'cryptoService.dart';
 
-Future savePin(pin) async {
+Future<void> savePin(pin) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('pin');
   prefs.setString('pin', pin);
@@ -19,7 +18,7 @@ Future<String> getPin() async {
   return prefs.getString('pin');
 }
 
-Future savePublicKey(key) async {
+Future<void> savePublicKey(key) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('publickey');
   prefs.setString('publickey', key);
@@ -30,7 +29,7 @@ Future<String> getPublicKey() async {
   return prefs.getString('publickey');
 }
 
-Future savePrivateKey(key) async {
+Future<void> savePrivateKey(key) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('privatekey');
   prefs.setString('privatekey', key);
@@ -41,7 +40,7 @@ Future<String> getPrivateKey() async {
   return prefs.getString('privatekey');
 }
 
-Future savePhrase(phrase) async {
+Future<void> savePhrase(phrase) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('phrase');
   prefs.setString('phrase', phrase);
@@ -52,7 +51,7 @@ Future<String> getPhrase() async {
   return prefs.getString('phrase');
 }
 
-Future saveDoubleName(doubleName) async {
+Future<void> saveDoubleName(doubleName) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('doubleName');
   prefs.setString('doubleName', doubleName);
@@ -63,14 +62,14 @@ Future<String> getDoubleName() async {
   return prefs.getString('doubleName');
 }
 
-Future removeEmail() async {
+Future<void> removeEmail() async {
   final prefs = await SharedPreferences.getInstance();
 
   prefs.remove('email');
   prefs.remove('emailVerified');
 }
 
-Future saveEmail(String email, bool verified) async {
+Future<void> saveEmail(String email, bool verified) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('email');
   prefs.setString('email', email);
@@ -81,19 +80,22 @@ Future saveEmail(String email, bool verified) async {
 
 Future<Map<String, Object>> getEmail() async {
   final prefs = await SharedPreferences.getInstance();
-  
+
   return {
     'email': prefs.getString('email'),
-    'verified': prefs.getBool('emailVerified') != null && prefs.getBool('emailVerified') && prefs.getString('signedEmailIdentifier') != null && prefs.getString('signedEmailIdentifier').isNotEmpty
+    'verified': prefs.getBool('emailVerified') != null &&
+        prefs.getBool('emailVerified') &&
+        prefs.getString('signedEmailIdentifier') != null &&
+        prefs.getString('signedEmailIdentifier').isNotEmpty
   };
 }
 
-Future removeSignedEmailIdentifier() async {
+Future<void> removeSignedEmailIdentifier() async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove("signedEmailIdentifier");
 }
 
-Future saveSignedEmailIdentifier(signedEmailIdentifier) async {
+Future<void> saveSignedEmailIdentifier(signedEmailIdentifier) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.setString('signedEmailIdentifier', signedEmailIdentifier);
 }
@@ -108,7 +110,19 @@ Future<Map<String, Object>> getKeys(String appId, String doubleName) async {
   return await generateDerivedKeypair(appId, doubleName);
 }
 
-Future saveLoginToken(loginToken) async {
+Future<void> saveFingerprint(fingerprint) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('fingerprint');
+  prefs.setBool('fingerprint', fingerprint);
+}
+
+Future<bool> getFingerprint() async {
+  final prefs = await SharedPreferences.getInstance();
+  print(prefs);
+  return prefs.getBool('fingerprint');
+}
+
+Future<void> saveLoginToken(loginToken) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('loginToken');
   prefs.setString('loginToken', loginToken);
@@ -117,6 +131,17 @@ Future saveLoginToken(loginToken) async {
 Future<String> getLoginToken() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString('loginToken');
+}
+
+Future<void> saveScopePermissions(scopePermissions) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.remove('scopePermissions');
+  prefs.setString('scopePermissions', scopePermissions);
+}
+
+Future<String> getScopePermissions() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('scopePermissions');
 }
 
 Future<void> clearData() async {

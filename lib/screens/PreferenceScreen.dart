@@ -21,6 +21,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_down);
   String emailAdress = '';
   final _prefScaffold = GlobalKey<ScaffoldState>();
+  bool biometricsCheck = false;
 
   var thiscolor = Colors.green;
 
@@ -28,6 +29,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   void initState() {
     super.initState();
     getUserValues();
+    checkBiometrics();
   }
 
   Future<bool> _onWillPop() {
@@ -135,16 +137,19 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                   }
                                 },
                               ),
-                              Material(
-                                child: SwitchListTile(
-                                  secondary: Icon(Icons.fingerprint),
-                                  value: finger,
-                                  title: Text("Fingerprint"),
-                                  activeColor: Theme.of(context).accentColor,
-                                  onChanged: (bool newValue) {
-                                    _chooseDialogFingerprint(newValue);
-                                    finger = newValue;
-                                  },
+                              Visibility(
+                                visible: biometricsCheck,
+                                child: Material(
+                                  child: SwitchListTile(
+                                    secondary: Icon(Icons.fingerprint),
+                                    value: finger,
+                                    title: Text("Fingerprint"),
+                                    activeColor: Theme.of(context).accentColor,
+                                    onChanged: (bool newValue) {
+                                      _chooseDialogFingerprint(newValue);
+                                      finger = newValue;
+                                    },
+                                  ),
                                 ),
                               ),
                               Material(
@@ -189,6 +194,11 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             ),
           ),
         ));
+  }
+
+  checkBiometrics() async {
+    biometricsCheck =  await checkBiometricsAvailable();
+    return biometricsCheck;
   }
 
   void _chooseDialogFingerprint(isValue) async {

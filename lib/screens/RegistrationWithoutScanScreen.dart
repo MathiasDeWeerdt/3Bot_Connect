@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/widgets/PreferenceDialog.dart';
 
 class RegistrationWithoutScanScreen extends StatefulWidget {
   final Widget registrationWithoutScanScreen;
@@ -102,71 +100,10 @@ class _RegistrationWithoutScanScreen
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-      var scopeFromQR;
-      widget.initialData['scope'] = json.encode({"doubleName":true, "email":false, "keys":false});
-      scope['doubleName'] = widget.initialData['doubleName'];
-
-      if (widget.initialData['scope'] != null) {
-        print(jsonDecode(widget.initialData['scope']));
-        scopeFromQR = jsonDecode(widget.initialData['scope']);
-
-        if (scopeFromQR.containsKey('email'))
-          scope['email'] = {'email': widget.initialData['email'], 'verified': false};
-        if (scopeFromQR.containsKey('keys'))
-          scope['keys'] = {'keys': widget.initialData['keys']};
-
-        openPreferencesDialog(jsonDecode(widget.initialData['scope']));
-      } else {
-        openPreferencesDialog({'doubleName': true});
-      }
+      sendIt();
     }
   }
 
-  void openPreferencesDialog(scopeFromQR) async {
-    if (await getScopePermissions() == null) {
-      saveScopePermissions(jsonEncode(HashMap()));
-    }
-
-    if (widget.initialData['appId'] == null) {
-      widget.initialData['appId'] = 'localhost:8081'; // needs to be changed in default domain
-    }
-
-    var initialPermissions = jsonDecode(await getScopePermissions());
-
-    if (!initialPermissions.containsKey(widget.initialData['appId'])) {
-      var newHashMap = new HashMap();
-      initialPermissions[widget.initialData['appId']] = newHashMap;
-
-      if (scopeFromQR != null) {
-        scopeFromQR.keys.toList().forEach((var value) {
-          newHashMap[value] = {
-            'enabled': true,
-            'required': isRequired(value, scopeFromQR)
-          };
-        });
-      }
-      print(initialPermissions);
-      saveScopePermissions(jsonEncode(initialPermissions));
-    }
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return PreferenceDialog(
-          //scope: initialPermissions[qrData['appId']],
-          scope: scope,
-          appId: widget.initialData['appId'],
-          callback: sendIt,
-        );
-      },
-    );
-  }
-
-  bool isRequired(value, scopeFromQR) {
-    bool flag = false;
-    if (scopeFromQR[value]) flag = scopeFromQR[value];
-    return flag;
-  }
 
   sendIt() async {
     var hash = widget.initialData['state'];

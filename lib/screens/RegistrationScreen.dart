@@ -27,6 +27,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   String pin;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var scope = Map();
+  var keys;
 
   @override
   void initState() {
@@ -156,18 +157,16 @@ class _ScanScreenState extends State<RegistrationScreen>
     });
 
     var hash = qrData['hash'];
-    var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
     var phrase = qrData['phrase'];
 
-    if (privateKey == null ||
-        doubleName == null ||
-        email == null ||
-        phrase == null) {
+    if (doubleName == null || email == null || phrase == null) {
       showError();
     } else {
-      var signedDeviceId = signData(deviceId, privateKey);
+      keys = await getFromSeedPhrase(phrase);
+
+      var signedDeviceId = signData(deviceId, keys['privateKey']);
       sendScannedFlag(hash, await signedDeviceId, doubleName).then((response) {
         sliderAnimationController.forward();
         setState(() {
@@ -177,7 +176,8 @@ class _ScanScreenState extends State<RegistrationScreen>
         print(e);
         showError();
       });
-      updateDeviceId(await messaging.getToken(), doubleName, privateKey);
+      updateDeviceId(
+          await messaging.getToken(), doubleName, keys['privateKey']);
     }
   }
 
@@ -210,71 +210,23 @@ class _ScanScreenState extends State<RegistrationScreen>
           scope['email'] = {'email': qrData['email'], 'verified': false};
         if (scopeFromQR.containsKey('keys'))
           scope['keys'] = {'keys': qrData['keys']};
-
-        openPreferencesDialog(jsonDecode(qrData['scope']));
+        saveValues();
       } else {
-        openPreferencesDialog({'doubleName': true});
+        saveValues();
       }
     }
-  }
-
-  void openPreferencesDialog(scopeFromQR) async {
-    if (await getScopePermissions() == null) {
-      saveScopePermissions(jsonEncode(HashMap()));
-    }
-
-    if (qrData['appId'] == null) {
-      qrData['appId'] = 'localhost:8081'; // needs to be changed in default domain 
-    }
-
-    var initialPermissions = jsonDecode(await getScopePermissions());
-
-    if (!initialPermissions.containsKey(qrData['appId'])) {
-      var newHashMap = new HashMap();
-      initialPermissions[qrData['appId']] = newHashMap;
-
-      if (scopeFromQR != null) {
-        scopeFromQR.keys.toList().forEach((var value) {
-          newHashMap[value] = {
-            'enabled': true,
-            'required': isRequired(value, scopeFromQR)
-          };
-        });
-      }
-      print(initialPermissions);
-      saveScopePermissions(jsonEncode(initialPermissions));
-    }
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return PreferenceDialog(
-          //scope: initialPermissions[qrData['appId']],
-          scope: scope,
-          appId: qrData['appId'],
-          callback: saveValues,
-        );
-      },
-    );
-  }
-
-  bool isRequired(value, scopeFromQR) {
-    bool flag = false;
-    if (scopeFromQR[value]) flag = scopeFromQR[value];
-    return flag;
   }
 
   saveValues() async {
     logger.log('save values');
     var hash = qrData['hash'];
-    var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
     var publicKey = qrData['appPublicKey'];
     var phrase = qrData['phrase'];
 
     savePin(pin);
-    savePrivateKey(privateKey);
+    savePrivateKey(keys['privateKey']);
     savePublicKey(publicKey);
     saveEmail(email, false);
     saveDoubleName(doubleName);
@@ -283,8 +235,8 @@ class _ScanScreenState extends State<RegistrationScreen>
     print('publickey $publicKey');
     if (publicKey != null) {
       try {
-        var signedHash = signData(hash, privateKey);
-        var data = encrypt(jsonEncode(scope), publicKey, privateKey);
+        var signedHash = signData(hash, keys['privateKey']);
+        var data = encrypt(jsonEncode(scope), publicKey, keys['privateKey']);
 
         sendData(hash, await signedHash, await data, null).then((x) {
           Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -312,22 +264,22 @@ class _ScanScreenState extends State<RegistrationScreen>
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-        image: Icons.error,
-        title: "Steps",
-        description: new Text(
-          _stepsList,
-          textAlign: TextAlign.center,
-          textScaleFactor: 1.2,
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: new Text("Continue"),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            image: Icons.error,
+            title: "Steps",
+            description: new Text(
+              _stepsList,
+              textAlign: TextAlign.center,
+              textScaleFactor: 1.2,
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Continue"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

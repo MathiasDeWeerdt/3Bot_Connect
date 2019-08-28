@@ -160,7 +160,7 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             ),
             FlatButton(
               onPressed: onStepCancel,
-              child: const Text('CANCEL'),
+              child: const Text('RETURN'),
             ),
             Text(
               errorStepperText,

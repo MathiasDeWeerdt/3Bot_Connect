@@ -15,3 +15,8 @@ Future<bool> authenticate() async {
 
   return authenticated;
 }
+
+Future<bool> checkBiometricsAvailable() async {
+  bool canCheckBiometrics = await auth.canCheckBiometrics;
+  return canCheckBiometrics;
+}

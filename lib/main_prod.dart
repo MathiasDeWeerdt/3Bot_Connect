@@ -35,7 +35,7 @@ void main() {
           'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false
-    },/*
+    },
     {
       "content": Text(
         'OpenBrowser',
@@ -55,7 +55,7 @@ void main() {
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
-    },*/
+    },
     {
       "content": Text(
         'FreeflowConnect',
@@ -68,32 +68,12 @@ void main() {
       "subheading": '',
       "url": 'https://cowork-lochristi.threefold.work/',
       "bg": 'om.jpg',
-      "disabled": false,
+      "disabled": true,
       "initialUrl": 'https://cowork-lochristi.threefold.work/',
-      "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false
-    },
-    {
-      "content": Text(
-        'NBH Digital Wallet',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://wallet.staging.jimber.org',
-      "bg": 'nbh.png',
-      "disabled": false,
-      "initialUrl": 'https://wallet.staging.jimber.org',
       "visible": false,
       "id": 2,
       'cookieUrl': '',
-      'color': 0xFF34495e,
+      'color': 0xFF0f296a,
       'errorText': false
     },
     {

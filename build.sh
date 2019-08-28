@@ -130,12 +130,12 @@ then
     else
         echo 'oooo'
         echo "flutter build apk -t lib/main_prod.dart"
-        flutter build appbundle -t lib/main_prod.dart --target-platform android-arm64  
-        hash=$(git rev-parse --verify HEAD)
-        md5sum=$(md5sum build/app/outputs/apk/release/app-release.apk)
-        curl -s -X POST "https://api.telegram.org/bot868129294:AAEAKE_v8ctmh472stPHtK8ZnP__pNu4448/sendDocument" -F chat_id=-1001186043363 -F document="@build/app/outputs/apk/release/app-release.apk" -F caption="Production build: $hash; MD5: $md5sum"
-        curl -s -X POST "https://api.telegram.org/bot868129294:AAEAKE_v8ctmh472stPHtK8ZnP__pNu4448/sendMessage" -d chat_id=-1001186043363 -d text="MD5: $md5sum"
-        paplay /usr/share/sounds/gnome/default/alerts/glass.ogg
+        flutter build appbundle -t lib/main_prod.dart  
+        # hash=$(git rev-parse --verify HEAD)
+        # md5sum=$(md5sum build/app/outputs/apk/release/app-release.apk)
+        # curl -s -X POST "https://api.telegram.org/bot868129294:AAEAKE_v8ctmh472stPHtK8ZnP__pNu4448/sendDocument" -F chat_id=-1001186043363 -F document="@build/app/outputs/apk/release/app-release.apk" -F caption="Production build: $hash; MD5: $md5sum"
+        # curl -s -X POST "https://api.telegram.org/bot868129294:AAEAKE_v8ctmh472stPHtK8ZnP__pNu4448/sendMessage" -d chat_id=-1001186043363 -d text="MD5: $md5sum"
+        # paplay /usr/share/sounds/gnome/default/alerts/glass.ogg
     fi
 
     exit 0

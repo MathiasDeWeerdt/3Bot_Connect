@@ -127,7 +127,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                             _showPinDialog('phrase');
                                           } else {
                                             var isValue = await authenticate();
-                                            isValue ? _showPhrase() : null;
+                                            isValue ? _showPhrase() : _showPinDialog('phrase');
                                           }
                                         },
                                       ),
@@ -147,7 +147,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                     activeColor: Theme.of(context).accentColor,
                                     onChanged: (bool newValue) {
                                       _chooseDialogFingerprint(newValue);
-                                      finger = newValue;
                                     },
                                   ),
                                 ),
@@ -348,6 +347,15 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 callbackParam: callbackParam,
               ),
             ),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {});
+                },
+              ),
+            ],
           ),
     );
   }

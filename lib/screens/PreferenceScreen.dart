@@ -320,8 +320,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
       context: context,
       builder: (BuildContext context) => CustomDialog(
             image: Icons.check,
-            title: "Email has been resend.",
-            description: new Text("A new verification email has been send."),
+            title: "Email has been resent.",
+            description: new Text("A new verification email has been sent."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Ok"),

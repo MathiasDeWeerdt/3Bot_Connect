@@ -111,7 +111,7 @@ class _RegistrationWithoutScanScreen
     var privateKey = widget.initialData['privateKey'];
     var doubleName = widget.initialData['doubleName'];
     var email = widget.initialData['email'];
-    var publicKey = widget.initialData['appPublicKey'];
+    var appPublicKey = widget.initialData['appPublicKey'];
     var phrase = widget.initialData['phrase'];
 
     savePin(pin);
@@ -133,7 +133,7 @@ class _RegistrationWithoutScanScreen
 
     if (!widget.resetPin) {
       var signedHash = signData(hash, privateKey);
-      var data = encrypt(jsonEncode(scope), publicKey, privateKey);
+      var data = encrypt(jsonEncode(scope), appPublicKey, privateKey);
 
       sendData(hash, await signedHash, await data, null).then((x) {
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');

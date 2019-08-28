@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:core';
 
 import 'package:http/http.dart';
@@ -27,6 +28,24 @@ Future<void> savePublicKey(key) async {
 
 Future<String> getPublicKey() async {
   final prefs = await SharedPreferences.getInstance();
+
+  // Older applications don't have the publickey stored yet, let's retrieve it. 
+  if(prefs.getString('publickey') == null || prefs.getString('publickey').isEmpty) {
+    var userInfoResponse = await getUserInfo(await getDoubleName());
+
+    if (userInfoResponse.statusCode != 200) {
+      throw new Exception('User not found');
+    }
+
+    var userInfo = json.decode(userInfoResponse.body);
+
+    if (userInfo['publicKey'] != null) {
+      throw new Exception('Keys do not correspond to given user');
+    }
+
+    prefs.setString("publickey", userInfo['publicKey']);
+  }
+
   return prefs.getString('publickey');
 }
 

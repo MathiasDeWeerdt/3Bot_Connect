@@ -133,16 +133,6 @@ class _ScanScreenState extends State<RegistrationScreen>
             context: context,
           ),
           Align(alignment: Alignment.bottomCenter, child: content()),
-          // Align(
-          //   alignment: Alignment.bottomRight,
-          //   child: FloatingActionButton(
-          //     tooltip: "What should I do?",
-          //     onPressed: () {
-          //       _showInformation();
-          //     },
-          //     child: Icon(Icons.help_outline),
-          //   ),
-          // )
         ],
       ),
     );
@@ -154,7 +144,6 @@ class _ScanScreenState extends State<RegistrationScreen>
     });
 
     var hash = qrData['hash'];
-    // var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
     var phrase = qrData['phrase'];
@@ -222,10 +211,8 @@ class _ScanScreenState extends State<RegistrationScreen>
   saveValues() async {
     logger.log('save values');
     var hash = qrData['hash'];
-    // var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
-    // var appPublicKey = qrData['appPublicKey'];
     var phrase = qrData['phrase'];
 
     savePin(pin);
@@ -239,7 +226,6 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveDoubleName(doubleName);
     savePhrase(phrase);
     saveFingerprint(false);
-    // print('publickey $publicKey');
     if (keys['publicKey'] != null) {
       try {
         var signedHash = signData(hash, keys['privateKey']);

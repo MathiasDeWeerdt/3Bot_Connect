@@ -30,7 +30,6 @@ class _PinFieldState extends State<PinField> {
   Widget buildTextField(int i, BuildContext context) {
     const double maxSize = 7;
     double size = input.length > i ? maxSize : 1;
-    double margin = (maxSize * 2 - size) / 2;
     double height = MediaQuery.of(context).size.height;
     return AnimatedContainer(
       margin: EdgeInsets.all(height/120),

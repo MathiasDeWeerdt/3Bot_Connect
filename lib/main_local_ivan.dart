@@ -6,7 +6,6 @@ import 'config.dart';
 import 'main.dart';
 
 void main() async {
-  //debugPaintSizeEnabled=true;
   var config = Config(
       name: '3bot local',
       threeBotApiUrl: 'http://192.168.2.80:5000/api',

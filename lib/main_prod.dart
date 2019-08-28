@@ -28,11 +28,11 @@ void main() {
       "subheading": 'Where privacy and social media co-exist.',
       "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://www2.freeflowpages.com/',
+      "initialUrl": 'https://freeflowpages.com/',
       "visible": false,
       "id": 0,
       'cookieUrl':
-          'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
+          'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false
     },/*

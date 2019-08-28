@@ -25,3 +25,12 @@ Future<http.Response> resendVerificationEmail() async {
       }),
       headers: requestHeaders);
 }
+
+
+Future<http.Response> sendVerificationEmail() async {
+  return http.post('$openKycApiUrl/users',
+      body: json.encode({
+        'user_id': await getDoubleName(),
+      }),
+      headers: requestHeaders);
+}

@@ -41,7 +41,8 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
               padding: EdgeInsets.only(top: 0.0, bottom: 0.0),
               child: Center(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.only(top: 0.0, bottom: 32.0),
@@ -104,38 +105,69 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
 
   Widget succesfulChange() {
     return Container(
+      child: Expanded(
         child: Column(
-      children: <Widget>[
-        Text(
-          'Pincode Succesfully',
-          style: TextStyle(fontSize: 32),
-        ),
-        Container(
-          padding: EdgeInsets.all(20.0),
-          child: Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 64,
-          ),
-        ),
-        RaisedButton(
-          shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(10),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
-          child: Text(
-            'Close',
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    'Success!',
+                    style: TextStyle(fontSize: 32),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 18,
+                  ),
+                  Text(
+                    'Your pincode has been changed!',
+                    style: TextStyle(fontSize: 24, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          color: Colors.green,
-        )
-      ],
-    ));
+            Expanded(
+              flex: 5,
+              child: Container(
+                padding: EdgeInsets.all(20.0),
+                child: Icon(
+                  Icons.check_circle_outline,
+                  color: Theme.of(context).accentColor,
+                  size: 128,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: RaisedButton(
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(50),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 100.0, vertical: 15.0),
+                  child: Text(
+                    'Close',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

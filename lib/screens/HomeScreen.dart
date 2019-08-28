@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -16,7 +15,6 @@ import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
-import 'package:community_material_icon/community_material_icon.dart';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -349,12 +347,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  child: IconButton(
-                    icon: new Icon(
-                      CommunityMaterialIcons.qrcode,
-                      size: 32,
-                    ),
-                    tooltip: 'Opens QR Scanner',
+                  child: FlatButton(
+                    child: Text('Scan QR'),
                     onPressed: () {
                       Navigator.pushNamed(context, '/scan');
                     },

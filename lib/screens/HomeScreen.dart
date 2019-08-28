@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         logger.log("Checking if there are login attempts.");
         try {
           if (attempt.body != '' && openPendingLoginAttempt) {
-            logger.log("Found a login a attempt, opening ...");
+            logger.log("Found a login attempt, opening ...");
             Navigator.popUntil(context, ModalRoute.withName('/'));
             Navigator.push(
               context,
@@ -162,10 +162,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         initFirebaseMessagingListener(context);
       }
 
-      initUniLinks();
-
       String tmpDoubleName = await getDoubleName();
+
       checkIfThereAreLoginAttempts(tmpDoubleName);
+      await initUniLinks();
 
       if (tmpDoubleName != null) {
         var sei = await getSignedEmailIdentifier();
@@ -173,12 +173,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         logger.log("sei: " + sei.toString());
 
-        // if(sei == null) {
-        //   logger.log("We've detected an old verified account, updating data ...");
-        //   // TODO email["verified"]
-
-          
-        // } else {
           if(sei != null && sei.isNotEmpty && email["email"] != null && email["verified"]) {
             logger.log("Email is verified and we have a signed email to verify this verification to a third party");
 
@@ -224,7 +218,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               }
             });
           }
-        // }
 
         if (mounted) {
           setState(() {

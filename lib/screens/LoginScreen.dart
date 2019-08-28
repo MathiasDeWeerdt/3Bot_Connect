@@ -54,7 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showPinfield = false;
   bool showScopeAndEmoji = false;
 
-
   // PreferenceDialog scopeListc = new PreferenceDialog(scope, appId, callback);
 
   @override
@@ -120,7 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (jsonDecode(widget.message['scope']).containsKey('keys')) {
-        scope['keys'] = await getKeys(widget.message['appId'], scope['doubleName']);
+        scope['keys'] =
+            await getKeys(widget.message['appId'], scope['doubleName']);
       }
     }
     print('scope $scope');
@@ -348,8 +348,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
       ));
-      // Navigator.popUntil(context, ModalRoute.withName('/'));
-      // Navigator.pushNamed(context, '/success');
       return;
     }
 
@@ -406,13 +404,17 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     return false;
-    // return (widget.message['mobile'] == 'true' || widget.message['mobile'] == true);
   }
 
   bool isNumeric(String s) {
     if (s == null) {
       return false;
     }
-    return double.parse(s, (e) => null) != null;
+
+    try {
+      return double.tryParse(s) != null;
+    } catch (e) {
+      return false;
+    }
   }
 }

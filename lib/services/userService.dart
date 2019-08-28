@@ -3,6 +3,7 @@ import 'dart:core';
 
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 
 import '3botService.dart';
 import 'cryptoService.dart';

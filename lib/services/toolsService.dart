@@ -21,3 +21,12 @@ String validateEmail(String value) {
     }
     return null;
   }
+
+String validateDoubleName(String value) {
+  Pattern pattern = r'^[a-zA-Z0-9]+$';
+  RegExp regex = new RegExp(pattern);
+  if (!regex.hasMatch(value)) {
+    return 'Enter Valid Email';
+  }
+  return null;
+}

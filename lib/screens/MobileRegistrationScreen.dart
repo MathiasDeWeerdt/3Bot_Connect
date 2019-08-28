@@ -45,14 +45,22 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
         if (doubleNameController.text != null ||
             doubleNameController.text != '') {
           doubleName = doubleNameController.text + '.3bot';
-          userKInfoResult = await getUserInfo(doubleName);
-          if (userKInfoResult.statusCode != 200) {
-            setState(() {
-              _index++;
-            });
+          var doubleNameValidation =
+              validateDoubleName(doubleNameController.text);
+          if (doubleNameValidation == null) {
+            userKInfoResult = await getUserInfo(doubleName);
+            if (userKInfoResult.statusCode != 200) {
+              setState(() {
+                _index++;
+              });
+            } else {
+              setState(() {
+                errorStepperText = 'User exists already';
+              });
+            }
           } else {
             setState(() {
-              errorStepperText = 'User exists already';
+              errorStepperText = 'Doublename needs to be alphanumeric';
             });
           }
         } else {
@@ -147,81 +155,93 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
   }
 
   Widget registrationStepper() {
-    return Stepper(
-      controlsBuilder: (BuildContext context,
-          {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
-        return Row(
-          children: <Widget>[
-            FlatButton(
-              onPressed: onStepContinue,
-              child: const Text('CONTINUE'),
+    return Theme(
+      data: Theme.of(context),
+      child: Stepper(
+        controlsBuilder: (BuildContext context,
+            {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+          return Column(
+            children: <Widget>[
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  FlatButton(
+                    onPressed: onStepCancel,
+                    child: const Text('RETURN'),
+                    color: Colors.grey[200],
+                  ),
+                  FlatButton(
+                    onPressed: onStepContinue,
+                    child: const Text('CONTINUE'),
+                    color: Colors.grey[200],
+                  ),
+                ],
+              ),
+              Text(
+                errorStepperText,
+                style: TextStyle(color: Colors.red),
+                textAlign: TextAlign.right,
+              )
+            ],
+          );
+        },
+        type: StepperType.horizontal,
+        steps: [
+          Step(
+            title: Text('3Bot'),
+            subtitle: Text('Name'),
+            content: ReuseableTextFieldStep(
+              titleText: 'Hi! What is your 3bot name',
+              labelText: 'Doublename',
+              typeText: TextInputType.text,
+              controller: doubleNameController,
+              suffixText: '.3bot',
             ),
-            FlatButton(
-              onPressed: onStepCancel,
-              child: const Text('RETURN'),
+          ),
+          Step(
+            title: Text('Email'),
+            content: ReuseableTextFieldStep(
+              titleText: 'What is your email',
+              labelText: 'email',
+              typeText: TextInputType.emailAddress,
+              controller: emailController,
             ),
-            Text(
-              errorStepperText,
-              style: TextStyle(color: Colors.red),
-              textAlign: TextAlign.right,
-            )
-          ],
-        );
-      },
-      type: StepperType.horizontal,
-      steps: [
-        Step(
-          title: Text('3Bot'),
-          subtitle: Text('Name'),
-          content: ReuseableTextFieldStep(
-            titleText: 'Hi! What is your 3bot name',
-            labelText: 'Doublename',
-            typeText: TextInputType.text,
-            controller: doubleNameController,
-            suffixText: '.3bot',
           ),
-        ),
-        Step(
-          title: Text('Email'),
-          content: ReuseableTextFieldStep(
-            titleText: 'What is your email',
-            labelText: 'email',
-            typeText: TextInputType.emailAddress,
-            controller: emailController,
+          Step(
+            title: Text('Phrase'),
+            content: ReuseableTextStep(
+              titleText:
+                  'Please write this on a piece of paper and keep it in a secure place.',
+              extraText: phrase,
+            ),
           ),
-        ),
-        Step(
-          title: Text('Phrase'),
-          content: ReuseableTextStep(
-            titleText:
-                'Please write this on a piece of paper and keep it in a secure place.',
-            extraText: phrase,
-          ),
-        ),
-        Step(
-          title: Text('Finishing'),
-          content: ReuseableTextStep(
+          Step(
+            title: Text('Finishing'),
+            content: ReuseableTextStep(
               titleText: 'You are almost there',
-              extraText: 'Click on continue to finish registration'),
-        )
-      ],
-      currentStep: _index,
-      onStepContinue: () {
-        errorStepperText = '';
-        checkStep(_index);
-      },
-      onStepCancel: () {
-        setState(
-          () {
-            errorStepperText = '';
-            if (_index > 0) {
-              _index--;
-            } else {
-              Navigator.pop(context);
-            }
-          },
-        );
-      },
+              extraText: 'Click on continue to finish registration.\n\n DoubleName: ${doubleNameController.text} \n Email: ${emailController.text}',
+            ),
+          )
+        ],
+        currentStep: _index,
+        onStepContinue: () {
+          errorStepperText = '';
+          checkStep(_index);
+        },
+        onStepCancel: () {
+          setState(
+            () {
+              errorStepperText = '';
+              if (_index > 0) {
+                _index--;
+              } else {
+                Navigator.pop(context);
+              }
+            },
+          );
+        },
+      ),
     );
   }
 

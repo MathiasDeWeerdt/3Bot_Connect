@@ -10,9 +10,9 @@ void main() async {
 
   var config = Config(
       name: '3bot local',
-      threeBotApiUrl: 'http://dev.jimber.org:5000/api',
-      openKycApiUrl: 'http://dev.jimber.org:5005',
-      threeBotFrontEndUrl: 'http://dev.jimber.org:8081/',
+      threeBotApiUrl: 'http://192.168.2.60:5000/api',
+      openKycApiUrl: 'http://192.168.2.60:5005',
+      threeBotFrontEndUrl: 'http://192.168.2.60:8081/',
       child: new MyApp()
   );
   

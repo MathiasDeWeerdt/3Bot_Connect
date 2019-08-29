@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
-import 'package:threebotlogin/services/toolsService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -112,12 +111,8 @@ class _RegistrationWithoutScanScreen
     var privateKey = widget.initialData['privateKey'];
     var doubleName = widget.initialData['doubleName'];
     var email = widget.initialData['email'];
-    var appPublicKey = widget.initialData['appPublicKey'];
+    var publicKey = widget.initialData['appPublicKey'];
     var phrase = widget.initialData['phrase'];
-
-    if(hash == null) {
-      hash = randomString(15);
-    }
 
     savePin(pin);
 
@@ -138,7 +133,7 @@ class _RegistrationWithoutScanScreen
 
     if (!widget.resetPin) {
       var signedHash = signData(hash, privateKey);
-      var data = encrypt(jsonEncode(scope), appPublicKey, privateKey);
+      var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
       sendData(hash, await signedHash, await data, null).then((x) {
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
@@ -146,7 +141,6 @@ class _RegistrationWithoutScanScreen
         Navigator.of(context).pushNamed('/success');
       });
     }
-    
     await sendRegisterSign(doubleName);
     await sendVerificationEmail();
 

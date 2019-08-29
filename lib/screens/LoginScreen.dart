@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -107,8 +108,39 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  finishLogin() async {
-    // making scope
+  bool isRequired(value, givenScope) {
+    bool flag = false;
+    if (jsonDecode(givenScope)[value]) flag = true;
+    return flag;
+  }
+
+  void makePermissionPrefs() async {
+     if (await getScopePermissions() == null) {
+      saveScopePermissions(jsonEncode(HashMap()));
+    }
+
+    var initialPermissions = jsonDecode(await getScopePermissions());
+    print('initialpermissions: $initialPermissions');
+
+    if (!initialPermissions.containsKey(widget.message['appId'])) {
+      print('Permissions for this appId not found in prefs');
+      var newHashMap = new HashMap();
+      initialPermissions[widget.message['appId']] = newHashMap;
+
+      if (scope != null) {
+        scope.keys.toList().forEach((var value) {
+          newHashMap[value] = {
+            'enabled': true,
+            'required': isRequired(value, widget.message['scope'])
+          };
+        });
+      }
+      print('setting perm $initialPermissions');
+      saveScopePermissions(jsonEncode(initialPermissions));
+    }
+  }
+
+  void makeScopes() async {
     scope['doubleName'] = await getDoubleName();
     print('widget ${widget.message['scope']}');
     if (widget.message['scope'] != null) {
@@ -122,8 +154,12 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
     print('scope $scope');
-    cancelBtnVisible = true;
+  }
 
+  finishLogin() async {
+    makeScopes();
+    makePermissionPrefs();
+    cancelBtnVisible = true;
     setState(() {
       showScopeAndEmoji = true;
       showPinfield = false;
@@ -178,15 +214,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ImageButton(imageList[3], selectedImageId,
                               imageSelectedCallback),
                         ])),
-              ),
-            ),
-            Visibility(
-              visible: !isMobile(),
-              child: Expanded(
-                flex: 2,
-                child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: RaisedButton(onPressed: sendIt(),) ),
               ),
             ),
           ],
@@ -284,6 +311,11 @@ class _LoginScreenState extends State<LoginScreen> {
           print('send it again');
           sendIt();
         });
+      } else {
+        setState(() {
+          print('send it again');
+          sendIt();
+        });
         _scaffoldKey.currentState.showSnackBar(
             SnackBar(content: Text('Oops... that\'s the wrong emoji')));
       }
@@ -298,9 +330,14 @@ class _LoginScreenState extends State<LoginScreen> {
     if (pin == p) {
       print('Onto showing scopes and emojis');
       return finishLogin();
+    } else {
+      setState(() {
+        print('send it again');
+        sendIt();
+      });
+      _scaffoldKey.currentState.showSnackBar(
+          SnackBar(content: Text('Oops... you entered the wrong pin')));
     }
-    _scaffoldKey.currentState.showSnackBar(
-        SnackBar(content: Text('Oops... you entered the wrong pin')));
   }
 
   cancelIt() async {
@@ -352,13 +389,6 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushNamed(context, '/success');
         } catch (e) {}
       }
-    } else {
-      setState(() {
-        print('send it again');
-        sendIt();
-      });
-      _scaffoldKey.currentState.showSnackBar(
-          SnackBar(content: Text('Oops... you selected the wrong emoji')));
     }
   }
 

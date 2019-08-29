@@ -150,8 +150,7 @@ class _ScanScreenState extends State<RegistrationScreen>
 
     Map<String, String> keys = await generateKeysFromSeedPhrase(phrase);
 
-    if (hash == null ||
-        doubleName == null ||
+    if (doubleName == null ||
         email == null ||
         phrase == null ||
         keys['privateKey'] == null) {
@@ -194,7 +193,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       scope['doubleName'] = qrData['doubleName'];
 
       if (qrData['scope'] != null) {
-        print(jsonDecode(qrData['scope']));
+        print('scope of qrdata ${jsonDecode(qrData['scope'])}');
         scopeFromQR = jsonDecode(qrData['scope']);
 
         if (scopeFromQR.containsKey('email'))
@@ -226,11 +225,10 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveDoubleName(doubleName);
     savePhrase(phrase);
     saveFingerprint(false);
-    if (keys['publicKey'] != null) {
+    if (keys['publicKey'] != null && hash != null) {
       try {
         var signedHash = signData(hash, keys['privateKey']);
-        var data =
-            encrypt(jsonEncode(scope), keys['publicKey'], keys['privateKey']);
+        var data = encrypt(jsonEncode(scope), keys['publicKey'], keys['privateKey']);
 
         sendData(hash, await signedHash, await data, null).then((x) {
           Navigator.popUntil(context, ModalRoute.withName('/'));

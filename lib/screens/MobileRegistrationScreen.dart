@@ -226,10 +226,35 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             isActive: _index == 3,
             state: _index >= 3 ? StepState.complete : StepState.disabled,
             title: Text('Finishing'),
-            content: ReuseableTextStep(
-              titleText: 'You are almost there',
-              extraText:
-                  'Click on continue to finish registration.\n\n DoubleName: ${doubleNameController.text} \n Email: ${emailController.text}',
+            content: Card(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 10.0,),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text('Click on continue to finish registration.', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),),
+                  ),
+                  SizedBox(height: 15.0,),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
+                    child: ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(doubleNameController.text),
+                      trailing: Icon(Icons.edit),
+                      onTap: () => setState(() { _index = 0; }),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0, bottom: 15.0),
+                    child: ListTile(
+                      leading: Icon(Icons.email),
+                      title: Text(emailController.text),
+                      trailing: Icon(Icons.edit),
+                      onTap: () => setState(() { _index = 1; })
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],

@@ -193,33 +193,48 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             state: _index >= 0 ? StepState.complete : StepState.disabled,
             title: Text('3Bot'),
             subtitle: Text('Name'),
-            content: ReuseableTextFieldStep(
-              titleText: 'Hi! What is your 3bot name',
-              labelText: 'Doublename',
-              typeText: TextInputType.text,
-              controller: doubleNameController,
-              suffixText: '.3bot',
+            content: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ReuseableTextFieldStep(
+                  titleText: 'Hi! What is your 3bot name',
+                  labelText: 'Doublename',
+                  typeText: TextInputType.text,
+                  controller: doubleNameController,
+                  suffixText: '.3bot',
+                ),
+              ),
             ),
           ),
           Step(
             isActive: _index == 1,
             state: _index >= 1 ? StepState.complete : StepState.disabled,
             title: Text('Email'),
-            content: ReuseableTextFieldStep(
-              titleText: 'What is your email',
-              labelText: 'email',
-              typeText: TextInputType.emailAddress,
-              controller: emailController,
+            content: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ReuseableTextFieldStep(
+                  titleText: 'What is your email',
+                  labelText: 'email',
+                  typeText: TextInputType.emailAddress,
+                  controller: emailController,
+                ),
+              ),
             ),
           ),
           Step(
             isActive: _index == 2,
             state: _index >= 2 ? StepState.complete : StepState.disabled,
             title: Text('Phrase'),
-            content: ReuseableTextStep(
-              titleText:
-                  'Please write this on a piece of paper and keep it in a secure place.',
-              extraText: phrase,
+            content: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ReuseableTextStep(
+                  titleText:
+                      'Please write this on a piece of paper and keep it in a secure place.',
+                  extraText: phrase,
+                ),
+              ),
             ),
           ),
           Step(
@@ -229,29 +244,40 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             content: Card(
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: 10.0,),
+                  SizedBox(
+                    height: 10.0,
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text('Click on continue to finish registration.', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),),
+                    child: Text(
+                      'Click on continue to finish registration.',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 15.0),
+                    ),
                   ),
-                  SizedBox(height: 15.0,),
+                  SizedBox(
+                    height: 15.0,
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
                     child: ListTile(
                       leading: Icon(Icons.person),
                       title: Text(doubleNameController.text),
                       trailing: Icon(Icons.edit),
-                      onTap: () => setState(() { _index = 0; }),
+                      onTap: () => setState(() {
+                            _index = 0;
+                          }),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 4.0, bottom: 15.0),
                     child: ListTile(
-                      leading: Icon(Icons.email),
-                      title: Text(emailController.text),
-                      trailing: Icon(Icons.edit),
-                      onTap: () => setState(() { _index = 1; })
-                    ),
+                        leading: Icon(Icons.email),
+                        title: Text(emailController.text),
+                        trailing: Icon(Icons.edit),
+                        onTap: () => setState(() {
+                              _index = 1;
+                            })),
                   ),
                 ],
               ),

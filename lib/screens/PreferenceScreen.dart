@@ -22,7 +22,6 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   String emailAdress = '';
   final _prefScaffold = GlobalKey<ScaffoldState>();
   bool biometricsCheck = false;
-  bool fingerDeactivated = false;
   bool finger = false;
 
   var thiscolor = Colors.green;

@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void makePermissionPrefs() async {
-     if (await getScopePermissions() == null) {
+    if (await getScopePermissions() == null) {
       saveScopePermissions(jsonEncode(HashMap()));
     }
 
@@ -382,7 +382,6 @@ class _LoginScreenState extends State<LoginScreen> {
     if (selectedImageId == correctImage || isMobile()) {
       if (widget.closeWhenLoggedIn) {
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-        Navigator.popUntil(context, ModalRoute.withName('/'));
       } else {
         try {
           Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -412,6 +411,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mobile is String) {
       return mobile == 'true';
     } else if (mobile is bool) {
+      sendIt();
       return mobile == true;
     }
 

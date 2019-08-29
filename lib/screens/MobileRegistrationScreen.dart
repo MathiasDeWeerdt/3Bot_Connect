@@ -189,6 +189,8 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
         type: StepperType.horizontal,
         steps: [
           Step(
+            isActive: _index == 0,
+            state: _index >= 0 ? StepState.complete : StepState.disabled,
             title: Text('3Bot'),
             subtitle: Text('Name'),
             content: ReuseableTextFieldStep(
@@ -200,6 +202,8 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             ),
           ),
           Step(
+            isActive: _index == 1,
+            state: _index >= 1 ? StepState.complete : StepState.disabled,
             title: Text('Email'),
             content: ReuseableTextFieldStep(
               titleText: 'What is your email',
@@ -209,6 +213,8 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             ),
           ),
           Step(
+            isActive: _index == 2,
+            state: _index >= 2 ? StepState.complete : StepState.disabled,
             title: Text('Phrase'),
             content: ReuseableTextStep(
               titleText:
@@ -217,10 +223,13 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             ),
           ),
           Step(
+            isActive: _index == 3,
+            state: _index >= 3 ? StepState.complete : StepState.disabled,
             title: Text('Finishing'),
             content: ReuseableTextStep(
               titleText: 'You are almost there',
-              extraText: 'Click on continue to finish registration.\n\n DoubleName: ${doubleNameController.text} \n Email: ${emailController.text}',
+              extraText:
+                  'Click on continue to finish registration.\n\n DoubleName: ${doubleNameController.text} \n Email: ${emailController.text}',
             ),
           )
         ],

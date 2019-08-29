@@ -131,24 +131,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget scopeEmojiView() {
-    final List<String> entries = <String>[
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F'
-    ];
-
     return Container(
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0),
@@ -178,22 +160,34 @@ class _LoginScreenState extends State<LoginScreen> {
                     type: 'login',
                   )),
             ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        ImageButton(imageList[0], selectedImageId,
-                            imageSelectedCallback),
-                        ImageButton(imageList[1], selectedImageId,
-                            imageSelectedCallback),
-                        ImageButton(imageList[2], selectedImageId,
-                            imageSelectedCallback),
-                        ImageButton(imageList[3], selectedImageId,
-                            imageSelectedCallback),
-                      ])),
+            Visibility(
+              visible: !isMobile(),
+              child: Expanded(
+                flex: 2,
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          ImageButton(imageList[0], selectedImageId,
+                              imageSelectedCallback),
+                          ImageButton(imageList[1], selectedImageId,
+                              imageSelectedCallback),
+                          ImageButton(imageList[2], selectedImageId,
+                              imageSelectedCallback),
+                          ImageButton(imageList[3], selectedImageId,
+                              imageSelectedCallback),
+                        ])),
+              ),
+            ),
+            Visibility(
+              visible: !isMobile(),
+              child: Expanded(
+                flex: 2,
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RaisedButton(onPressed: sendIt(),) ),
+              ),
             ),
           ],
         ),
@@ -290,11 +284,6 @@ class _LoginScreenState extends State<LoginScreen> {
           print('send it again');
           sendIt();
         });
-      } else {
-        setState(() {
-          print('send it again');
-          // sendIt();
-        });
         _scaffoldKey.currentState.showSnackBar(
             SnackBar(content: Text('Oops... that\'s the wrong emoji')));
       }
@@ -309,14 +298,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (pin == p) {
       print('Onto showing scopes and emojis');
       return finishLogin();
-    } else {
-      setState(() {
-        print('send it again');
-        sendIt();
-      });
-      _scaffoldKey.currentState.showSnackBar(
-          SnackBar(content: Text('Oops... you entered the wrong pin')));
     }
+    _scaffoldKey.currentState.showSnackBar(
+        SnackBar(content: Text('Oops... you entered the wrong pin')));
   }
 
   cancelIt() async {

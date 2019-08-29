@@ -22,6 +22,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   String emailAdress = '';
   final _prefScaffold = GlobalKey<ScaffoldState>();
   bool biometricsCheck = false;
+  bool fingerDeactivated = false;
 
   var thiscolor = Colors.green;
 
@@ -122,13 +123,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                         trailing: Icon(Icons.visibility),
                                         leading: Icon(Icons.vpn_key),
                                         title: Text("Show Phrase"),
-                                        onTap: () async {
-                                          if (!finger) {
-                                            _showPinDialog('phrase');
-                                          } else {
-                                            var isValue = await authenticate();
-                                            isValue ? _showPhrase() : _showPinDialog('phrase');
-                                          }
+                                        onTap: () {
+                                          _chooseFunctionalityPhrase();
                                         },
                                       ),
                                     );
@@ -147,6 +143,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                     activeColor: Theme.of(context).accentColor,
                                     onChanged: (bool newValue) {
                                       _chooseDialogFingerprint(newValue);
+                                      setState(() {});
                                     },
                                   ),
                                 ),
@@ -196,7 +193,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   checkBiometrics() async {
-    biometricsCheck =  await checkBiometricsAvailable();
+    biometricsCheck = await checkBiometricsAvailable();
     return biometricsCheck;
   }
 
@@ -205,6 +202,19 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
       _showEnabledFingerprint();
     } else {
       _showPinDialog('fingerprint');
+    }
+  }
+
+  void _chooseFunctionalityPhrase() async {
+    bool fingerActive = await getFingerprint();
+    if (!fingerActive) {
+      _showPinDialog('phrase');
+    } else {
+      var isValue = await authenticate();
+      isValue ? _showPhrase() : _showPinDialog('phrase');
+      setState(() {
+        finger = true;
+      });
     }
   }
 
@@ -230,6 +240,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 child: new Text("Yes"),
                 onPressed: () async {
                   Navigator.pop(context);
+                  finger = true;
                   await saveFingerprint(true);
                   setState(() {});
                 },
@@ -250,9 +261,10 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
             actions: <Widget>[
               FlatButton(
                 child: new Text("Cancel"),
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
                   finger = true;
+                  await saveFingerprint(true);
                   setState(() {});
                 },
               ),
@@ -260,6 +272,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 child: new Text("Yes"),
                 onPressed: () async {
                   Navigator.pop(context);
+                  finger = false;
                   await saveFingerprint(false);
                   setState(() {});
                 },
@@ -335,6 +348,12 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   }
 
   void _showPinDialog(callbackParam) {
+    if (callbackParam == 'fingerprint') {
+      setState(() {
+        finger = true;
+      });
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(

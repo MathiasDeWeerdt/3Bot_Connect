@@ -17,20 +17,16 @@ class ReuseableTextStep extends StatelessWidget {
           ),
         ),
         Padding(
-            padding: const EdgeInsets.only(top: 8.5),
-            child: ListView(
-              children: <Widget>[
-                Container(
-                  child: Center(
-                    child: Text(
-                      extraText,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                    ),
-                  ),
-                ),
-              ],
-            )),
+          padding: const EdgeInsets.only(top: 8.5),
+          child: Container(
+            child: Center(
+              child: Text(
+                extraText,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+            ),
+          ),
+        ),
         Divider(
           height: 50,
         ),

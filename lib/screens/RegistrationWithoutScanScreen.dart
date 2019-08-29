@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
+import 'package:threebotlogin/services/toolsService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -114,6 +115,10 @@ class _RegistrationWithoutScanScreen
     var appPublicKey = widget.initialData['appPublicKey'];
     var phrase = widget.initialData['phrase'];
 
+    if(hash == null) {
+      hash = randomString(15);
+    }
+
     savePin(pin);
 
     Map<String, String> keys = await generateKeysFromSeedPhrase(phrase);
@@ -141,6 +146,7 @@ class _RegistrationWithoutScanScreen
         Navigator.of(context).pushNamed('/success');
       });
     }
+    
     await sendRegisterSign(doubleName);
     await sendVerificationEmail();
 

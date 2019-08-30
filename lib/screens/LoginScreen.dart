@@ -45,6 +45,8 @@ Future<bool> _onWillPop() async {
 
 class _LoginScreenState extends State<LoginScreen> {
   String helperText = '';
+  String scopesText =
+      'Please select your preferred scopes and the asked emoji to continue';
   List<int> imageList = new List();
   var selectedImageId = -1;
   var correctImage = -1;
@@ -105,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       helperText = 'Enter your pincode to log in';
       showPinfield = true;
+      cancelBtnVisible = true;
     });
   }
 
@@ -178,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 24.0, left: 24.0),
                   child: Text(
-                    'Please select your preferred scopes and the asked emoji to continue',
+                    scopesText,
                     style: TextStyle(fontSize: 18.0),
                     textAlign: TextAlign.center,
                   ),
@@ -216,6 +219,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ])),
               ),
             ),
+            Visibility(
+              visible: isMobile(),
+              child: RaisedButton(
+                shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 11.0, vertical: 6.0),
+                color: Theme.of(context).accentColor,
+                child: Text(
+                  'Accept',
+                  style: TextStyle(color: Colors.white, fontSize: 22),
+                ),
+                onPressed: () {
+                  sendIt();
+                },
+              ),
+            )
           ],
         ),
       ),
@@ -276,17 +296,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       visible: cancelBtnVisible,
                       child: Expanded(
                         flex: 0,
-                        child: FlatButton(
-                          child: Text(
-                            "It wasn\'t me - cancel",
-                            style: TextStyle(
-                                fontSize: 14.0, color: Color(0xff0f296a)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: FlatButton(
+                            child: Text(
+                              "It wasn\'t me - cancel",
+                              style: TextStyle(
+                                  fontSize: 16.0, color: Color(0xff0f296a)),
+                            ),
+                            onPressed: () {
+                              cancelIt();
+                              Navigator.of(context).pop();
+                              _onWillPop();
+                            },
                           ),
-                          onPressed: () {
-                            cancelIt();
-                            Navigator.of(context).pop();
-                            _onWillPop();
-                          },
                         ),
                       ),
                     ),
@@ -409,12 +432,14 @@ class _LoginScreenState extends State<LoginScreen> {
     var mobile = widget.message['mobile'];
 
     if (mobile is String) {
+      setState(() =>
+          scopesText = 'Please select your preferred scopes and press Accept');
       return mobile == 'true';
     } else if (mobile is bool) {
-      sendIt();
+      setState(() =>
+          scopesText = 'Please select your preferred scopes and press Accept');
       return mobile == true;
     }
-
     return false;
   }
 

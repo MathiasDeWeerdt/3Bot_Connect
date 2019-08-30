@@ -36,6 +36,26 @@ void main() async {
     },
     {
       "content": Text(
+        'OpenBrowser',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'By Jimber',
+      "url": 'https://broker.jimber.org/',
+      "bg": 'jimber.png',
+      "disabled": false,
+      "initialUrl": 'https://broker.jimber.org/',
+      "visible": false,
+      "id": 1,
+      'cookieUrl': '',
+      'color': 0xFF0f296a,
+      'errorText': false
+    },
+    {
+      "content": Text(
         'NBH Digital Wallet',
         style: TextStyle(
           color: Colors.white,

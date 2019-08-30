@@ -22,7 +22,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
   String emailAdress = '';
   final _prefScaffold = GlobalKey<ScaffoldState>();
   bool biometricsCheck = false;
-  bool fingerDeactivated = false;
+  bool finger = false;
 
   var thiscolor = Colors.green;
 
@@ -108,7 +108,10 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                           "Unverified",
                                           style: TextStyle(color: Colors.grey),
                                         )
-                                      : Container(),
+                                      : Text(
+                                          "Verified",
+                                          style: TextStyle(color: Colors.green),
+                                        ),
                                   onTap: !emailVerified
                                       ? sendVerificationEmail
                                       : null,
@@ -136,14 +139,17 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                               Visibility(
                                 visible: biometricsCheck,
                                 child: Material(
-                                  child: SwitchListTile(
+                                  child: CheckboxListTile(
                                     secondary: Icon(Icons.fingerprint),
                                     value: finger,
                                     title: Text("Fingerprint"),
                                     activeColor: Theme.of(context).accentColor,
                                     onChanged: (bool newValue) {
+                                      setState(() {
+                                        logger.log('newvalue:', newValue, finger);                                      
+                                      });
+
                                       _chooseDialogFingerprint(newValue);
-                                      setState(() {});
                                     },
                                   ),
                                 ),
@@ -155,6 +161,12 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                   onTap: () {
                                     Navigator.pushNamed(context, '/changepin');
                                   },
+                                ),
+                              ),
+                              Material(
+                                child: ListTile(
+                                  leading: Icon(Icons.info_outline),
+                                  title: Text("Version: " + version + " - " + buildNumber),
                                 ),
                               ),
                               ExpansionTile(

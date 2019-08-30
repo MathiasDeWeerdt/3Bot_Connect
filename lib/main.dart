@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
 import 'package:threebotlogin/screens/PreferenceScreen.dart';
 import 'package:threebotlogin/services/loggingService.dart';
@@ -25,6 +26,11 @@ List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
 int lastAppUsed;
 int keyboardUsedApp;
 bool finger = false;
+
+String appName;
+String packageName;
+String version;
+String buildNumber;
 
 List<Map<String, dynamic>> apps = [
   {
@@ -51,6 +57,14 @@ List<Map<String, dynamic>> apps = [
 ];
 
 void init() async {
+
+  PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+    appName = packageInfo.appName;
+    packageName = packageInfo.packageName;
+    version = packageInfo.version;
+    buildNumber = packageInfo.buildNumber;
+  });
+
   logger = new LoggingService();
   showButton = false;
 

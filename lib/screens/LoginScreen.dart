@@ -79,15 +79,11 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
 
-    isFingerPrintActive();
+    checkFingerPrintActive();
 
     setState(() {
       imageList.shuffle();
     });
-  }
-
-  isFingerPrintActive() {
-    checkFingerPrintActive();
   }
 
   checkFingerPrintActive() async {

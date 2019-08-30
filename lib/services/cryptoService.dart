@@ -87,9 +87,6 @@ Future<Map<String, Object>> generateDerivedKeypair(
   String privateKey = await getPrivateKey();
 
   PBKDF2 generator = new PBKDF2();
-  print('-----');
-  print(privateKey);
-  print(appId);
   List<int> hashKey = generator.generateKey(privateKey, appId, 1000, 32);
 
   Map<String, Uint8List> key =

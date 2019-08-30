@@ -137,6 +137,21 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       print('setting perm $initialPermissions');
       saveScopePermissions(jsonEncode(initialPermissions));
+    } else {
+      print('Permissions already in prefs');
+      var arr = ['doubleName', 'email', 'keys'];
+
+      arr.forEach((var value) {
+        if(!initialPermissions[widget.message['appId']].containsKey(value)) {
+          print('$scope $value  ${!scope.keys.toList().contains(value)}');
+          initialPermissions[widget.message['appId']][value] = {
+            'enabled': true,
+            'required': isRequired(value, widget.message['scope'])
+          };
+        }
+      });
+      print('setting perm $initialPermissions');
+      saveScopePermissions(jsonEncode(initialPermissions));
     }
   }
 
@@ -149,16 +164,14 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (jsonDecode(widget.message['scope']).containsKey('keys')) {
-        scope['keys'] =
-            await getKeys(widget.message['appId'], scope['doubleName']);
+        scope['keys'] = await getKeys(widget.message['appId'], scope['doubleName']);
       }
     }
-    print('scope $scope');
+    makePermissionPrefs();
   }
 
   finishLogin() async {
     makeScopes();
-    makePermissionPrefs();
     cancelBtnVisible = true;
     setState(() {
       showScopeAndEmoji = true;

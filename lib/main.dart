@@ -26,6 +26,7 @@ List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
 int lastAppUsed;
 int keyboardUsedApp;
 bool finger = false;
+Color hexColor = Color(0xff0f296a);
 
 String appName;
 String packageName;

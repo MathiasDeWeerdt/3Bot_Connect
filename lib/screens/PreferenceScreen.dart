@@ -319,6 +319,7 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                       // flutterWebViewPlugin.resetWebviews();
                     }
                   }
+                  hexColor = Color(0xff0f296a);
                   await clearData();
                   Navigator.popUntil(
                     context,

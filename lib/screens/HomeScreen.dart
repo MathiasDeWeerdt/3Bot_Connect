@@ -29,7 +29,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String doubleName = '';
   var email;
   String initialLink;
-  Color hexColor = Color(0xff0f296a);
 
   @override
   void initState() {
@@ -39,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       });
     });
 
-    if(initialLink == null) {
+    if (initialLink == null) {
       getLinksStream().listen((String incomingLink) {
         checkWhatPageToOpen(Uri.parse(incomingLink));
       });
@@ -98,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     if (initialLink != null) {
       checkWhatPageToOpen(Uri.parse(initialLink));
-    } 
+    }
   }
 
   checkWhatPageToOpen(Uri link) {
@@ -128,10 +127,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => LoginScreen(
-                      jsonDecode(attempt.body),
-                      closeWhenLoggedIn: true
-                    ),
+                builder: (context) => LoginScreen(jsonDecode(attempt.body),
+                    closeWhenLoggedIn: true),
               ),
             );
           } else {
@@ -173,51 +170,68 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         logger.log("sei: " + sei.toString());
 
-          if(sei != null && sei.isNotEmpty && email["email"] != null && email["verified"]) {
-            logger.log("Email is verified and we have a signed email to verify this verification to a third party");
+        if (sei != null &&
+            sei.isNotEmpty &&
+            email["email"] != null &&
+            email["verified"]) {
+          logger.log(
+              "Email is verified and we have a signed email to verify this verification to a third party");
 
-            logger.log("Email: ", email["email"]);
-            logger.log("Verification status: ", email["verified"].toString());
-            logger.log("Signed email: ", sei);
-            
-            // We could recheck the signed email here, but this seems to be overkill, since its already verified.
-          } else {
-            logger.log("We are missing email information or have not been verified yet, attempting to retrieve data ...");
+          logger.log("Email: ", email["email"]);
+          logger.log("Verification status: ", email["verified"].toString());
+          logger.log("Signed email: ", sei);
 
-            logger.log("Email: ", email["email"]);
-            logger.log("Verification status: ", email["verified"].toString());
-            logger.log("Signed email: ", sei.toString());
+          // We could recheck the signed email here, but this seems to be overkill, since its already verified.
+        } else {
+          logger.log(
+              "We are missing email information or have not been verified yet, attempting to retrieve data ...");
 
-            logger.log("Getting signed email from openkyc.");
-            getSignedEmailIdentifierFromOpenKYC(tmpDoubleName).then((response) async {
-              if(response.statusCode == 404) {
-                logger.log("Can't retrieve signedEmailidentifier, we need to resend email verification.");
-                logger.log("Response: " + response.body);
-                return;
-              }
+          logger.log("Email: ", email["email"]);
+          logger.log("Verification status: ", email["verified"].toString());
+          logger.log("Signed email: ", sei.toString());
 
-              var body = jsonDecode(response.body);
-              var signedEmailIdentifier = body["signed_email_identifier"];
+          logger.log("Getting signed email from openkyc.");
+          getSignedEmailIdentifierFromOpenKYC(tmpDoubleName)
+              .then((response) async {
+            if (response.statusCode == 404) {
+              logger.log(
+                  "Can't retrieve signedEmailidentifier, we need to resend email verification.");
+              logger.log("Response: " + response.body);
+              return;
+            }
 
-              if(signedEmailIdentifier != null && signedEmailIdentifier.isNotEmpty) {
-                logger.log("Received signedEmailIdentifier: " + signedEmailIdentifier);
+            var body = jsonDecode(response.body);
+            var signedEmailIdentifier = body["signed_email_identifier"];
 
-                var vsei = json.decode((await verifySignedEmailIdentifier(signedEmailIdentifier)).body);
+            if (signedEmailIdentifier != null &&
+                signedEmailIdentifier.isNotEmpty) {
+              logger.log(
+                  "Received signedEmailIdentifier: " + signedEmailIdentifier);
 
-                if(vsei != null && vsei["email"] == email["email"] && vsei["identifier"].toLowerCase() == tmpDoubleName.toLowerCase()) {
-                  logger.log("Verified signedEmailIdentifier authenticity, saving data.");
-                  await saveEmail(vsei["email"], true);
-                  await saveSignedEmailIdentifier(signedEmailIdentifier);
-                } else {
-                  logger.log("Couldn't verify authenticity, saving unverified email.");
-                  await saveEmail(email["email"], false);
-                  await removeSignedEmailIdentifier();
-                }
+              var vsei = json.decode(
+                  (await verifySignedEmailIdentifier(signedEmailIdentifier))
+                      .body);
+
+              if (vsei != null &&
+                  vsei["email"] == email["email"] &&
+                  vsei["identifier"].toLowerCase() ==
+                      tmpDoubleName.toLowerCase()) {
+                logger.log(
+                    "Verified signedEmailIdentifier authenticity, saving data.");
+                await saveEmail(vsei["email"], true);
+                await saveSignedEmailIdentifier(signedEmailIdentifier);
               } else {
-                logger.log("No valid signed email has been found, please redo the verification process.");
+                logger.log(
+                    "Couldn't verify authenticity, saving unverified email.");
+                await saveEmail(email["email"], false);
+                await removeSignedEmailIdentifier();
               }
-            });
-          }
+            } else {
+              logger.log(
+                  "No valid signed email has been found, please redo the verification process.");
+            }
+          });
+        }
 
         if (mounted) {
           setState(() {

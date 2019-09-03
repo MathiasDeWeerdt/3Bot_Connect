@@ -1,5 +1,9 @@
+import 'dart:collection';
+import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
+
+import 'package:threebotlogin/services/userService.dart';
 
 const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -29,4 +33,10 @@ String validateDoubleName(String value) {
     return 'Enter Valid Email';
   }
   return null;
+}
+
+void createScopePermissions() async {
+  if (await getScopePermissions() == null) {
+      saveScopePermissions(jsonEncode(HashMap()));
+  }
 }

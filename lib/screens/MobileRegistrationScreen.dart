@@ -71,7 +71,6 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
         Navigator.pop(context);
         break;
       case 1:
-        print(_index.toString() + "wtf");
         var emailValidation = validateEmail(emailController.text);
         setState(() {
           loadingDialog();

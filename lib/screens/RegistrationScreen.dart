@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:threebotlogin/services/toolsService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -225,6 +226,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     saveDoubleName(doubleName);
     savePhrase(phrase);
     saveFingerprint(false);
+    createScopePermissions();
     if (keys['publicKey'] != null && hash != null) {
       try {
         var signedHash = signData(hash, keys['privateKey']);

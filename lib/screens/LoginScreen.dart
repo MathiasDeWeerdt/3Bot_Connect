@@ -45,8 +45,10 @@ Future<bool> _onWillPop() async {
 
 class _LoginScreenState extends State<LoginScreen> {
   String helperText = '';
-  String scopesText =
-      'Please select your preferred scopes and the asked emoji to continue';
+  String scopeTextMobile =
+      'Please select your preferred scopes and press Accept';
+  String scopeText =
+      'Please select your preferred scopes and press the corresponding emoji';
   List<int> imageList = new List();
   var selectedImageId = -1;
   var correctImage = -1;
@@ -190,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 24.0, left: 24.0),
                   child: Text(
-                    scopesText,
+                    checkMobile() ? scopeTextMobile : scopeText,
                     style: TextStyle(fontSize: 18.0),
                     textAlign: TextAlign.center,
                   ),
@@ -209,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   )),
             ),
             Visibility(
-              visible: !isMobile(),
+              visible: !checkMobile(),
               child: Expanded(
                 flex: 2,
                 child: Padding(
@@ -229,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             Visibility(
-              visible: isMobile(),
+              visible: checkMobile(),
               child: RaisedButton(
                 shape: new RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(30),
@@ -295,11 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Visibility(
                       visible: showScopeAndEmoji,
-                      child: Expanded(
-                        flex: 6,
-                        child:
-                            showScopeAndEmoji ? scopeEmojiView() : Container(),
-                      ),
+                      child: Expanded(flex: 6, child: scopeEmojiView()),
                     ),
                     Visibility(
                       visible: cancelBtnVisible,
@@ -374,7 +372,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   cancelIt() async {
     cancelLogin(await getDoubleName());
-    Navigator.pushNamed(context, '/');
+    Navigator.popUntil(context, ModalRoute.withName('/'));
     var index = 0;
 
     for (var flutterWebViewPlugin in flutterWebViewPlugins) {
@@ -437,16 +435,21 @@ class _LoginScreenState extends State<LoginScreen> {
     return scope;
   }
 
+  bool checkMobile() {
+    var mobile = widget.message['mobile'];
+    if (mobile == true || mobile == 'true') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   bool isMobile() {
     var mobile = widget.message['mobile'];
 
     if (mobile is String) {
-      setState(() =>
-          scopesText = 'Please select your preferred scopes and press Accept');
       return mobile == 'true';
     } else if (mobile is bool) {
-      setState(() =>
-          scopesText = 'Please select your preferred scopes and press Accept');
       return mobile == true;
     }
     return false;

@@ -63,6 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
+    makeScopes();
+
     var generated = 1;
     var rng = new Random();
     if (isNumeric(widget.message['randomImageId'])) {
@@ -115,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return flag;
   }
 
-  void makePermissionPrefs() async {
+  makePermissionPrefs() async {
     if (await getScopePermissions() == null) {
       saveScopePermissions(jsonEncode(HashMap()));
     }
@@ -143,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var arr = ['doubleName', 'email', 'keys'];
 
       arr.forEach((var value) {
-        if(!initialPermissions[widget.message['appId']].containsKey(value)) {
+        if (!initialPermissions[widget.message['appId']].containsKey(value)) {
           print('$scope $value  ${!scope.keys.toList().contains(value)}');
           initialPermissions[widget.message['appId']][value] = {
             'enabled': true,
@@ -165,14 +167,15 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (jsonDecode(widget.message['scope']).containsKey('keys')) {
-        scope['keys'] = await getKeys(widget.message['appId'], scope['doubleName']);
+        scope['keys'] =
+            await getKeys(widget.message['appId'], scope['doubleName']);
       }
     }
-    makePermissionPrefs();
+
+    await makePermissionPrefs();
   }
 
-  finishLogin() async {
-    makeScopes();
+  finishLogin() {
     cancelBtnVisible = true;
     setState(() {
       showScopeAndEmoji = true;

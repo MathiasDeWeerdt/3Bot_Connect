@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
-import 'package:threebotlogin/services/toolsService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
@@ -132,8 +131,7 @@ class _RegistrationWithoutScanScreen
 
     saveDoubleName(doubleName);
     savePhrase(phrase);
-    createScopePermissions();
-
+    
     if (!widget.resetPin) {
       var signedHash = signData(hash, privateKey);
       var data = encrypt(jsonEncode(scope), publicKey, privateKey);

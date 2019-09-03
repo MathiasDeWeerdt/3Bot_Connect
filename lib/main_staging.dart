@@ -36,49 +36,49 @@ void main() async {
       'color': 0xFF708fa0,
       'errorText': false
     },
-    // {
-    //   "content": Text(
-    //     'NBH Digital Wallet',
-    //     style: TextStyle(
-    //       color: Colors.white,
-    //       fontSize: 20,
-    //     ),
-    //     textAlign: TextAlign.center,
-    //   ),
-    //   "subheading": '',
-    //   "url": 'https://wallet.staging.jimber.org',
-    //   "appid": 'wallet.staging.jimber.org',
-    //   "redirecturl" : '/login',
-    //   "bg": 'nbh.png',
-    //   "disabled": false,
-    //   "initialUrl": 'https://wallet.staging.jimber.org',
-    //   "visible": false,
-    //   "id": 1,
-    //   'cookieUrl': '',
-    //   'localStorageKeys': true,
-    //   'color': 0xFF34495e,
-    //   'errorText': false
-    // },
-    // {
-    //   "content": Text(
-    //     'OpenBrowser',
-    //     style: TextStyle(
-    //       color: Colors.white,
-    //       fontSize: 20,
-    //     ),
-    //     textAlign: TextAlign.center,
-    //   ),
-    //   "subheading": 'By Jimber',
-    //   "url": 'https://broker.jimber.org/',
-    //   "bg": 'jimber.png',
-    //   "disabled": false,
-    //   "initialUrl": 'https://broker.jimber.org/',
-    //   "visible": false,
-    //   "id": 1,
-    //   'cookieUrl': '',
-    //   'color': 0xFF0f296a,
-    //   'errorText': false
-    // },
+    {
+      "content": Text(
+        'NBH Digital Wallet',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": '',
+      "url": 'https://wallet.staging.jimber.org',
+      "appid": 'wallet.staging.jimber.org',
+      "redirecturl" : '/login',
+      "bg": 'nbh.png',
+      "disabled": false,
+      "initialUrl": 'https://wallet.staging.jimber.org',
+      "visible": false,
+      "id": 1,
+      'cookieUrl': '',
+      'localStorageKeys': true,
+      'color': 0xFF34495e,
+      'errorText': false
+    },
+    {
+      "content": Text(
+        'OpenBrowser',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'By Jimber',
+      "url": 'https://broker.jimber.org/',
+      "bg": 'jimber.png',
+      "disabled": false,
+      "initialUrl": 'https://broker.jimber.org/',
+      "visible": false,
+      "id": 2,
+      'cookieUrl': '',
+      'color': 0xFF0f296a,
+      'errorText': false
+    },
     // {
     //   "content": Text(
     //     'FreeFlowConnect',
@@ -99,23 +99,23 @@ void main() async {
     //   'color': 0xFF0f296a,
     //   'errorText': false
     // },
-    // {
-    //   "content": Icon(
-    //     Icons.add_circle,
-    //     size: 75,
-    //     color: Colors.white,
-    //   ),
-    //   "subheading": 'New Application',
-    //   "bg": 'example.jpg',
-    //   "url": 'https://jimber.org/app',
-    //   "disabled": true,
-    //   "initialUrl": 'https://cowork-lochristi.threefold.work',
-    //   "visible": false,
-    //   "id": 3,
-    //   'cookieUrl': '',
-    //   'color': 0xFF0f296a,
-    //   'errorText': false
-    // }
+    {
+      "content": Icon(
+        Icons.add_circle,
+        size: 75,
+        color: Colors.white,
+      ),
+      "subheading": 'New Application',
+      "bg": 'example.jpg',
+      "url": 'https://jimber.org/app',
+      "disabled": true,
+      "initialUrl": 'https://cowork-lochristi.threefold.work',
+      "visible": false,
+      "id": 3,
+      'cookieUrl': '',
+      'color': 0xFF0f296a,
+      'errorText': false
+    }
   ];
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

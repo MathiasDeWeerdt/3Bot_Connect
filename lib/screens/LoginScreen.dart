@@ -113,7 +113,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isRequired(value, givenScope) {
     bool flag = false;
-    if (jsonDecode(givenScope)[value]) flag = true;
+    
+    if (jsonDecode(givenScope)[value] != null && jsonDecode(givenScope)[value]) {
+      flag = true;
+    } 
+
     return flag;
   }
 

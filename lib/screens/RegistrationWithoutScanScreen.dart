@@ -131,7 +131,7 @@ class _RegistrationWithoutScanScreen
 
     saveDoubleName(doubleName);
     savePhrase(phrase);
-    
+
     if (!widget.resetPin) {
       var signedHash = signData(hash, privateKey);
       var data = encrypt(jsonEncode(scope), publicKey, privateKey);
@@ -156,26 +156,26 @@ class _RegistrationWithoutScanScreen
     return showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) => Dialog(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: 10,
-                ),
-                new CircularProgressIndicator(),
-                SizedBox(
-                  height: 10,
-                ),
-                Center(
-                  child: new Text("Loading\nSending mail"),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
+      builder: (BuildContext context) => CustomDialog(
+        image: Icons.refresh,
+        title: "Loading",
+        description: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 10,
             ),
-          ),
+            new CircularProgressIndicator(),
+            SizedBox(
+              height: 10,
+            ),
+            new Text("Sending Email"),
+            SizedBox(
+              height: 10,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -183,31 +183,30 @@ class _RegistrationWithoutScanScreen
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            title: "You are about to register a new account",
-            description: new Text(
-                "If you continue, you won't be able to login with the current account again"),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Cancel"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, '/preference');
-                },
-              ),
-              FlatButton(
-                child: new Text("Continue"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  clearData();
-                  sendScannedFlag(
-                      widget.initialData['state'],
-                      await signData(
-                          deviceId, widget.initialData['privateKey']),
-                      widget.initialData['doubleName']);
-                },
-              ),
-            ],
+        title: "You are about to register a new account",
+        description: new Text(
+            "If you continue, you won't be able to login with the current account again"),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Cancel"),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/preference');
+            },
           ),
+          FlatButton(
+            child: new Text("Continue"),
+            onPressed: () async {
+              Navigator.pop(context);
+              clearData();
+              sendScannedFlag(
+                  widget.initialData['state'],
+                  await signData(deviceId, widget.initialData['privateKey']),
+                  widget.initialData['doubleName']);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

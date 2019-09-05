@@ -81,8 +81,10 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
           }
           Navigator.pop(context);
         });
+        if (phrase == null || phrase == '') {
+          phrase = await generateSeedPhrase();
+        }
 
-        phrase = await generateSeedPhrase();
         break;
       case 2:
         setState(() {
@@ -251,7 +253,7 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                     child: Text(
                       'Click on continue to finish registration.',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 15.0),
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(

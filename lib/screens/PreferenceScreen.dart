@@ -146,7 +146,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                     activeColor: Theme.of(context).accentColor,
                                     onChanged: (bool newValue) {
                                       setState(() {
-                                        logger.log('newvalue:', newValue, finger);                                      
+                                        logger.log(
+                                            'newvalue:', newValue, finger);
                                       });
 
                                       _chooseDialogFingerprint(newValue);
@@ -166,7 +167,10 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                               Material(
                                 child: ListTile(
                                   leading: Icon(Icons.info_outline),
-                                  title: Text("Version: " + version + " - " + buildNumber),
+                                  title: Text("Version: " +
+                                      version +
+                                      " - " +
+                                      buildNumber),
                                 ),
                               ),
                               ExpansionTile(
@@ -234,31 +238,31 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            image: Icons.error,
-            title: "Enable Fingerprint",
-            description: new Text(
-                "If you enable fingerprint, anyone who has a registered fingerprint on this device will have access to your account."),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Cancel"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  finger = false;
-                  await saveFingerprint(false);
-                  setState(() {});
-                },
-              ),
-              FlatButton(
-                child: new Text("Yes"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  finger = true;
-                  await saveFingerprint(true);
-                  setState(() {});
-                },
-              ),
-            ],
+        image: Icons.error,
+        title: "Enable Fingerprint",
+        description: new Text(
+            "If you enable fingerprint, anyone who has a registered fingerprint on this device will have access to your account.", textAlign: TextAlign.center,),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Cancel"),
+            onPressed: () async {
+              Navigator.pop(context);
+              finger = false;
+              await saveFingerprint(false);
+              setState(() {});
+            },
           ),
+          FlatButton(
+            child: new Text("Yes"),
+            onPressed: () async {
+              Navigator.pop(context);
+              finger = true;
+              await saveFingerprint(true);
+              setState(() {});
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -266,31 +270,31 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            image: Icons.error,
-            title: "Disable Fingerprint",
-            description: new Text(
-                "Are you sure you want to deactivate fingerprint as authentication method?"),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Cancel"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  finger = true;
-                  await saveFingerprint(true);
-                  setState(() {});
-                },
-              ),
-              FlatButton(
-                child: new Text("Yes"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  finger = false;
-                  await saveFingerprint(false);
-                  setState(() {});
-                },
-              ),
-            ],
+        image: Icons.error,
+        title: "Disable Fingerprint",
+        description: new Text(
+            "Are you sure you want to deactivate fingerprint as authentication method?", textAlign: TextAlign.center,),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Cancel"),
+            onPressed: () async {
+              Navigator.pop(context);
+              finger = true;
+              await saveFingerprint(true);
+              setState(() {});
+            },
           ),
+          FlatButton(
+            child: new Text("Yes"),
+            onPressed: () async {
+              Navigator.pop(context);
+              finger = false;
+              await saveFingerprint(false);
+              setState(() {});
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -298,37 +302,37 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            image: Icons.error,
-            title: "Are you sure?",
-            description: new Text(
-                "If you confirm, your account will be removed from this device. You can always recover your account with your doublename, email and phrase."),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Cancel"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              FlatButton(
-                child: new Text("Yes"),
-                onPressed: () async {
-                  for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-                    if (flutterWebViewPlugin != null) {
-                      flutterWebViewPlugin.cleanCookies();
-                      flutterWebViewPlugin.close();
-                      // flutterWebViewPlugin.resetWebviews();
-                    }
-                  }
-                  hexColor = Color(0xff0f296a);
-                  await clearData();
-                  Navigator.popUntil(
-                    context,
-                    ModalRoute.withName('/'),
-                  );
-                },
-              ),
-            ],
+        image: Icons.error,
+        title: "Are you sure?",
+        description: new Text(
+            "If you confirm, your account will be removed from this device. You can always recover your account with your doublename, email and phrase.", textAlign: TextAlign.center,),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Cancel"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
+          FlatButton(
+            child: new Text("Yes"),
+            onPressed: () async {
+              for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+                if (flutterWebViewPlugin != null) {
+                  flutterWebViewPlugin.cleanCookies();
+                  flutterWebViewPlugin.close();
+                  // flutterWebViewPlugin.resetWebviews();
+                }
+              }
+              hexColor = Color(0xff0f296a);
+              await clearData();
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName('/'),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -345,19 +349,19 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) => CustomDialog(
-              image: Icons.check,
-              title: "Email has been resent.",
-              description: new Text("A new verification email has been sent."),
-              actions: <Widget>[
-                FlatButton(
-                  child: new Text("Ok"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    setState(() {});
-                  },
-                ),
-              ],
+          image: Icons.check,
+          title: "Email has been resent.",
+          description: new Text("A new verification email has been sent."),
+          actions: <Widget>[
+            FlatButton(
+              child: new Text("Ok"),
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {});
+              },
             ),
+          ],
+        ),
       );
     }
   }
@@ -372,25 +376,24 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            image: Icons.dialpad,
-            title: "Please enter your pincode",
-            description: Container(
-              padding: EdgeInsets.only(bottom: 32.0),
-              child: PinField(
-                callback: checkPin,
-                callbackParam: callbackParam,
-              ),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Cancel"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {});
-                },
-              ),
-            ],
+        image: Icons.dialpad,
+        title: "Please enter your pincode",
+        description: Container(
+          child: PinField(
+            callback: checkPin,
+            callbackParam: callbackParam,
           ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Cancel"),
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {});
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -427,23 +430,23 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            hiddenaction: copySeedPhrase,
-            image: Icons.create,
-            title: "Please write this down on a piece of paper",
-            description: new Text(
-              phrase.toString(),
-            ),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              FlatButton(
-                child: new Text("Close"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {});
-                },
-              ),
-            ],
+        hiddenaction: copySeedPhrase,
+        image: Icons.create,
+        title: "Please write this down on a piece of paper",
+        description: Text(
+          phrase.toString(), textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          // usually buttons at the bottom of the dialog
+          FlatButton(
+            child: new Text("Close"),
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {});
+            },
           ),
+        ],
+      ),
     );
   }
 

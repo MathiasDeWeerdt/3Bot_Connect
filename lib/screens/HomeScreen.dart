@@ -296,10 +296,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     tooltip: 'Settings',
                     onPressed: () {
                       SystemChannels.textInput.invokeMethod('TextInput.hide');
-                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-                        if (flutterWebViewPlugin != null) {
-                          flutterWebViewPlugin.hide();
+                      try {
+                        for (var flutterWebViewPlugin
+                            in flutterWebViewPlugins) {
+                          if (flutterWebViewPlugin != null) {
+                            flutterWebViewPlugin.hide();
+                          }
                         }
+                      } catch (Exception) {
+                        print('caught something');
                       }
 
                       Navigator.pushNamed(context, '/preference');
@@ -352,75 +357,77 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Column notRegistered(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: Container(),
-          flex: 1,
-        ),
-        Expanded(
-          child: Container(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('You are not registered yet.',
-                      style: TextStyle(fontSize: 24)),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  RaisedButton(
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30),
+  ConstrainedBox notRegistered(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+          maxHeight: double.infinity,
+          maxWidth: double.infinity,
+          minHeight: 250,
+          minWidth: 250),
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('You are not registered yet.'),
+                    SizedBox(
+                      height: 20.0,
                     ),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
-                    color: Theme.of(context).accentColor,
-                    child: Text(
-                      'Register Now!',
-                      style: TextStyle(color: Colors.white, fontSize: 22),
+                    RaisedButton(
+                      shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 22.0, vertical: 12.0),
+                      color: Theme.of(context).accentColor,
+                      child: Text(
+                        'Register Now!',
+                        style: TextStyle(color: Colors.white, fontSize: 22),
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/registration');
+                      },
                     ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/registration');
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
+            flex: 5,
           ),
-          flex: 5,
-        ),
-        Expanded(
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  child: FlatButton(
-                    child: Text('Scan QR'),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/scan');
-                    },
+          Expanded(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    child: FlatButton(
+                      child: Text('Scan QR'),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/scan');
+                      },
+                    ),
                   ),
+                  flex: 2,
                 ),
-                flex: 2,
-              ),
-              Expanded(
-                child: Container(
-                  child: FlatButton(
-                    child: Text('Recover account'),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/recover');
-                    },
+                Expanded(
+                  child: Container(
+                    child: FlatButton(
+                      child: Text('Recover account'),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/recover');
+                      },
+                    ),
                   ),
+                  flex: 2,
                 ),
-                flex: 2,
-              ),
-            ],
+              ],
+            ),
+            flex: 1,
           ),
-          flex: 1,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

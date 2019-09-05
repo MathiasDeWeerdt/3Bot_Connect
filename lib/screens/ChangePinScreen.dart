@@ -49,7 +49,6 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
                       child: Center(
                           child: Text(
                         helperText,
-                        style: TextStyle(fontSize: 24.0),
                       )),
                     ),
                     !pinChanged
@@ -105,65 +104,22 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
 
   Widget succesfulChange() {
     return Container(
-      child: Expanded(
+      padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
+      child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Expanded(
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    'Success!',
-                    style: TextStyle(fontSize: 32),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(
-                    height: 18,
-                  ),
-                  Text(
-                    'Your pincode has been changed!',
-                    style: TextStyle(fontSize: 24, color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+            Icon(
+              Icons.check_circle,
+              size: 42.0,
+              color: Theme.of(context).accentColor,
             ),
-            Expanded(
-              flex: 5,
-              child: Container(
-                padding: EdgeInsets.all(20.0),
-                child: Icon(
-                  Icons.check_circle_outline,
-                  color: Theme.of(context).accentColor,
-                  size: 128,
-                ),
-              ),
+            SizedBox(
+              height: 20.0,
             ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(50.0),
-                child: RaisedButton(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(50),
-                  ),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 100.0, vertical: 15.0),
-                  child: Text(
-                    'Close',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  color: Theme.of(context).accentColor,
-                ),
-              ),
+            Text('You have successfully changed you pincode'),
+            SizedBox(
+              height: 60.0,
             ),
           ],
         ),

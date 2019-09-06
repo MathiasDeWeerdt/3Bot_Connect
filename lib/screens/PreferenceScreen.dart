@@ -123,7 +123,10 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                   if (snapshot.hasData) {
                                     return Material(
                                       child: ListTile(
-                                        trailing: Icon(Icons.visibility),
+                                        trailing: Padding(
+                                          padding: new EdgeInsets.only(right: 7.5),
+                                          child: Icon(Icons.visibility),
+                                        ),
                                         leading: Icon(Icons.vpn_key),
                                         title: Text("Show Phrase"),
                                         onTap: () {

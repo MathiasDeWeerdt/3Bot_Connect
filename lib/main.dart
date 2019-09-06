@@ -57,6 +57,57 @@ List<Map<String, dynamic>> apps = [
   }*/
 ];
 
+Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
+  return SafeArea(
+    child: Scaffold(
+      backgroundColor: Color(0xff0f296a),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Oops something went Wrong.",
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Center(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Text(
+                'Please restart the application. If this error persist, press the button',
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+          Center(
+            child: RaisedButton(
+              child: Text('Send to Support'),
+              onPressed: () {
+                // TODO: implement me
+                print('Has not been implemented yet');
+              },
+            ),
+          )
+        ],
+      ),
+    ),
+  );
+}
+
 void init() async {
 
   PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
@@ -96,6 +147,9 @@ String kAndroidUserAgent =
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+      return getErrorWidget(context, errorDetails);
+    };
     config = Config.of(context);
 
     return MaterialApp(

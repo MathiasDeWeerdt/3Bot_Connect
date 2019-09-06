@@ -119,7 +119,7 @@ class _AppSelectorState extends State<AppSelector> {
         final redirecturl = apps[appId]['redirecturl'];
         var scope = {};
         scope['doubleName'] = await getDoubleName();
-        scope['keys'] = await getKeys(appid, scope['doubleName']);
+        scope['derivedSeed'] = await getDerivedSeed(appid);
 
         var encrypted =
             await encrypt(jsonEncode(scope), keys["publicKey"], privateKey);

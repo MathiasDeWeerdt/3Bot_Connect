@@ -58,8 +58,8 @@ class _PreferenceDialogState extends State<PreferenceDialog> {
             var val = scope[keys[index]];
             if (keys[index] == 'email') {
               val = scope[keys[index]]['email'];
-            } else if (keys[index] == 'keys') {
-              val = 'Cryptographic key pair';
+            } else if (keys[index] == 'derivedSeed') {
+              val = 'Cryptographic seed';
             }
 
             return FutureBuilder(

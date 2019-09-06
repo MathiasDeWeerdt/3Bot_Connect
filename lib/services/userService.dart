@@ -130,6 +130,11 @@ Future<Map<String, Object>> getKeys(String appId, String doubleName) async {
   return await generateDerivedKeypair(appId, doubleName);
 }
 
+Future<String> getDerivedSeed(String appId) async {
+  print("Getting derivedKey");
+  return await generateDerivedSeed(appId);
+}
+
 Future<void> saveFingerprint(fingerprint) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.remove('fingerprint');

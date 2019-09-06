@@ -60,6 +60,9 @@ Future openLogin(context, message) async {
       var signedHash = signData(state, await privateKey);
       var scope = {};
       var dataToSend;
+
+      // Dead code ? 
+
       if (data['scope'] != null) {
         if (data['scope'].split(",").contains('user:email')) {
           scope['email'] = await email;
@@ -69,6 +72,8 @@ Future openLogin(context, message) async {
           scope['keys'] = await keys;
         }
       }
+
+      
       if (scope.isNotEmpty) {
         logger.log(scope.isEmpty);
         dataToSend =

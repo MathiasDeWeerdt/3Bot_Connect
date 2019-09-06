@@ -77,6 +77,21 @@ Future<String> generateSeedPhrase() async {
   return phrase;
 }
 
+Future<String> generateDerivedSeed(String appId) async {
+
+  // We could save the derivedSeed to the preferences? 
+  // final prefs = await SharedPreferences.getInstance();
+
+  String privateKey = await getPrivateKey();
+
+  PBKDF2 generator = new PBKDF2();
+  List<int> hashKey = generator.generateKey(privateKey, appId, 1000, 32);
+
+  Uint8List derivedSeed = new Uint8List.fromList(hashKey);
+
+  return base64.encode(derivedSeed);
+}
+
 Future<Map<String, Object>> generateDerivedKeypair(
     String appId, String doubleName) async {
   final prefs = await SharedPreferences.getInstance();

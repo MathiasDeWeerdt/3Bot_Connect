@@ -198,8 +198,8 @@ class _ScanScreenState extends State<RegistrationScreen>
 
         if (scopeFromQR.containsKey('email'))
           scope['email'] = {'email': qrData['email'], 'verified': false};
-        if (scopeFromQR.containsKey('keys'))
-          scope['keys'] = {'keys': qrData['keys']};
+        if (scopeFromQR.containsKey('derivedSeed'))
+          scope['derivedSeed'] = {'derivedSeed': qrData['derivedSeed']};
         saveValues();
       } else {
         saveValues();

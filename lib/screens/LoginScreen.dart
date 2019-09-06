@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
       saveScopePermissions(jsonEncode(initialPermissions));
     } else {
       print('Permissions already in prefs');
-      var arr = ['doubleName', 'email', 'keys'];
+      var arr = ['doubleName', 'email', 'derivedSeed'];
 
       arr.forEach((var value) {
         if (!initialPermissions[widget.message['appId']].containsKey(value)) {
@@ -169,9 +169,8 @@ class _LoginScreenState extends State<LoginScreen> {
         scope['email'] = await getEmail();
       }
 
-      if (jsonDecode(widget.message['scope']).containsKey('keys')) {
-        scope['keys'] =
-            await getKeys(widget.message['appId'], scope['doubleName']);
+      if (jsonDecode(widget.message['scope']).containsKey('derivedSeed')) {
+        scope['derivedSeed'] = await getDerivedSeed(widget.message['appId']);
       }
     }
 
@@ -429,7 +428,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   dynamic refineScope(scope) async {
     var json = jsonDecode(await getScopePermissions());
-    var permissions = json[scope['keys']['appId']];
+    var permissions = json[scope['derivedSeed']['appId']];
     var keysOfPermissions = permissions.keys.toList();
 
     keysOfPermissions.forEach((var value) {

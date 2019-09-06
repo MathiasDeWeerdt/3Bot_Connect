@@ -163,7 +163,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void makeScopes() async {
-    scope['doubleName'] = await getDoubleName();
     print('widget ${widget.message['scope']}');
     if (widget.message['scope'] != null) {
       if (jsonDecode(widget.message['scope']).containsKey('email')) {

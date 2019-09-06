@@ -108,11 +108,14 @@ class _AppSelectorState extends State<AppSelector> {
         final state = randomString(15);
 
         final privateKey = await getPrivateKey();
-        final signedHash = signData(state, privateKey);
+        final signedHash = await signData(state, privateKey);
 
         var jsToExecute =
             "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
+        
+        // This should be removed in the future!
         sleep(const Duration(seconds: 1));
+
         final res =
             await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
         final appid = apps[appId]['appid'];
@@ -126,9 +129,10 @@ class _AppSelectorState extends State<AppSelector> {
         var jsonData = jsonEncode(encrypted);
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
 
-        loadUrl =
-            'https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+        loadUrl = 'http://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(signedHash)}&data=$data';
 
+
+        logger.log("!!!loadUrl: " + loadUrl);
         flutterWebViewPlugins[appId].reloadUrl(loadUrl);
         print("Eval result: $res");
 

@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+
 import 'config.dart';
 import 'main.dart';
 
 void main() async {
   var config = Config(
       name: '3bot local',
-      threeBotApiUrl: 'http://192.168.2.243:5000/api',
-      openKycApiUrl: 'http://192.168.2.243:5005',
-      threeBotFrontEndUrl: 'http://192.168.2.243:8080/',
+      threeBotApiUrl: 'http://192.168.2.120:5000/api',
+      openKycApiUrl: 'http://192.168.2.120:5005',
+      threeBotFrontEndUrl: 'http://192.168.2.120:8081/',
       child: new MyApp());
 
   init();
@@ -26,38 +24,14 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": 'Where privacy and social media co-exist.',
-      "url": 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://staging.freeflowpages.com/',
+      "initialUrl": 'https://www2.freeflowpages.com/',
       "visible": false,
       "id": 0,
       'cookieUrl':
-          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
+          'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
-      'errorText': false
-    },
-    {
-      "content": Text(
-        'NBH Digital Wallet',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://wallet.staging.jimber.org',
-      "appid": 'wallet.staging.jimber.org',
-      "redirecturl" : '/login',
-      "bg": 'nbh.png',
-      "disabled": false,
-      "initialUrl": 'https://wallet.staging.jimber.org',
-      "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'localStorageKeys': true,
-      'color': 0xFF34495e,
       'errorText': false
     },
     {
@@ -75,14 +49,14 @@ void main() async {
       "disabled": false,
       "initialUrl": 'https://broker.jimber.org/',
       "visible": false,
-      "id": 2,
+      "id": 1,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
     },
     {
       "content": Text(
-        'FreeFlowConnect',
+        'NBH Digital Wallet',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,
@@ -90,14 +64,14 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'https://cowork-lochristi.threefold.work/',
-      "bg": 'om.jpg',
-      "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work/',
+      "url": 'https://wallet.staging.jimber.org',
+      "bg": 'nbh.png',
+      "disabled": false,
+      "initialUrl": 'https://wallet.staging.jimber.org',
       "visible": false,
       "id": 3,
       'cookieUrl': '',
-      'color': 0xFF0f296a,
+      'color': 0xFF34495e,
       'errorText': false
     },
     {
@@ -119,9 +93,6 @@ void main() async {
     }
   ];
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
-    runApp(config);
-    logger.log("running main_staging.dart");
-  });
+  runApp(config);
+  logger.log("running main_local_mathias.dart");
 }

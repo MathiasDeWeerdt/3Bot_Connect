@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -16,7 +16,6 @@ import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
-import 'package:community_material_icon/community_material_icon.dart';
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -31,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String doubleName = '';
   var email;
   String initialLink;
-  Color hexColor = Color(0xff0f296a);
 
   @override
   void initState() {
@@ -122,15 +120,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void checkIfThereAreLoginAttempts(dn) async {
     if (await getPrivateKey() != null && deviceId != null) {
       checkLoginAttempts(dn).then((attempt) {
-        logger.log("attempt: ");
-        logger.log(attempt);
-        logger.log('-----=====------');
-        logger.log(deviceId);
-        logger.log(attempt.body);
+        logger.log("Checking if there are login attempts.");
         try {
-          logger.log("Inside the try");
           if (attempt.body != '' && openPendingLoginAttempt) {
-            logger.log("We passed the IF!");
+            logger.log("Found a login attempt, opening ...");
             Navigator.popUntil(context, ModalRoute.withName('/'));
             Navigator.push(
               context,
@@ -139,13 +132,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     closeWhenLoggedIn: true),
               ),
             );
+          } else {
+            logger.log("We currently have no open login attempts.");
           }
         } catch (exception) {
-          logger.log("We caught the exception!");
           logger.log(exception);
         }
-
-        logger.log('-----=====------');
       });
     }
   }
@@ -170,23 +162,83 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       String dn = await getDoubleName();
 
-      checkIfThereAreLoginAttempts(dn);
+      String tmpDoubleName = await getDoubleName();
 
-      initUniLinks();
+      checkIfThereAreLoginAttempts(tmpDoubleName);
+      await initUniLinks();
 
-      if (dn != null || dn != '') {
-        getEmail().then((emailMap) async {
-          if (emailMap['verified'] != null && !emailMap['verified']) {
-            checkVerificationStatus(dn).then((newEmailMap) async {
-              logger.log(newEmailMap.body);
-              var body = jsonDecode(newEmailMap.body);
-              saveEmailVerified(body['verified'] == 1);
-            });
-          }
-        });
+      if (tmpDoubleName != null) {
+        var sei = await getSignedEmailIdentifier();
+        var email = await getEmail();
+
+        logger.log("sei: " + sei.toString());
+
+        if (sei != null &&
+            sei.isNotEmpty &&
+            email["email"] != null &&
+            email["verified"]) {
+          logger.log(
+              "Email is verified and we have a signed email to verify this verification to a third party");
+
+          logger.log("Email: ", email["email"]);
+          logger.log("Verification status: ", email["verified"].toString());
+          logger.log("Signed email: ", sei);
+
+          // We could recheck the signed email here, but this seems to be overkill, since its already verified.
+        } else {
+          logger.log(
+              "We are missing email information or have not been verified yet, attempting to retrieve data ...");
+
+          logger.log("Email: ", email["email"]);
+          logger.log("Verification status: ", email["verified"].toString());
+          logger.log("Signed email: ", sei.toString());
+
+          logger.log("Getting signed email from openkyc.");
+          getSignedEmailIdentifierFromOpenKYC(tmpDoubleName)
+              .then((response) async {
+            if (response.statusCode == 404) {
+              logger.log(
+                  "Can't retrieve signedEmailidentifier, we need to resend email verification.");
+              logger.log("Response: " + response.body);
+              return;
+            }
+
+            var body = jsonDecode(response.body);
+            var signedEmailIdentifier = body["signed_email_identifier"];
+
+            if (signedEmailIdentifier != null &&
+                signedEmailIdentifier.isNotEmpty) {
+              logger.log(
+                  "Received signedEmailIdentifier: " + signedEmailIdentifier);
+
+              var vsei = json.decode(
+                  (await verifySignedEmailIdentifier(signedEmailIdentifier))
+                      .body);
+
+              if (vsei != null &&
+                  vsei["email"] == email["email"] &&
+                  vsei["identifier"].toLowerCase() ==
+                      tmpDoubleName.toLowerCase()) {
+                logger.log(
+                    "Verified signedEmailIdentifier authenticity, saving data.");
+                await saveEmail(vsei["email"], true);
+                await saveSignedEmailIdentifier(signedEmailIdentifier);
+              } else {
+                logger.log(
+                    "Couldn't verify authenticity, saving unverified email.");
+                await saveEmail(email["email"], false);
+                await removeSignedEmailIdentifier();
+              }
+            } else {
+              logger.log(
+                  "No valid signed email has been found, please redo the verification process.");
+            }
+          });
+        }
+
         if (mounted) {
           setState(() {
-            doubleName = dn;
+            doubleName = tmpDoubleName;
           });
         }
       }
@@ -247,10 +299,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     tooltip: 'Settings',
                     onPressed: () {
                       SystemChannels.textInput.invokeMethod('TextInput.hide');
-                      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-                        if (flutterWebViewPlugin != null) {
-                          flutterWebViewPlugin.hide();
+                      try {
+                        for (var flutterWebViewPlugin
+                            in flutterWebViewPlugins) {
+                          if (flutterWebViewPlugin != null) {
+                            flutterWebViewPlugin.hide();
+                          }
                         }
+                      } catch (Exception) {
+                        print('caught something');
                       }
 
                       Navigator.pushNamed(context, '/preference');
@@ -303,84 +360,92 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Column notRegistered(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Container(),
-        Image.asset(
-          'assets/logo.png',
-          height: 100.0,
-        ),
-        IntrinsicWidth(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text('Welcome to 3Bot.', style: TextStyle(fontSize: 24)),
-              SizedBox(
-                height: 10,
-              ),
-              RaisedButton(
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(30),
-                ),
-                color: Theme.of(context).primaryColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Icon(
-                      CommunityMaterialIcons.account_edit,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    Text(
-                      'Register Now!',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/registration');
-                },
-              ),
-              RaisedButton(
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(30),
-                ),
-                color: Theme.of(context).accentColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Icon(
-                      CommunityMaterialIcons.qrcode,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    Text(
-                      'Scan QR!',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/scan');
-                },
-              ),
-            ],
+  ConstrainedBox notRegistered(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxHeight: double.infinity,
+        maxWidth: double.infinity,
+        minHeight: 250,
+        minWidth: 250
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(),
+          Image.asset(
+            'assets/logo.png',
+            height: 100.0,
           ),
-        ),
-        Container(),
-        FlatButton(
-          child: Text('Recover account'),
-          onPressed: () {
-            Navigator.pushNamed(context, '/recover');
-          },
-        ),
-      ],
+          IntrinsicWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text('Welcome to 3Bot.', style: TextStyle(fontSize: 24)),
+                SizedBox(
+                  height: 10,
+                ),
+                RaisedButton(
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30),
+                  ),
+                  color: Theme.of(context).primaryColor,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Icon(
+                        CommunityMaterialIcons.account_edit,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Text(
+                        'Register Now!',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/registration');
+                  },
+                ),
+                RaisedButton(
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30),
+                  ),
+                  color: Theme.of(context).accentColor,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Icon(
+                        CommunityMaterialIcons.qrcode,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Text(
+                        'Scan QR!',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/scan');
+                  },
+                ),
+              ],
+            ),
+          ),
+          Container(),
+          FlatButton(
+            child: Text('Recover account'),
+            onPressed: () {
+              Navigator.pushNamed(context, '/recover');
+            },
+          ),
+        ],
+      ),
     );
   }
 }

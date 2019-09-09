@@ -8,7 +8,6 @@ import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/Scanner.dart';
-import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final Widget registrationScreen;
@@ -25,6 +24,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   String pin;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var scope = Map();
+  var keys;
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _ScanScreenState extends State<RegistrationScreen>
   }
 
   Widget content() {
+    double height = MediaQuery.of(context).size.height;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -95,7 +96,7 @@ class _ScanScreenState extends State<RegistrationScreen>
                 children: <Widget>[
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.only(top: 24.0, bottom: 24.0),
+                    padding: EdgeInsets.only(top: height / 100, bottom: 12),
                     child: Center(
                       child: Text(
                         helperText,
@@ -105,7 +106,7 @@ class _ScanScreenState extends State<RegistrationScreen>
                   ),
                   AnimatedContainer(
                     duration: Duration(milliseconds: 100),
-                    padding: EdgeInsets.only(bottom: 24.0),
+                    padding: EdgeInsets.only(bottom: 12),
                     curve: Curves.bounceInOut,
                     width: double.infinity,
                     child: qrData != ''
@@ -132,16 +133,6 @@ class _ScanScreenState extends State<RegistrationScreen>
             context: context,
           ),
           Align(alignment: Alignment.bottomCenter, child: content()),
-          // Align(
-          //   alignment: Alignment.bottomRight,
-          //   child: FloatingActionButton(
-          //     tooltip: "What should I do?",
-          //     onPressed: () {
-          //       _showInformation();
-          //     },
-          //     child: Icon(Icons.help_outline),
-          //   ),
-          // )
         ],
       ),
     );
@@ -153,19 +144,20 @@ class _ScanScreenState extends State<RegistrationScreen>
     });
 
     var hash = qrData['hash'];
-    var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
     var phrase = qrData['phrase'];
-    if (hash == null ||
-        privateKey == null ||
-        doubleName == null ||
+
+    Map<String, String> keys = await generateKeysFromSeedPhrase(phrase);
+
+    if (doubleName == null ||
         email == null ||
-        phrase == null) {
+        phrase == null ||
+        keys['privateKey'] == null) {
       showError();
     } else {
-      var signedDeviceId = signData(deviceId, privateKey);
-      sendScannedFlag(hash, await signedDeviceId).then((response) {
+      var signedDeviceId = signData(deviceId, keys['privateKey']);
+      sendScannedFlag(hash, await signedDeviceId, doubleName).then((response) {
         sliderAnimationController.forward();
         setState(() {
           helperText = "Choose new pin";
@@ -174,6 +166,8 @@ class _ScanScreenState extends State<RegistrationScreen>
         print(e);
         showError();
       });
+      updateDeviceId(
+          await messaging.getToken(), doubleName, keys['privateKey']);
     }
   }
 
@@ -183,7 +177,7 @@ class _ScanScreenState extends State<RegistrationScreen>
     ));
   }
 
-  pinFilledIn(String value) {
+  pinFilledIn(String value) async {
     if (pin == null) {
       setState(() {
         pin = value;
@@ -195,44 +189,62 @@ class _ScanScreenState extends State<RegistrationScreen>
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
+      var scopeFromQR;
       scope['doubleName'] = qrData['doubleName'];
 
       if (qrData['scope'] != null) {
-        if (qrData['scope'].contains('user:email')) {
-          scope['email'] = {'email': qrData['email'], 'verified': false};
-        }
+        print('scope of qrdata ${jsonDecode(qrData['scope'])}');
+        scopeFromQR = jsonDecode(qrData['scope']);
 
-        if (qrData['scope'].contains('user:keys')) {
-          scope['keys'] = {'keys': qrData['keys']};
-        }
+        if (scopeFromQR.containsKey('email'))
+          scope['email'] = {'email': qrData['email'], 'verified': false};
+        if (scopeFromQR.containsKey('derivedSeed'))
+          scope['derivedSeed'] = {'derivedSeed': qrData['derivedSeed']};
+        saveValues();
+      } else {
+        saveValues();
       }
-      showScopeDialog(context, scope, qrData['appId'], saveValues);
     }
   }
 
   saveValues() async {
     logger.log('save values');
     var hash = qrData['hash'];
-    var privateKey = qrData['privateKey'];
     var doubleName = qrData['doubleName'];
     var email = qrData['email'];
-    var publicKey = qrData['appPublicKey'];
     var phrase = qrData['phrase'];
 
     savePin(pin);
-    savePrivateKey(privateKey);
-    savePublicKey(publicKey);
+
+    Map<String, String> keys = await generateKeysFromSeedPhrase(phrase);
+
+    savePrivateKey(keys['privateKey']);
+    savePublicKey(keys['publicKey']);
+
     saveEmail(email, false);
     saveDoubleName(doubleName);
     savePhrase(phrase);
+    saveFingerprint(false);
+    if (keys['publicKey'] != null && hash != null) {
+      try {
+        var signedHash = signData(hash, keys['privateKey']);
+        var data = encrypt(jsonEncode(scope), keys['publicKey'], keys['privateKey']);
 
-    var signedHash = signData(hash, privateKey);
-    var data = encrypt(jsonEncode(scope), publicKey, privateKey);
+        sendData(hash, await signedHash, await data, null).then((x) {
+          Navigator.popUntil(context, ModalRoute.withName('/'));
+          Navigator.of(context).pushNamed('/success');
+        });
+      } catch (exception) {
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        showError();
+      }
+    } else {
+      print('signing $doubleName');
+      sendRegisterSign(doubleName);
 
-    sendData(hash, await signedHash, await data, null).then((x) {
       Navigator.popUntil(context, ModalRoute.withName('/'));
       Navigator.of(context).pushNamed('/success');
-    });
+    }
   }
 
   _showInformation() {
@@ -244,22 +256,22 @@ class _ScanScreenState extends State<RegistrationScreen>
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            image: Icons.error,
-            title: "Steps",
-            description: new Text(
-              _stepsList,
-              textAlign: TextAlign.center,
-              textScaleFactor: 1.2,
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Continue"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+        image: Icons.error,
+        title: "Steps",
+        description: new Text(
+          _stepsList,
+          textAlign: TextAlign.center,
+          textScaleFactor: 1.2,
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Continue"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
+        ],
+      ),
     );
   }
 }

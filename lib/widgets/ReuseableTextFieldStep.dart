@@ -29,6 +29,7 @@ class ReuseableTextFieldStep extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 8.5),
           child: TextField(
+            autofocus: true,
             keyboardType: typeText,
             decoration: InputDecoration(
               border: OutlineInputBorder(),

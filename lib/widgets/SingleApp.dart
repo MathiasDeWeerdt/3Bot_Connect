@@ -15,7 +15,6 @@ class _SingleAppState extends State<SingleApp> {
     final size = MediaQuery.of(context).size;
     return Container(
       height: double.infinity,
-      // padding: EdgeInsets.all(50),
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: RawMaterialButton(
         child: Container(

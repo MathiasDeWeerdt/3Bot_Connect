@@ -2,14 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:threebotlogin/services/openKYCService.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:uni_links/uni_links.dart';
-import 'package:threebotlogin/widgets/scopeDialog.dart';
 
 class RegistrationWithoutScanScreen extends StatefulWidget {
   final Widget registrationWithoutScanScreen;
@@ -38,8 +37,10 @@ class _RegistrationWithoutScanScreen
   }
 
   Future sendFlag(pk) async {
-    sendScannedFlag(widget.initialData['state'],
-        await signData(deviceId, widget.initialData['privateKey']));
+    sendScannedFlag(
+        widget.initialData['state'],
+        await signData(deviceId, widget.initialData['privateKey']),
+        widget.initialData['doubleName']);
   }
 
   @override
@@ -101,29 +102,8 @@ class _RegistrationWithoutScanScreen
         helperText = 'Pins do not match, choose pin';
       });
     } else if (pin == value) {
-      if (widget.resetPin) {
-        sendIt();
-        Navigator.popUntil(context, ModalRoute.withName('/'));
-        Navigator.of(context).pushNamed('/success');
-      } else {
-        scope['doubleName'] = widget.initialData['doubleName'];
-
-        if (widget.initialData['scope'] != null) {
-          if (widget.initialData['scope'].contains('user:email')) {
-            scope['email'] = {
-              'email': widget.initialData['email'],
-              'verified': false
-            };
-          }
-
-          if (widget.initialData['scope'].contains('user:keys')) {
-            scope['keys'] = {'keys': widget.initialData['keys']};
-          }
-        }
-
-        showScopeDialog(context, scope, widget.initialData['appId'], sendIt);
-      }
-      removeInitialLink();
+      loadingDialog();
+      sendIt();
     }
   }
 
@@ -136,18 +116,23 @@ class _RegistrationWithoutScanScreen
     var phrase = widget.initialData['phrase'];
 
     savePin(pin);
-    savePrivateKey(privateKey);
 
-    if(!widget.resetPin) {
+    Map<String, String> keys = await generateKeysFromSeedPhrase(phrase);
+
+    savePrivateKey(keys['privateKey']);
+    savePublicKey(keys['publicKey']);
+    saveFingerprint(false);
+
+    if (!widget.resetPin) {
       saveEmail(email, false);
     } else {
       saveEmail(email, widget.initialData['emailVerified']);
     }
-    
+
     saveDoubleName(doubleName);
     savePhrase(phrase);
 
-    if(!widget.resetPin) {
+    if (!widget.resetPin) {
       var signedHash = signData(hash, privateKey);
       var data = encrypt(jsonEncode(scope), publicKey, privateKey);
 
@@ -157,38 +142,71 @@ class _RegistrationWithoutScanScreen
         Navigator.of(context).pushNamed('/success');
       });
     }
+
+    await sendRegisterSign(doubleName);
+    await sendVerificationEmail();
+
+    print('signing $doubleName');
+
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.of(context).pushNamed('/success');
+  }
+
+  loadingDialog() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => CustomDialog(
+        image: Icons.refresh,
+        title: "Loading",
+        description: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            new CircularProgressIndicator(),
+            SizedBox(
+              height: 10,
+            ),
+            new Text("Sending Email"),
+            SizedBox(
+              height: 10,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(
-            title: "You are about to register a new account",
-            description: new Text(
-                "If you continue, you won't be able to login with the current account again"),
-            actions: <Widget>[
-              FlatButton(
-                child: new Text("Cancel"),
-                onPressed: () {
-                  removeInitialLink();
-                  Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, '/preference');
-                },
-              ),
-              FlatButton(
-                child: new Text("Continue"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  removeInitialLink();
-                  clearData();
-                  sendScannedFlag(
-                      widget.initialData['state'],
-                      await signData(
-                          deviceId, widget.initialData['privateKey']));
-                },
-              ),
-            ],
+        title: "You are about to register a new account",
+        description: new Text(
+            "If you continue, you won't be able to login with the current account again"),
+        actions: <Widget>[
+          FlatButton(
+            child: new Text("Cancel"),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/preference');
+            },
           ),
+          FlatButton(
+            child: new Text("Continue"),
+            onPressed: () async {
+              Navigator.pop(context);
+              clearData();
+              sendScannedFlag(
+                  widget.initialData['state'],
+                  await signData(deviceId, widget.initialData['privateKey']),
+                  widget.initialData['doubleName']);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

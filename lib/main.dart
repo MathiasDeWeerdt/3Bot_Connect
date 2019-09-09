@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
 import 'package:threebotlogin/screens/PreferenceScreen.dart';
 import 'package:threebotlogin/services/loggingService.dart';
@@ -24,6 +25,13 @@ bool showButton;
 List<FlutterWebviewPlugin> flutterWebViewPlugins = new List(6);
 int lastAppUsed;
 int keyboardUsedApp;
+bool finger = false;
+Color hexColor = Color(0xff0f296a);
+
+String appName;
+String packageName;
+String version;
+String buildNumber;
 
 List<Map<String, dynamic>> apps = [
   {
@@ -49,7 +57,66 @@ List<Map<String, dynamic>> apps = [
   }*/
 ];
 
+Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
+  return SafeArea(
+    child: Scaffold(
+      backgroundColor: Color(0xff0f296a),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Oops something went Wrong.",
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Center(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Text(
+                'Please restart the application. If this error persist, press the button',
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+          Center(
+            child: RaisedButton(
+              child: Text('Send to Support'),
+              onPressed: () {
+                // TODO: implement me
+                print('Has not been implemented yet');
+              },
+            ),
+          )
+        ],
+      ),
+    ),
+  );
+}
+
 void init() async {
+
+  PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+    appName = packageInfo.appName;
+    packageName = packageInfo.packageName;
+    version = packageInfo.version;
+    buildNumber = packageInfo.buildNumber;
+  });
+
   logger = new LoggingService();
   showButton = false;
 
@@ -75,12 +142,14 @@ bool get isInDebugMode {
 }
 
 String kAndroidUserAgent =
-    //'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36';
     'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+      return getErrorWidget(context, errorDetails);
+    };
     config = Config.of(context);
 
     return MaterialApp(

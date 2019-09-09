@@ -11,10 +11,10 @@ description: A new Flutter project.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at\
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.2.4+36
+version: 1.3.0+40
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   password_hash:
@@ -35,12 +35,13 @@ dependencies:
     git:
       url: https://github.com/MathiasDeWeerdt/uni_links
   flutter_webview_plugin:
-    git:
-      url: https://github.com/coeneivan/flutter_webview_plugin
+    path: /Users/ivancoene/Jimber/flutter_webview_plugin
   cupertino_icons: ^0.1.2
   crypto: ^2.0.6
   bip39: ^1.0.3
   keyboard_visibility: 0.5.0
+  community_material_icon:
+  local_auth: 0.5.2+4
 
 
 dev_dependencies:

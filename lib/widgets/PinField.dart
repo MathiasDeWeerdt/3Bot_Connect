@@ -4,23 +4,36 @@ import 'package:flutter/services.dart';
 import '../main.dart';
 
 class PinField extends StatefulWidget {
-  final Widget pinField;
   final int pinLength = 4;
   final callback;
-  PinField({Key key, this.pinField, this.callback}) : super(key: key);
+  final callbackParam;
+  final Function callbackFunction;
+  PinField(
+      {Key key,
+      @required this.callback,
+      this.callbackParam,
+      this.callbackFunction})
+      : super(key: key);
   _PinFieldState createState() => _PinFieldState();
 }
 
 class _PinFieldState extends State<PinField> {
+  void initState() {
+    super.initState();
+    if (widget.callbackFunction != null) {
+      widget.callbackFunction();
+    }
+  }
+
   List<String> input = List();
 
   Widget buildTextField(int i, BuildContext context) {
     const double maxSize = 7;
     double size = input.length > i ? maxSize : 1;
-    double margin = (maxSize * 2 - size) / 2;
+    double height = MediaQuery.of(context).size.height;
     return AnimatedContainer(
-      margin: EdgeInsets.all(margin),
-      height: size,
+      margin: EdgeInsets.all(height/120),
+      height: height/50,
       width: size,
       decoration: BoxDecoration(color: Colors.black, shape: BoxShape.circle),
       duration: Duration(milliseconds: 100),
@@ -29,14 +42,16 @@ class _PinFieldState extends State<PinField> {
   }
 
   Widget buildNumberPin(String buttonText, BuildContext context,
-      {Color backgroundColor: Colors.blueGrey}) {
+    {Color backgroundColor: Colors.blueGrey}) {
     var onPressedMethod = () => handleInput(buttonText);
+    double height = MediaQuery.of(context).size.height;
+    
     if (buttonText == 'OK')
       onPressedMethod = input.length >= widget.pinLength ? () => onOk() : null;
     if (buttonText == 'C')
       onPressedMethod = input.length >= 1 ? () => onClear() : null;
     return Container(
-        padding: EdgeInsets.only(top: 12, bottom: 12),
+        padding: EdgeInsets.only(top: height/136, bottom: height/136),
         child: Center(
             child: RawMaterialButton(
           padding: EdgeInsets.all(12),
@@ -69,9 +84,8 @@ class _PinFieldState extends State<PinField> {
       String buttonText = possibleInput[i];
       if (buttonText == 'C')
         return buildNumberPin(possibleInput[i], context,
-            backgroundColor: input.length >= 1
-                ? Colors.yellow[700]
-                : Colors.yellow[200]);
+            backgroundColor:
+                input.length >= 1 ? Colors.yellow[700] : Colors.yellow[200]);
       else if (buttonText == 'OK')
         return buildNumberPin(possibleInput[i], context,
             backgroundColor: input.length >= widget.pinLength
@@ -132,7 +146,11 @@ class _PinFieldState extends State<PinField> {
     String pin = "";
     input.forEach((char) => pin += char);
     logger.log(pin);
-    widget.callback(pin);
+    if (widget.callbackParam != null) {
+      widget.callback(pin, widget.callbackParam);
+    } else {
+      widget.callback(pin);
+    }
     setState(() {
       input = List();
     });

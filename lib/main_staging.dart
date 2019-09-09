@@ -74,31 +74,31 @@ void main() async {
       "disabled": false,
       "initialUrl": 'https://broker.jimber.org/',
       "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false
-    },
-    {
-      "content": Text(
-        'FreeFlowConnect',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://cowork-lochristi.threefold.work/',
-      "bg": 'om.jpg',
-      "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work/',
-      "visible": false,
       "id": 2,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false
     },
+    // {
+    //   "content": Text(
+    //     'FreeFlowConnect',
+    //     style: TextStyle(
+    //       color: Colors.white,
+    //       fontSize: 20,
+    //     ),
+    //     textAlign: TextAlign.center,
+    //   ),
+    //   "subheading": '',
+    //   "url": 'https://cowork-lochristi.threefold.work/',
+    //   "bg": 'om.jpg',
+    //   "disabled": true,
+    //   "initialUrl": 'https://cowork-lochristi.threefold.work/',
+    //   "visible": false,
+    //   "id": 2,
+    //   'cookieUrl': '',
+    //   'color': 0xFF0f296a,
+    //   'errorText': false
+    // },
     {
       "content": Icon(
         Icons.add_circle,

@@ -12,12 +12,11 @@ import 'package:threebotlogin/services/userService.dart';
 String threeBotApiUrl = config.threeBotApiUrl;
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
-sendScannedFlag(String hash, String deviceId) async {
+sendScannedFlag(String hash, String deviceId, String doubleName) async {
   print('$threeBotApiUrl/flag');
-  print(deviceId);
   http.post(
     '$threeBotApiUrl/flag',
-    body: json.encode({'hash': hash, 'deviceId': deviceId, 'isSigned': true}),
+    body: json.encode({'hash': hash, 'deviceId': deviceId, 'isSigned': true, 'doubleName': doubleName}),
     headers: requestHeaders,
   );
 }
@@ -31,7 +30,6 @@ Future updateDeviceId(String deviceId, String doubleName, String privateKey) asy
 }
 
 Future sendData(String hash, String signedHash, data, selectedImageId) {
-  print(data);
   return http.post('$threeBotApiUrl/sign',
       body: json.encode({
         'hash': hash,
@@ -159,4 +157,13 @@ Future<http.Response> finishRegistration(String doubleName, String email, String
     'public_key' : publicKey,
   }),
   headers: requestHeaders);
+}
+
+Future sendRegisterSign(String doubleName) {
+  print("SIGNING $doubleName");
+  return http.post('$threeBotApiUrl/signRegister',
+      body: json.encode({
+        'doubleName': doubleName,
+      }),
+      headers: requestHeaders);
 }

@@ -71,64 +71,71 @@ class CustomDialog extends StatelessWidget {
   }
 
   card(context) {
-    return Container(
-      padding: EdgeInsets.only(top: 30.0 + 20.0),
-      margin: EdgeInsets.only(top: 30.0),
-      decoration: new BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(20.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10.0,
-            offset: const Offset(0.0, 10.0),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min, // To make the card compact
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
+    return ConstrainedBox(
+      constraints:
+          BoxConstraints(maxHeight: double.infinity, maxWidth: double.infinity),
+      child: Container(
+        padding: EdgeInsets.only(top: 30.0 + 20.0),
+        margin: EdgeInsets.only(top: 30.0),
+        decoration: new BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10.0,
+              offset: const Offset(0.0, 10.0),
             ),
-          ),
-          SizedBox(height: 16.0),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: description,
-          ),
-          SizedBox(height: 24.0),
-          actions != null && actions.length > 0
-              ? Container(
-                  decoration: new BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(20),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10.0,
-                        offset: const Offset(0.0, 10.0),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // To make the card compact
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(height: 16.0),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 300, maxWidth: 310),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 5.0),
+                child: description,
+              ),
+            ),
+            SizedBox(height: 24.0),
+            actions != null && actions.length > 0
+                ? Container(
+                    decoration: new BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(20),
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: actions,
-                  ),
-                )
-              : Container()
-        ],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10.0,
+                          offset: const Offset(0.0, 10.0),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: actions,
+                    ),
+                  )
+                : Container()
+          ],
+        ),
       ),
     );
   }

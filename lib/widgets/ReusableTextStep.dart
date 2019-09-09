@@ -18,9 +18,13 @@ class ReuseableTextStep extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8.5),
-          child: Text(
-            extraText,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 42),
+          child: Container(
+            child: Center(
+              child: Text(
+                extraText,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+            ),
           ),
         ),
         Divider(

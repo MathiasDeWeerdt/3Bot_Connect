@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/services/cryptoService.dart';
 
 import 'config.dart';
 import 'main.dart';
 
 void main() async {
-
-  // generateDerivedKeypair('hello');
-  // await generateDerivedKeypair("hello2", "");
-
   var config = Config(
       name: '3bot local',
       threeBotApiUrl: 'http://192.168.2.60:5000/api',
       openKycApiUrl: 'http://192.168.2.60:5005',
       threeBotFrontEndUrl: 'http://192.168.2.60:8081/',
-      child: new MyApp()
-  );
-  
+      child: new MyApp());
+
   init();
 
   apps = [
@@ -62,26 +56,6 @@ void main() async {
     },
     {
       "content": Text(
-        'FreeflowConnect',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://cowork-lochristi.threefold.work/',
-      "bg": 'om.jpg',
-      "disabled": false,
-      "initialUrl": 'https://cowork-lochristi.threefold.work/',
-      "visible": false,
-      "id": 2,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false
-    },
-    {
-      "content": Text(
         'NBH Digital Wallet',
         style: TextStyle(
           color: Colors.white,
@@ -90,13 +64,16 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'https://wallet.staging.jimber.org',
+      "url": 'http://192.168.2.60:8082',
       "bg": 'nbh.png',
       "disabled": false,
-      "initialUrl": 'https://wallet.staging.jimber.org',
+      "initialUrl": 'http://192.168.2.60:8082',
       "visible": false,
-      "id": 3,
+      "id": 2,
+      "appid": '192.168.2.60:8082',
+      "redirecturl": '/login',
       'cookieUrl': '',
+      'localStorageKeys': true,
       'color': 0xFF34495e,
       'errorText': false
     },
@@ -112,7 +89,7 @@ void main() async {
       "disabled": true,
       "initialUrl": 'https://cowork-lochristi.threefold.work',
       "visible": false,
-      "id": 4,
+      "id": 3,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false

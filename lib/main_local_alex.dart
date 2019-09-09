@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:threebotlogin/services/cryptoService.dart';
 
 import 'config.dart';
 import 'main.dart';
 
 void main() async {
-
-  // generateDerivedKeypair('hello');
-  // await generateDerivedKeypair("hello2", "");
 
   var config = Config(
       name: '3bot local',

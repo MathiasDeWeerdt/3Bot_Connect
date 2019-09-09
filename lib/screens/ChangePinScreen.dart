@@ -41,14 +41,14 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
               padding: EdgeInsets.only(top: 0.0, bottom: 0.0),
               child: Center(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.only(top: 0.0, bottom: 32.0),
                       child: Center(
                           child: Text(
                         helperText,
-                        style: TextStyle(fontSize: 24.0),
                       )),
                     ),
                     !pinChanged
@@ -104,38 +104,26 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
 
   Widget succesfulChange() {
     return Container(
+      padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
+      child: Center(
         child: Column(
-      children: <Widget>[
-        Text(
-          'Pincode Succesfully',
-          style: TextStyle(fontSize: 32),
-        ),
-        Container(
-          padding: EdgeInsets.all(20.0),
-          child: Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 64,
-          ),
-        ),
-        RaisedButton(
-          shape: new RoundedRectangleBorder(
-            borderRadius: new BorderRadius.circular(10),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
-          child: Text(
-            'Close',
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.check_circle,
+              size: 42.0,
+              color: Theme.of(context).accentColor,
             ),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          color: Colors.green,
-        )
-      ],
-    ));
+            SizedBox(
+              height: 20.0,
+            ),
+            Text('You have successfully changed you pincode'),
+            SizedBox(
+              height: 60.0,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -122,7 +122,7 @@ Future openLogin(context, message) async {
                           FlatButton(
                             child: new Text("Ok"),
                             onPressed: () {
-                              Navigator.popUntil(context, ModalRoute.withName("/"));
+                              Navigator.pop(context);
                             },
                           ),
                         ],

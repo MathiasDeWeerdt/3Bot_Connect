@@ -58,10 +58,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool showPinfield = false;
   bool showScopeAndEmoji = false;
+  bool isMobileCheck = false;
 
   @override
   void initState() {
     super.initState();
+    isMobileCheck = checkMobile();
 
     makeScopes();
 
@@ -197,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 24.0, left: 24.0),
                   child: Text(
-                    checkMobile() ? scopeTextMobile : scopeText,
+                    isMobileCheck ? scopeTextMobile : scopeText,
                     style: TextStyle(fontSize: 18.0),
                     textAlign: TextAlign.center,
                   ),
@@ -216,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   )),
             ),
             Visibility(
-              visible: !checkMobile(),
+              visible: !isMobileCheck,
               child: Expanded(
                 flex: 2,
                 child: Padding(
@@ -236,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             Visibility(
-              visible: checkMobile(),
+              visible: isMobileCheck,
               child: RaisedButton(
                 shape: new RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(30),
@@ -366,10 +368,6 @@ class _LoginScreenState extends State<LoginScreen> {
       print('Onto showing scopes and emojis');
       return finishLogin();
     } else {
-      setState(() {
-        print('send it again');
-        sendIt();
-      });
       _scaffoldKey.currentState.showSnackBar(
           SnackBar(content: Text('Oops... you entered the wrong pin')));
     }

@@ -38,14 +38,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "org.jimber.threebotlogin"
+        applicationId "org.jimber.threebotlogin.staging"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
     }
 
     signingConfigs {
@@ -62,9 +61,6 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            ndk {
-                abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
-            }
         }
         debug {
             signingConfig signingConfigs.debug

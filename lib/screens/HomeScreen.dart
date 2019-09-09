@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       });
     });
 
-    if(initialLink == null) {
+    if (initialLink == null) {
       getLinksStream().listen((String incomingLink) {
         checkWhatPageToOpen(Uri.parse(incomingLink));
       });
@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     if (initialLink != null) {
       checkWhatPageToOpen(Uri.parse(initialLink));
-    } 
+    }
   }
 
   checkWhatPageToOpen(Uri link) {
@@ -135,10 +135,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => LoginScreen(
-                      jsonDecode(attempt.body),
-                      closeWhenLoggedIn: true
-                    ),
+                builder: (context) => LoginScreen(jsonDecode(attempt.body),
+                    closeWhenLoggedIn: true),
               ),
             );
           }
@@ -169,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (initFirebase) {
         initFirebaseMessagingListener(context);
       }
-      
+
       String dn = await getDoubleName();
 
       checkIfThereAreLoginAttempts(dn);
@@ -307,75 +305,80 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Column notRegistered(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Expanded(
-          child: Container(),
-          flex: 1,
+        Container(),
+        Image.asset(
+          'assets/logo.png',
+          height: 100.0,
         ),
-        Expanded(
-          child: Container(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('You are not registered yet.',
-                      style: TextStyle(fontSize: 24)),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  RaisedButton(
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30),
-                    ),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
-                    color: Theme.of(context).accentColor,
-                    child: Text(
-                      'Register Now!',
-                      style: TextStyle(color: Colors.white, fontSize: 22),
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/registration');
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          flex: 5,
-        ),
-        Expanded(
-          child: Row(
+        IntrinsicWidth(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Expanded(
-                child: Container(
-                  child: IconButton(
-                    icon: new Icon(
-                      CommunityMaterialIcons.qrcode,
-                      size: 32,
-                    ),
-                    tooltip: 'Opens QR Scanner',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/scan');
-                    },
-                  ),
-                ),
-                flex: 2,
+              Text('Welcome to 3Bot.', style: TextStyle(fontSize: 24)),
+              SizedBox(
+                height: 10,
               ),
-              Expanded(
-                child: Container(
-                  child: FlatButton(
-                    child: Text('Recover account'),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/recover');
-                    },
-                  ),
+              RaisedButton(
+                shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30),
                 ),
-                flex: 2,
+                color: Theme.of(context).primaryColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Icon(
+                      CommunityMaterialIcons.account_edit,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      'Register Now!',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/registration');
+                },
+              ),
+              RaisedButton(
+                shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30),
+                ),
+                color: Theme.of(context).accentColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Icon(
+                      CommunityMaterialIcons.qrcode,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      'Scan QR!',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/scan');
+                },
               ),
             ],
           ),
-          flex: 1,
+        ),
+        Container(),
+        FlatButton(
+          child: Text('Recover account'),
+          onPressed: () {
+            Navigator.pushNamed(context, '/recover');
+          },
         ),
       ],
     );

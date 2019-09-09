@@ -231,7 +231,6 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text('Registration'),
         backgroundColor: Color(0xFF0f296a),
       ),

@@ -71,7 +71,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         final scopeData = {};
 
-        if (scope != null && scope.contains("user:email")) {
+        if (scope != null && scope.contains("\"email\":")) {
           scopeData['email'] = await getEmail();
         }
 

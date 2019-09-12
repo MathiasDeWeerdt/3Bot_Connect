@@ -70,35 +70,57 @@ class _ChangePinScreenState extends State<ChangePinScreen> {
     final oldPin = await getPin();
 
     if (!oldPinOk) {
-      if (oldPin == p) {
-        setState(() {
-          helperText = "Enter new pincode";
-          oldPinOk = true;
-        });
-      } else {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-            content: Text('Oops... you entered the wrong pin'),
-            duration: Duration(milliseconds: 500)));
-      }
+      checkUserCurrentPin(oldPin, p);
     } else {
       if (newPin == null) {
-        setState(() {
-          newPin = p;
-          helperText = "Confirm new pincode";
-        });
+        newPin = p;
+        checkUserNewPin(oldPin);
       } else {
-        if (newPin == p) {
-          savePin(newPin);
-          setState(() {
-            helperText = '';
-            pinChanged = true;
-          });
-        } else {
-          _scaffoldKey.currentState.showSnackBar(SnackBar(
-              content: Text('Oops... pin does not match'),
-              duration: Duration(milliseconds: 500)));
-        }
+        confirmUserNewPin(p);
       }
+    }
+  }
+
+  void confirmUserNewPin(p) {
+    if (newPin == p) {
+      savePin(newPin);
+      setState(() {
+        helperText = '';
+        pinChanged = true;
+      });
+    } else {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Oops... pin does not match'),
+          duration: Duration(milliseconds: 500)));
+    }
+  }
+
+  void checkUserNewPin(String oldPin) {
+     if (newPin == oldPin) {
+       setState(() {
+        newPin = null;
+      });
+      
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Oops... pin is the same as current pin'),
+          duration: Duration(milliseconds: 500)));
+    } else {
+      setState(() {
+        helperText = "Confirm new pincode";
+      });
+    }
+  }
+
+  void checkUserCurrentPin(String oldPin, p) {
+    if (oldPin == p) {
+      setState(() {
+        helperText = "Enter new pincode";
+        oldPinOk = true;
+      });
+    } else {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Oops... you entered the wrong pin'),
+          duration: Duration(milliseconds: 500)));
     }
   }
 

@@ -4,15 +4,13 @@ import 'config.dart';
 import 'main.dart';
 
 void main() async {
-
   var config = Config(
       name: '3bot local',
       threeBotApiUrl: 'http://dev.jimber.org:5000/api',
       openKycApiUrl: 'https://openkyc.staging.jimber.org/',
       threeBotFrontEndUrl: 'http://dev.jimber.org:8080/',
-      child: new MyApp()
-  );
-  
+      child: new MyApp());
+
   init();
 
   apps = [
@@ -34,7 +32,8 @@ void main() async {
       'cookieUrl':
           'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     },
     {
       "content": Text(
@@ -56,7 +55,8 @@ void main() async {
       "id": 1,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     },
     {
       "content": Text(
@@ -76,7 +76,8 @@ void main() async {
       "id": 2,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': ['CAMERA', 'MICROPHONE']
     },
     {
       "content": Text(
@@ -96,7 +97,8 @@ void main() async {
       "id": 3,
       'cookieUrl': '',
       'color': 0xFF34495e,
-      'errorText': false
+      'errorText': false,
+      'permissions': ['CAMERA']
     },
     {
       "content": Icon(
@@ -113,7 +115,8 @@ void main() async {
       "id": 4,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     }
   ];
 

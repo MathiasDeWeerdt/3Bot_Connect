@@ -32,7 +32,8 @@ void main() async {
       'cookieUrl':
           'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     },
     {
       "content": Text(
@@ -52,7 +53,8 @@ void main() async {
       "id": 1,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     },
     {
       "content": Text(
@@ -75,7 +77,8 @@ void main() async {
       'cookieUrl': '',
       'localStorageKeys': true,
       'color': 0xFF34495e,
-      'errorText': false
+      'errorText': false,
+      'permissions': ['CAMERA']
     },
     {
       "content": Icon(
@@ -92,7 +95,8 @@ void main() async {
       "id": 3,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     }
   ];
 

@@ -32,15 +32,10 @@ class _AppSelectorState extends State<AppSelector> {
       'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Mobile Safari/537.36';
   bool isLaunched = false;
 
-  @override
-  void initState() {
-    super.initState();
-    for (var app in apps) {
-      flutterWebViewPlugins[app['id']] = new FlutterWebviewPlugin();
-    }
-  }
-
   Future<void> launchApp(size, appId) async {
+    if (flutterWebViewPlugins[appId] == null) {
+      flutterWebViewPlugins[appId] = new FlutterWebviewPlugin();
+    }
     try {
       var url = apps[appId]['cookieUrl'];
       var loadUrl = apps[appId]['url'];
@@ -89,21 +84,33 @@ class _AppSelectorState extends State<AppSelector> {
         var cookieList = List<Cookie>();
         cookieList.add(Cookie.fromSetCookieValue(cookies));
 
-        flutterWebViewPlugins[appId].launch(loadUrl,
-            rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
-            userAgent: kAndroidUserAgent,
-            hidden: true,
-            cookies: cookieList,
-            withLocalStorage: true,
-            permissions: []);
+        flutterWebViewPlugins[appId]
+            .launch(loadUrl,
+                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                userAgent: kAndroidUserAgent,
+                hidden: true,
+                cookies: cookieList,
+                withLocalStorage: true,
+                permissions: new List<String>.from(apps[appId]['permissions']))
+            .then((permissionGranted) {
+          if (!permissionGranted) {
+            showPermissionsNeeded(context, appId);
+          }
+        });
       } else if (localStorageKeys != null) {
-        await flutterWebViewPlugins[appId].launch(loadUrl + '/error',
-            rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
-            userAgent: kAndroidUserAgent,
-            hidden: true,
-            cookies: [],
-            withLocalStorage: true,
-            permissions: []);
+        await flutterWebViewPlugins[appId]
+            .launch(loadUrl + '/error',
+                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                userAgent: kAndroidUserAgent,
+                hidden: true,
+                cookies: [],
+                withLocalStorage: true,
+                permissions: new List<String>.from(apps[appId]['permissions']))
+            .then((permissionGranted) {
+          if (!permissionGranted) {
+            showPermissionsNeeded(context, appId);
+          }
+        });
 
         var keys = await generateKeyPair();
 
@@ -114,7 +121,7 @@ class _AppSelectorState extends State<AppSelector> {
 
         var jsToExecute =
             "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
-        
+
         // This should be removed in the future!
         sleep(const Duration(seconds: 1));
 
@@ -131,8 +138,8 @@ class _AppSelectorState extends State<AppSelector> {
         var jsonData = jsonEncode(encrypted);
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
 
-        loadUrl = 'http://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(signedHash)}&data=$data';
-
+        loadUrl =
+            'http://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(signedHash)}&data=$data';
 
         logger.log("!!!loadUrl: " + loadUrl);
         flutterWebViewPlugins[appId].reloadUrl(loadUrl);
@@ -140,12 +147,19 @@ class _AppSelectorState extends State<AppSelector> {
 
         logger.log("Launching App" + [appId].toString());
       } else {
-        flutterWebViewPlugins[appId].launch(loadUrl,
-            rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
-            userAgent: kAndroidUserAgent,
-            hidden: true,
-            cookies: [],
-            withLocalStorage: true);
+        flutterWebViewPlugins[appId]
+            .launch(loadUrl,
+                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                userAgent: kAndroidUserAgent,
+                hidden: true,
+                cookies: [],
+                withLocalStorage: true,
+                permissions: new List<String>.from(apps[appId]['permissions']))
+            .then((permissionGranted) {
+          if (!permissionGranted) {
+            showPermissionsNeeded(context, appId);
+          }
+        });
         logger.log("Launching App" + [appId].toString());
       }
 
@@ -169,19 +183,25 @@ class _AppSelectorState extends State<AppSelector> {
         for (var app in apps) {
           logger.log(app['url']);
           logger.log("launching app " + app['id'].toString());
-          launchApp(size, app['id']);
+          if (new List<String>.from(apps[app['id']]['permissions']).length ==
+              0) {
+            launchApp(size, app['id']);
+          }
         }
       }
     });
 
     return Container(
-          height: 0.7 * size.height,
-          child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: apps.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                return SingleApp(apps[index], updateApp);
-              }));
+      padding: EdgeInsets.only(left: 0.0),
+      height: 0.7 * size.height,
+      child: PageView.builder(
+        itemCount: apps.length,
+        controller: PageController(viewportFraction: 0.8),
+        itemBuilder: (BuildContext ctxt, int index) {
+          return SingleApp(apps[index], updateApp);
+        },
+      ),
+    );
   }
 
   void sendVerificationEmail() async {
@@ -218,9 +238,9 @@ class _AppSelectorState extends State<AppSelector> {
       if (emailVer['verified']) {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
+          final size = MediaQuery.of(context).size;
 
           if (!prefs.containsKey('firstvalidation')) {
-            final size = MediaQuery.of(context).size;
             isLaunched = true;
 
             for (var oneApp in apps) {
@@ -230,9 +250,6 @@ class _AppSelectorState extends State<AppSelector> {
                 launchApp(size, oneApp['id']);
               }
             }
-            await launchApp(size, app['id']);
-            flutterWebViewPlugins[app['id']].show();
-            showButton = true;
             prefs.setBool('firstvalidation', true);
           }
 
@@ -241,7 +258,13 @@ class _AppSelectorState extends State<AppSelector> {
           showButton = true;
           lastAppUsed = app['id'];
           keyboardUsedApp = app['id'];
-          flutterWebViewPlugins[app['id']].show();
+          if (flutterWebViewPlugins[app['id']] == null) {
+            await launchApp(size, app['id']);
+          }
+          // The launch can change the webview to null if permissions weren't granted
+          if (flutterWebViewPlugins[app['id']] != null) {
+            flutterWebViewPlugins[app['id']].show();
+          }
         } else {
           showDialog(
             context: context,
@@ -306,5 +329,31 @@ class _AppSelectorState extends State<AppSelector> {
         ),
       );
     }
+  }
+
+  void showPermissionsNeeded(BuildContext context, appId) {
+    flutterWebViewPlugins[appId].close();
+    flutterWebViewPlugins[appId] = null;
+    widget.notifyParent(0xFF0f296a);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+        image: Icons.error,
+        title: "Need permissions",
+        description: Container(
+          child: Text(
+              "Some ungranted permissions are needed to run this.", textAlign: TextAlign.center,),
+        ), //TODO: if iOS -> place link to settings
+        actions: <Widget>[
+          // usually buttons at the bottom of the dialog
+          FlatButton(
+            child: new Text("Ok"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

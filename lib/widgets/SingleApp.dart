@@ -18,7 +18,8 @@ class _SingleAppState extends State<SingleApp> {
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: RawMaterialButton(
         child: Container(
-          width: 0.7 * size.width,
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(

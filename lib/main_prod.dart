@@ -10,8 +10,7 @@ void main() {
       threeBotApiUrl: 'https://login.threefold.me/api',
       openKycApiUrl: 'https://openkyc.live/',
       threeBotFrontEndUrl: 'https://login.threefold.me/',
-      child: new MyApp()
-  );
+      child: new MyApp());
 
   init();
 
@@ -34,7 +33,8 @@ void main() {
       'cookieUrl':
           'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     },
     {
       "content": Text(
@@ -54,7 +54,8 @@ void main() {
       "id": 1,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     },
     {
       "content": Text(
@@ -74,7 +75,8 @@ void main() {
       "id": 2,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': ['CAMERA', 'MICROPHONE']
     },
     {
       "content": Icon(
@@ -91,13 +93,14 @@ void main() {
       "id": 3,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     }
   ];
-  
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-    .then((_) {
-      runApp(config);
-      logger.log("running main_prod.dart");
-    });
+      .then((_) {
+    runApp(config);
+    logger.log("running main_prod.dart");
+  });
 }

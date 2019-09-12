@@ -33,29 +33,7 @@ String packageName;
 String version;
 String buildNumber;
 
-List<Map<String, dynamic>> apps = [
-  {
-    "name": 'FreeFlowPages',
-    "subheading": 'Where privacy and social media co-exist.',
-    "bg": 'ffp.jpg',
-    "disabled": false,
-    "initialUrl": 'https://freeflowpages.com/',
-    "visible": false,
-    "id": 0,
-    'cookieUrl': 'https://freeflowpages.com/user/auth/external?authclient=3bot'
-  }/*,
-  {
-    "name": 'OpenBrowser',
-    "subheading": 'By Jimber (Coming soon)',
-    "url": 'https://broker.jimber.org',
-    "bg": 'jimber.png',
-    "disabled": false,
-    "initialUrl": 'https://broker.jimber.org',
-    "visible": false,
-    "id": 1,
-    'cookieUrl': ''
-  }*/
-];
+List<Map<String, dynamic>> apps = [];
 
 Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
   return SafeArea(
@@ -109,7 +87,6 @@ Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
 }
 
 void init() async {
-
   PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
     appName = packageInfo.appName;
     packageName = packageInfo.packageName;

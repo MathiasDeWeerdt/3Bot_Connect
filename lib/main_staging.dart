@@ -34,7 +34,8 @@ void main() async {
       'cookieUrl':
           'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     },
     {
       "content": Text(
@@ -48,7 +49,7 @@ void main() async {
       "subheading": '',
       "url": 'https://wallet.staging.jimber.org',
       "appid": 'wallet.staging.jimber.org',
-      "redirecturl" : '/login',
+      "redirecturl": '/login',
       "bg": 'nbh.png',
       "disabled": false,
       "initialUrl": 'https://wallet.staging.jimber.org',
@@ -57,7 +58,8 @@ void main() async {
       'cookieUrl': '',
       'localStorageKeys': true,
       'color': 0xFF34495e,
-      'errorText': false
+      'errorText': false,
+      'permissions': ['CAMERA']
     },
     {
       "content": Text(
@@ -77,28 +79,30 @@ void main() async {
       "id": 2,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     },
-    // {
-    //   "content": Text(
-    //     'FreeFlowConnect',
-    //     style: TextStyle(
-    //       color: Colors.white,
-    //       fontSize: 20,
-    //     ),
-    //     textAlign: TextAlign.center,
-    //   ),
-    //   "subheading": '',
-    //   "url": 'https://cowork-lochristi.threefold.work/',
-    //   "bg": 'om.jpg',
-    //   "disabled": true,
-    //   "initialUrl": 'https://cowork-lochristi.threefold.work/',
-    //   "visible": false,
-    //   "id": 2,
-    //   'cookieUrl': '',
-    //   'color': 0xFF0f296a,
-    //   'errorText': false
-    // },
+    {
+      "content": Text(
+        'FreeFlowConnect',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": '',
+      "url": 'https://www.cam-recorder.com/',
+      "bg": 'om.jpg',
+      "disabled": false,
+      "initialUrl": 'https://www.cam-recorder.com/',
+      "visible": false,
+      "id": 3,
+      'cookieUrl': '',
+      'color': 0xFF0f296a,
+      'errorText': false,
+    'permissions': ['CAMERA', 'MICROPHONE']
+    },
     {
       "content": Icon(
         Icons.add_circle,
@@ -111,10 +115,11 @@ void main() async {
       "disabled": true,
       "initialUrl": 'https://cowork-lochristi.threefold.work',
       "visible": false,
-      "id": 3,
+      "id": 4,
       'cookieUrl': '',
       'color': 0xFF0f296a,
-      'errorText': false
+      'errorText': false,
+      'permissions': []
     }
   ];
 

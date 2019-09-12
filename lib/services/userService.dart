@@ -143,8 +143,14 @@ Future<void> saveFingerprint(fingerprint) async {
 
 Future<bool> getFingerprint() async {
   final prefs = await SharedPreferences.getInstance();
-  print(prefs);
-  return prefs.getBool('fingerprint');
+  bool result = prefs.getBool('fingerprint');
+
+  if(result == null) {
+      await prefs.setBool('fingerprint', false);
+      result = prefs.getBool('fingerprint');
+  }
+
+  return result;
 }
 
 Future<void> saveLoginToken(loginToken) async {

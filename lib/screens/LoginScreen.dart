@@ -411,9 +411,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
-    sendData(state, await signedHash, await data, selectedImageId);
-    if (selectedImageId == correctImage || isMobile()) {
-      if (widget.closeWhenLoggedIn) {
+    await sendData(state, await signedHash, await data, selectedImageId);
+    
+    if (selectedImageId == correctImage) {
+      if (widget.closeWhenLoggedIn && isMobile()) {
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       } else {
         try {

@@ -413,7 +413,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     await sendData(state, await signedHash, await data, selectedImageId);
     
-    if (selectedImageId == correctImage) {
+    if (selectedImageId == correctImage || isMobile()) {
       if (widget.closeWhenLoggedIn && isMobile()) {
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       } else {
@@ -456,6 +456,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (mobile is bool) {
       return mobile == true;
     }
+
     return false;
   }
 

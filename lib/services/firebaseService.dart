@@ -19,7 +19,7 @@ void initFirebaseMessagingListener(context) async {
       openLogin(context, message);
     },
     onLaunch: (Map<String, dynamic> message) async {
-      logger.log('On launch $message');
+      logger.log('On launch $message'); 
       openLogin(context, message);
     },
     onResume: (Map<String, dynamic> message) async {

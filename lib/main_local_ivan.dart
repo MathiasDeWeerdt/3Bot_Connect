@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'config.dart';
@@ -7,10 +6,10 @@ import 'main.dart';
 
 void main() async {
   var config = Config(
-      name: '3bot local',
-      threeBotApiUrl: 'http://192.168.2.80:5000/api',
-      openKycApiUrl: 'http://192.168.2.80:5005',
-      threeBotFrontEndUrl: 'http://192.168.2.80:8080/',
+      name: '3bot staging',
+      threeBotApiUrl: 'https://login.staging.jimber.org/api',
+      openKycApiUrl: 'https://openkyc.staging.jimber.org',
+      threeBotFrontEndUrl: 'https://login.staging.jimber.org/',
       child: new MyApp());
 
   init();
@@ -26,6 +25,7 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": 'Where privacy and social media co-exist.',
+      "url": 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
       "disabled": false,
       "initialUrl": 'https://staging.freeflowpages.com/',
@@ -35,7 +35,33 @@ void main() async {
           'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
+    },
+    {
+      "content": Text(
+        'NBH Digital Wallet',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": '',
+      "url": 'https://192.168.2.80:8080/',
+      "appid": '192.168.2.80:8080',
+      "redirecturl": '/login',
+      "bg": 'nbh.png',
+      "disabled": false,
+      "initialUrl": 'https://192.168.2.80:8080/',
+      "visible": false,
+      "id": 1,
+      'cookieUrl': '',
+      'localStorageKeys': true,
+      'color': 0xFF34495e,
+      'errorText': false,
+      'openInBrowser': true,
+      'permissions': ['CAMERA']
     },
     {
       "content": Text(
@@ -52,36 +78,16 @@ void main() async {
       "disabled": false,
       "initialUrl": 'https://broker.jimber.org/',
       "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'permissions': []
-    },
-    {
-      "content": Text(
-        'FreeflowConnect',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://cowork-lochristi.threefold.work/',
-      "bg": 'om.jpg',
-      "disabled": false,
-      "initialUrl": 'https://cowork-lochristi.threefold.work/',
-      "visible": false,
       "id": 2,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
-      'permissions': ['CAMERA', 'MICROPHONE']
+      'openInBrowser': false,
+      'permissions': []
     },
     {
       "content": Text(
-        'NBH Digital Wallet',
+        'FreeFlowConnect',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,
@@ -89,16 +95,17 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'https://wallet.staging.jimber.org',
-      "bg": 'nbh.png',
-      "disabled": false,
-      "initialUrl": 'https://wallet.staging.jimber.org',
+      "url": 'https://janus.conf.meetecho.com/videoroomtest.html',
+      "bg": 'om.jpg',
+      "disabled": true,
+      "initialUrl": 'https://janus.conf.meetecho.com/videoroomtest.html',
       "visible": false,
       "id": 3,
       'cookieUrl': '',
-      'color': 0xFF34495e,
+      'color': 0xFF0f296a,
       'errorText': false,
-      'permissions': ['CAMERA']
+      'openInBrowser': true,
+      'permissions': ['CAMERA', 'MICROPHONE']
     },
     {
       "content": Icon(
@@ -108,14 +115,15 @@ void main() async {
       ),
       "subheading": 'New Application',
       "bg": 'example.jpg',
-      "url": 'https://jimber.org/app',
+      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work',
+      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "visible": false,
       "id": 4,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
     }
   ];

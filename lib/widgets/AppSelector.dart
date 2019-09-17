@@ -13,9 +13,9 @@ import 'package:http/http.dart' as http;
 import 'package:threebotlogin/widgets/SingleApp.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/toolsService.dart';
-
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'CustomDialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppSelector extends StatefulWidget {
   final Function(int colorData) notifyParent;
@@ -139,9 +139,10 @@ class _AppSelectorState extends State<AppSelector> {
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
 
         loadUrl =
-            'http://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(signedHash)}&data=$data';
+            'https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(signedHash)}&data=$data';
 
         logger.log("!!!loadUrl: " + loadUrl);
+
         flutterWebViewPlugins[appId].reloadUrl(loadUrl);
         print("Eval result: $res");
 
@@ -183,8 +184,8 @@ class _AppSelectorState extends State<AppSelector> {
         for (var app in apps) {
           logger.log(app['url']);
           logger.log("launching app " + app['id'].toString());
-          if (new List<String>.from(apps[app['id']]['permissions']).length ==
-              0) {
+          if (new List<String>.from(app['permissions']).length == 0 &&
+              !(Platform.isIOS && app['openInBrowser'])) {
             launchApp(size, app['id']);
           }
         }
@@ -195,6 +196,7 @@ class _AppSelectorState extends State<AppSelector> {
       padding: EdgeInsets.only(left: 0.0),
       height: 0.7 * size.height,
       child: PageView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: apps.length,
         controller: PageController(viewportFraction: 0.8),
         itemBuilder: (BuildContext ctxt, int index) {
@@ -233,50 +235,86 @@ class _AppSelectorState extends State<AppSelector> {
   }
 
   Future<void> updateApp(app) async {
-    if (!app['disabled']) {
-      final emailVer = await getEmail();
-      if (emailVer['verified']) {
-        if (!app['errorText']) {
-          final prefs = await SharedPreferences.getInstance();
-          final size = MediaQuery.of(context).size;
+    if (Platform.isIOS && app['openInBrowser']) {
+      String appid = app['appid'];
+      String redirecturl = app['redirecturl'];
+      launch('https://$appid$redirecturl?username=${await getDoubleName()}&derivedSeed=${Uri.encodeQueryComponent(await getDerivedSeed(appid))}', forceSafariVC: false);
+    } else {
+      if (!app['disabled']) {
+        final emailVer = await getEmail();
+        if (emailVer['verified']) {
+          if (!app['errorText']) {
+            final prefs = await SharedPreferences.getInstance();
+            final size = MediaQuery.of(context).size;
 
-          if (!prefs.containsKey('firstvalidation')) {
-            isLaunched = true;
+            if (!prefs.containsKey('firstvalidation')) {
+              isLaunched = true;
 
-            for (var oneApp in apps) {
-              if (app['id'] != oneApp['id']) {
-                logger.log(oneApp['url']);
-                logger.log("launching app " + oneApp['id'].toString());
-                launchApp(size, oneApp['id']);
+              for (var oneApp in apps) {
+                if (new List<String>.from(oneApp['permissions']).length == 0 &&
+                    app['id'] != oneApp['id'] &&
+                    !(Platform.isIOS && app['openInBrowser'])) {
+                  logger.log(oneApp['url']);
+                  logger.log("launching app " + oneApp['id'].toString());
+                  launchApp(size, oneApp['id']);
+                }
               }
+              prefs.setBool('firstvalidation', true);
             }
-            prefs.setBool('firstvalidation', true);
-          }
 
-          widget.notifyParent(app['color']);
-          logger.log("Webviews is showing");
-          showButton = true;
-          lastAppUsed = app['id'];
-          keyboardUsedApp = app['id'];
-          if (flutterWebViewPlugins[app['id']] == null) {
-            await launchApp(size, app['id']);
-          }
-          // The launch can change the webview to null if permissions weren't granted
-          if (flutterWebViewPlugins[app['id']] != null) {
-            flutterWebViewPlugins[app['id']].show();
+            widget.notifyParent(app['color']);
+            showButton = true;
+            lastAppUsed = app['id'];
+            keyboardUsedApp = app['id'];
+            if (flutterWebViewPlugins[app['id']] == null) {
+              await launchApp(size, app['id']);
+              logger.log("Webviews was null");
+            }
+            // The launch can change the webview to null if permissions weren't granted
+            if (flutterWebViewPlugins[app['id']] != null &&
+                !(Platform.isIOS && app['openInBrowser'])) {
+              logger.log("Webviews is showing");
+              flutterWebViewPlugins[app['id']].show();
+            }
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) => CustomDialog(
+                image: Icons.error,
+                title: "Service Unavailable",
+                description: new Text("Service Unavailable"),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  FlatButton(
+                    child: new Text("Ok"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            );
           }
         } else {
           showDialog(
             context: context,
             builder: (BuildContext context) => CustomDialog(
               image: Icons.error,
-              title: "Service Unavailable",
-              description: new Text("Service Unavailable"),
+              title: "Please verify email",
+              description:
+                  new Text("Please verify email before using this app"),
               actions: <Widget>[
                 // usually buttons at the bottom of the dialog
                 FlatButton(
                   child: new Text("Ok"),
                   onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: new Text("Resend email"),
+                  onPressed: () {
+                    sendVerificationEmail();
                     Navigator.pop(context);
                   },
                 ),
@@ -289,8 +327,8 @@ class _AppSelectorState extends State<AppSelector> {
           context: context,
           builder: (BuildContext context) => CustomDialog(
             image: Icons.error,
-            title: "Please verify email",
-            description: new Text("Please verify email before using this app"),
+            title: "Coming soon",
+            description: new Text("This will be available soon."),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               FlatButton(
@@ -299,35 +337,10 @@ class _AppSelectorState extends State<AppSelector> {
                   Navigator.pop(context);
                 },
               ),
-              FlatButton(
-                child: new Text("Resend email"),
-                onPressed: () {
-                  sendVerificationEmail();
-                  Navigator.pop(context);
-                },
-              ),
             ],
           ),
         );
       }
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => CustomDialog(
-          image: Icons.error,
-          title: "Coming soon",
-          description: new Text("This will be available soon."),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            FlatButton(
-              child: new Text("Ok"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
     }
   }
 
@@ -342,7 +355,9 @@ class _AppSelectorState extends State<AppSelector> {
         title: "Need permissions",
         description: Container(
           child: Text(
-              "Some ungranted permissions are needed to run this.", textAlign: TextAlign.center,),
+            "Some ungranted permissions are needed to run this.",
+            textAlign: TextAlign.center,
+          ),
         ), //TODO: if iOS -> place link to settings
         actions: <Widget>[
           // usually buttons at the bottom of the dialog

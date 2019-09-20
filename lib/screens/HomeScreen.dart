@@ -124,14 +124,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         try {
           if (attempt.body != '' && openPendingLoginAttempt) {
             logger.log("Found a login attempt, opening ...");
-            Navigator.popUntil(context, ModalRoute.withName('/'));
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LoginScreen(jsonDecode(attempt.body),
-                    closeWhenLoggedIn: true),
-              ),
-            );
+
+              String name = ModalRoute.of(context).settings.name;
+
+
+              // Navigator.popUntil(context, ModalRoute.withName('/'));
+
+              Navigator.popUntil(context, (route) {
+                if (route.settings.name == "/") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(jsonDecode(attempt.body),
+                          closeWhenLoggedIn: true),
+                    ),
+                  );
+                }
+                return true;
+              });
+              
           } else {
             logger.log("We currently have no open login attempts.");
           }
@@ -163,6 +174,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       String dn = await getDoubleName();
 
       String tmpDoubleName = await getDoubleName();
+
+      // Check if the user didn't click the notification.
 
       checkIfThereAreLoginAttempts(tmpDoubleName);
       await initUniLinks();
@@ -363,11 +376,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   ConstrainedBox notRegistered(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        maxHeight: double.infinity,
-        maxWidth: double.infinity,
-        minHeight: 250,
-        minWidth: 250
-      ),
+          maxHeight: double.infinity,
+          maxWidth: double.infinity,
+          minHeight: 250,
+          minWidth: 250),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[

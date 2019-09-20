@@ -98,6 +98,8 @@ PODS:
     - Flutter
   - uni_links (0.0.1):
     - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - fast_qr_reader_view (from `.symlinks/plugins/fast_qr_reader_view/ios`)
@@ -110,6 +112,7 @@ DEPENDENCIES:
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - uni_links (from `.symlinks/plugins/uni_links/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -150,11 +153,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences/ios"
   uni_links:
     :path: ".symlinks/plugins/uni_links/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
 
 SPEC CHECKSUMS:
   fast_qr_reader_view: 53b38a544886e650381ca579e0cdd5ae142fffa6
   Firebase: 9cbe4e5b5eaafa05dc932be58b7c8c3820d71e88
-  firebase_messaging: acdcd2edbe7270bae6c3a93cf6c60e86538b3064
+  firebase_messaging: 0d5c04cc40f58bd4bf7f2992c91050f9bc01bec3
   FirebaseAnalytics: 843c7f64a8f9c79f0d03281197ebe7bb1d58d477
   FirebaseAnalyticsInterop: d48b6ab67bcf016a05e55b71fc39c61c0cb6b7f3
   FirebaseCore: e9d9bd1dae61c1e82bc1e0e617a9d832392086a0
@@ -177,6 +182,7 @@ SPEC CHECKSUMS:
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
+  url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298
 
 PODFILE CHECKSUM: b65fdc01ac03a090f3353379dc29c17e902177aa
 

@@ -200,10 +200,8 @@ class _ScanScreenState extends State<RegistrationScreen>
           scope['email'] = {'email': qrData['email'], 'verified': false};
         if (scopeFromQR.containsKey('derivedSeed'))
           scope['derivedSeed'] = {'derivedSeed': qrData['derivedSeed']};
-        saveValues();
-      } else {
-        saveValues();
       }
+      saveValues();
     }
   }
 
@@ -228,7 +226,8 @@ class _ScanScreenState extends State<RegistrationScreen>
     if (keys['publicKey'] != null && hash != null) {
       try {
         var signedHash = signData(hash, keys['privateKey']);
-        var data = encrypt(jsonEncode(scope), keys['publicKey'], keys['privateKey']);
+        var data =
+            encrypt(jsonEncode(scope), keys['publicKey'], keys['privateKey']);
 
         sendData(hash, await signedHash, await data, null).then((x) {
           Navigator.popUntil(context, ModalRoute.withName('/'));

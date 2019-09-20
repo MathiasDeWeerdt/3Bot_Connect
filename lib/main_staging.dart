@@ -35,6 +35,7 @@ void main() async {
           'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
     },
     {
@@ -59,6 +60,7 @@ void main() async {
       'localStorageKeys': true,
       'color': 0xFF34495e,
       'errorText': false,
+      'openInBrowser': true,
       'permissions': ['CAMERA']
     },
     {
@@ -80,6 +82,7 @@ void main() async {
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
     },
     {
@@ -92,7 +95,7 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'https://www.cam-recorder.com/',
+      "url": 'https://janus.conf.meetecho.com/videoroomtest.html',
       "bg": 'om.jpg',
       "disabled": true,
       "initialUrl": 'https://www.cam-recorder.com/',
@@ -101,7 +104,8 @@ void main() async {
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
-    'permissions': ['CAMERA', 'MICROPHONE']
+      'openInBrowser': false,
+      'permissions': ['CAMERA', 'MICROPHONE']
     },
     {
       "content": Icon(
@@ -111,14 +115,15 @@ void main() async {
       ),
       "subheading": 'New Application',
       "bg": 'example.jpg',
-      "url": 'https://jimber.org/app',
+      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work',
+      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "visible": false,
       "id": 4,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
     }
   ];

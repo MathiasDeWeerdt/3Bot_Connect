@@ -453,7 +453,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   dynamic refineScope(scope) async {
     var json = jsonDecode(await getScopePermissions());
-    var permissions = json[scope['derivedSeed']['appId']];
+    var permissions = json[widget.message['appId']]; // scope['derivedSeed']['appId']
     var keysOfPermissions = permissions.keys.toList();
 
     print("====================");

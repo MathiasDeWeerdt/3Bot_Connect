@@ -55,7 +55,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>org.jimber.threebotlogin.local</string>
+			<string>org.jimber.threebotlogin.staging</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>threebot</string>

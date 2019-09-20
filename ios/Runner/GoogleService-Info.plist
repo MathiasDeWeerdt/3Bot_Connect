@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>399226968341-hf8eptroon7e68fgm54pah1fp7kpentd.apps.googleusercontent.com</string>
+	<string>1047213728155-7oadtnh12fvjevrgqtbcvntldeq6bhn9.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.399226968341-hf8eptroon7e68fgm54pah1fp7kpentd</string>
+	<string>com.googleusercontent.apps.1047213728155-7oadtnh12fvjevrgqtbcvntldeq6bhn9</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDnFaau9fVjWqsoKQ5u22krMmY-RDMAaEk</string>
+	<string>AIzaSyDVZR-9C52gyxwJBho7C0IYm2R4jfDbS_w</string>
 	<key>GCM_SENDER_ID</key>
-	<string>399226968341</string>
+	<string>1047213728155</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.jimber.threebot</string>
+	<string>org.jimber.threebotlogin.staging</string>
 	<key>PROJECT_ID</key>
-	<string>threebotlogin</string>
+	<string>threebot-staging</string>
 	<key>STORAGE_BUCKET</key>
-	<string>threebotlogin.appspot.com</string>
+	<string>threebot-staging.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:399226968341:ios:bb957777dd903caa</string>
+	<string>1:1047213728155:ios:5806999efef408fc</string>
 	<key>DATABASE_URL</key>
-	<string>https://threebotlogin.firebaseio.com</string>
+	<string>https://threebot-staging.firebaseio.com</string>
 </dict>
 </plist>

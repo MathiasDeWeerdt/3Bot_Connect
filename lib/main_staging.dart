@@ -94,7 +94,7 @@ void main() async {
       "subheading": '',
       "url": 'https://www.cam-recorder.com/',
       "bg": 'om.jpg',
-      "disabled": false,
+      "disabled": true,
       "initialUrl": 'https://www.cam-recorder.com/',
       "visible": false,
       "id": 3,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -12,7 +14,11 @@ Future<bool> authenticate() async {
   } on PlatformException catch (e) {
     print(e);
   }
-
+  print("callin authenticate");
+  if(Platform.isIOS){
+    print("yaes");
+    return false;
+  }
   return authenticated;
 }
 

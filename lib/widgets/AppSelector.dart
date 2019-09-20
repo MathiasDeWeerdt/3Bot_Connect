@@ -71,16 +71,26 @@ class _AppSelectorState extends State<AppSelector> {
 
         final scopeData = {};
 
+        print("==================");
+        print(scope);
+        print("==================");
+
         if (scope != null && scope.contains("\"email\":")) {
           scopeData['email'] = await getEmail();
+          print("adding scope");
         }
+
+        print("==================");
+        print(scopeData);
+        print("==================");
 
         var jsonData = jsonEncode(
             (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
         loadUrl =
-            'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+            'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeComponent(await signedHash)}&data=$data';
 
+        logger.log("!!!loadUrl: " + loadUrl);
         var cookieList = List<Cookie>();
         cookieList.add(Cookie.fromSetCookieValue(cookies));
 
@@ -97,6 +107,7 @@ class _AppSelectorState extends State<AppSelector> {
             showPermissionsNeeded(context, appId);
           }
         });
+
       } else if (localStorageKeys != null) {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl + '/error',
@@ -139,7 +150,7 @@ class _AppSelectorState extends State<AppSelector> {
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
 
         loadUrl =
-            'http://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(signedHash)}&data=$data';
+            'https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(signedHash)}&data=$data';
 
         logger.log("!!!loadUrl: " + loadUrl);
         flutterWebViewPlugins[appId].reloadUrl(loadUrl);
@@ -195,6 +206,7 @@ class _AppSelectorState extends State<AppSelector> {
       padding: EdgeInsets.only(left: 0.0),
       height: 0.7 * size.height,
       child: PageView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: apps.length,
         controller: PageController(viewportFraction: 0.8),
         itemBuilder: (BuildContext ctxt, int index) {
@@ -342,7 +354,9 @@ class _AppSelectorState extends State<AppSelector> {
         title: "Need permissions",
         description: Container(
           child: Text(
-              "Some ungranted permissions are needed to run this.", textAlign: TextAlign.center,),
+            "Some ungranted permissions are needed to run this.",
+            textAlign: TextAlign.center,
+          ),
         ), //TODO: if iOS -> place link to settings
         actions: <Widget>[
           // usually buttons at the bottom of the dialog

@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -85,7 +86,16 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
 
-    checkFingerPrintActive();
+    if (Platform.isIOS) {
+      goToPinfield();
+      checkFingerPrintActive();
+    } else {
+      checkFingerPrintActive();
+    }
+
+    print("====================");
+    print("I only get here once");
+    print("--------------------");
 
     setState(() {
       imageList.shuffle();
@@ -94,9 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   checkFingerPrintActive() async {
     bool isValue = await getFingerprint();
+    print("How many times do we get here");
 
     if (isValue) {
       bool isAuthenticate = await authenticate();
+      print("How many times");
+      print(isAuthenticate);
 
       if (isAuthenticate) {
         // Show scopes + emmoji
@@ -105,6 +118,11 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
     // Show Pinfield
+    goToPinfield();
+  }
+
+  void goToPinfield() {
+    print('====================');
     print('showing pinfield');
     setState(() {
       helperText = 'Enter your pincode to log in';
@@ -115,10 +133,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isRequired(value, givenScope) {
     bool flag = false;
-    
-    if (jsonDecode(givenScope)[value] != null && jsonDecode(givenScope)[value]) {
+
+    if (jsonDecode(givenScope)[value] != null &&
+        jsonDecode(givenScope)[value]) {
       flag = true;
-    } 
+    }
 
     return flag;
   }
@@ -407,15 +426,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       scope = await refineScope(scope);
-    } catch (exception) {}
+    } catch (exception) {
+      print(exception);
+    }
 
     var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
 
     await sendData(state, await signedHash, await data, selectedImageId);
-    
+
     if (selectedImageId == correctImage || isMobile()) {
       if (widget.closeWhenLoggedIn && isMobile()) {
-        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        if (Platform.isIOS) {
+          Navigator.popUntil(context, ModalRoute.withName('/'));
+          Navigator.pushNamed(context, '/success');
+        } else {
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        }
       } else {
         try {
           Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -429,6 +455,12 @@ class _LoginScreenState extends State<LoginScreen> {
     var json = jsonDecode(await getScopePermissions());
     var permissions = json[scope['derivedSeed']['appId']];
     var keysOfPermissions = permissions.keys.toList();
+
+    print("====================");
+    print(scope);
+    print(permissions);
+    print(keysOfPermissions); 
+    print("--------------------");
 
     keysOfPermissions.forEach((var value) {
       if (!permissions[value]['enabled']) {

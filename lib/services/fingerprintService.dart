@@ -14,11 +14,7 @@ Future<bool> authenticate() async {
   } on PlatformException catch (e) {
     print(e);
   }
-  print("callin authenticate");
-  if(Platform.isIOS){
-    print("yaes");
-    return false;
-  }
+  
   return authenticated;
 }
 

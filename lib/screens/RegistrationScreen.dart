@@ -231,7 +231,7 @@ class _ScanScreenState extends State<RegistrationScreen>
 
         sendData(hash, await signedHash, await data, null).then((x) {
           Navigator.popUntil(context, ModalRoute.withName('/'));
-          Navigator.of(context).pushNamed('/success');
+          Navigator.of(context).pushNamed('/registered');
         });
       } catch (exception) {
         Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -242,7 +242,7 @@ class _ScanScreenState extends State<RegistrationScreen>
       sendRegisterSign(doubleName);
 
       Navigator.popUntil(context, ModalRoute.withName('/'));
-      Navigator.of(context).pushNamed('/success');
+      Navigator.of(context).pushNamed('/registered');
     }
   }
 

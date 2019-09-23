@@ -3,8 +3,9 @@ import 'package:threebotlogin/main.dart';
 
 class SuccessfulScreen extends StatefulWidget {
   final Widget successfulscreen;
+  final bool registration;
 
-  SuccessfulScreen({Key key, this.successfulscreen}) : super(key: key);
+  SuccessfulScreen({Key key, this.successfulscreen, this.registration}) : super(key: key);
 
   _SuccessfulScreenState createState() => _SuccessfulScreenState();
 }
@@ -31,7 +32,7 @@ class _SuccessfulScreenState extends State<SuccessfulScreen> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Logged in'),
+          title: widget.registration ? Text('Registered') : Text('Logged in'),
           elevation: 0.0,
         ),
         body: Container(
@@ -59,7 +60,7 @@ class _SuccessfulScreenState extends State<SuccessfulScreen> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      Text('You are logged in, go back to the browser now.'),
+                       widget.registration ? Text('You are now registered, please check your email.') : Text('You are logged in, go back to the browser now.'),
                       SizedBox(
                         height: 60.0,
                       ),

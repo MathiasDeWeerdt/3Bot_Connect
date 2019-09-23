@@ -139,7 +139,7 @@ class _RegistrationWithoutScanScreen
       sendData(hash, await signedHash, await data, null).then((x) {
         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         Navigator.popUntil(context, ModalRoute.withName('/'));
-        Navigator.of(context).pushNamed('/success');
+        Navigator.of(context).pushNamed('/registered');
       });
     }
 
@@ -149,7 +149,7 @@ class _RegistrationWithoutScanScreen
     print('signing $doubleName');
 
     Navigator.popUntil(context, ModalRoute.withName('/'));
-    Navigator.of(context).pushNamed('/success');
+    Navigator.of(context).pushNamed('/registered');
   }
 
   loadingDialog() {

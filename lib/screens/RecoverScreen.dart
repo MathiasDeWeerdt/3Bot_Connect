@@ -197,7 +197,12 @@ class _RecoverScreenState extends State<RecoverScreen> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(), labelText: 'Email'),
-                validator: validateEmail,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Enter an email';
+                  }
+                  return null;
+                },
                 controller: emailController,
               ),
             ),
@@ -266,9 +271,12 @@ class _RecoverScreenState extends State<RecoverScreen> {
                   doubleName = doubleNameController.text + '.3bot';
                   emailFromForm = emailController.text;
                   seedPhrase = seedPhrasecontroller.text;
+                  validateEmail(emailFromForm);
                 });
                 try {
-                  if (emailFromForm != null && emailFromForm.isNotEmpty && emailCheck == true) {
+                  if (emailFromForm != null &&
+                      emailFromForm.isNotEmpty &&
+                      emailCheck == true) {
                     await checkSeedPhrase(doubleName, seedPhrase);
                     // await checkEmail(doubleName, (emailFromForm.toLowerCase()));
                     Navigator.pop(context);

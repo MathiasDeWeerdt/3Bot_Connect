@@ -24,6 +24,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
 
   bool _autoValidate = false;
   bool emailVerified = false;
+  bool emailCheck = false;
 
   String doubleName = '';
   String emailFromForm = '';
@@ -89,6 +90,18 @@ class _RecoverScreenState extends State<RecoverScreen> {
     } else if (seedLength > 24) {
       throw new Exception('Seed phrase is too long');
     }
+  }
+
+  String validateEmail(String value) {
+    Pattern pattern =
+        r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value)) {
+      emailCheck = false;
+      return 'Enter Valid Email';
+    }
+    emailCheck = true;
+    return null;
   }
 
   void initState() {
@@ -255,7 +268,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                   seedPhrase = seedPhrasecontroller.text;
                 });
                 try {
-                  if (emailFromForm != null && emailFromForm.isNotEmpty) {
+                  if (emailFromForm != null && emailFromForm.isNotEmpty && emailCheck == true) {
                     await checkSeedPhrase(doubleName, seedPhrase);
                     // await checkEmail(doubleName, (emailFromForm.toLowerCase()));
                     Navigator.pop(context);

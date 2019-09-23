@@ -71,16 +71,26 @@ class _AppSelectorState extends State<AppSelector> {
 
         final scopeData = {};
 
+        print("==================");
+        print(scope);
+        print("==================");
+
         if (scope != null && scope.contains("\"email\":")) {
           scopeData['email'] = await getEmail();
+          print("adding scope");
         }
+
+        print("==================");
+        print(scopeData);
+        print("==================");
 
         var jsonData = jsonEncode(
             (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
         var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
         loadUrl =
-            'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(await signedHash)}&data=$data';
+            'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeComponent(await signedHash)}&data=$data';
 
+        logger.log("!!!loadUrl: " + loadUrl);
         var cookieList = List<Cookie>();
         cookieList.add(Cookie.fromSetCookieValue(cookies));
 
@@ -97,6 +107,7 @@ class _AppSelectorState extends State<AppSelector> {
             showPermissionsNeeded(context, appId);
           }
         });
+
       } else if (localStorageKeys != null) {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl + '/error',

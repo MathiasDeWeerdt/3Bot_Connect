@@ -98,13 +98,13 @@ void main() async {
       "url": 'https://janus.conf.meetecho.com/videoroomtest.html',
       "bg": 'om.jpg',
       "disabled": true,
-      "initialUrl": 'https://janus.conf.meetecho.com/videoroomtest.html',
+      "initialUrl": 'https://www.cam-recorder.com/',
       "visible": false,
       "id": 3,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
-      'openInBrowser': true,
+      'openInBrowser': false,
       'permissions': ['CAMERA', 'MICROPHONE']
     },
     {

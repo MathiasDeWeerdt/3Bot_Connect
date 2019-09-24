@@ -7,8 +7,8 @@ import 'main.dart';
 void main() async {
   var config = Config(
       name: '3bot staging',
-      threeBotApiUrl: 'https://login.staging.jimber.org/api',
-      openKycApiUrl: 'https://openkyc.staging.jimber.org',
+      threeBotApiUrl: 'http://192.168.43.129:5000/api',
+      openKycApiUrl: 'http://192.168.43.129:5005',
       threeBotFrontEndUrl: 'https://login.staging.jimber.org/',
       child: new MyApp());
 
@@ -27,7 +27,7 @@ void main() async {
       "subheading": 'Where privacy and social media co-exist.',
       "url": 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
-      "disabled": false,
+      "disabled": true,
       "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
       "id": 0,
@@ -104,8 +104,8 @@ void main() async {
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
-      'openInBrowser': true,
-      'permissions': ['CAMERA', 'MICROPHONE']
+      'openInBrowser': false,
+      'permissions': []
     },
     {
       "content": Icon(

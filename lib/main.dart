@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
 import 'package:threebotlogin/screens/PreferenceScreen.dart';
+import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/loggingService.dart';
 import 'config.dart';
 import 'package:threebotlogin/screens/HomeScreen.dart';
@@ -32,7 +35,7 @@ String appName;
 String packageName;
 String version;
 String buildNumber;
-
+bool showApps = false;
 List<Map<String, dynamic>> apps = [];
 
 Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
@@ -110,6 +113,9 @@ void init() async {
     deviceId = t;
     logger.log('Got device id $deviceId');
   });
+  if(Platform.isIOS) {
+    showApps = (await getShowApps()).body != 'False';
+  }
 }
 
 bool get isInDebugMode {

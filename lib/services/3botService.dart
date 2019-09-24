@@ -167,3 +167,12 @@ Future sendRegisterSign(String doubleName) {
       }),
       headers: requestHeaders);
 }
+
+Future<http.Response> getShowApps() async {
+    return http.get('$threeBotApiUrl/showapps', headers: requestHeaders);
+  // try {
+  //   return (await http.get('$threeBotApiUrl/showapps', headers: requestHeaders)).body == "Tue";
+  // } on SocketException catch (error) {
+  //   logger.log("Can't connect to server: " + error.toString());
+  // }
+}

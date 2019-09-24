@@ -95,17 +95,17 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'https://janus.conf.meetecho.com/videoroomtest.html',
       "bg": 'om.jpg',
+      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "disabled": true,
-      "initialUrl": 'https://www.cam-recorder.com/',
+      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "visible": false,
       "id": 3,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
       'openInBrowser': false,
-      'permissions': ['CAMERA', 'MICROPHONE']
+      'permissions': []
     },
     {
       "content": Icon(

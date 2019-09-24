@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -366,11 +367,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Column registered(BuildContext context) {
-    return Column(
+  Widget registered(BuildContext context) {
+    var appList = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[AppSelector(notifyParent: refresh)],
     );
+    if (Platform.isIOS) {
+      if (showApps) {
+        return appList;
+      } else {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('You are registered.'),
+            SizedBox(
+              height: 20,
+            ),
+            Text('If you need to login you\'ll get a notification.'),
+          ],
+        );
+      }
+    } else {
+      return appList;
+    }
   }
 
   ConstrainedBox notRegistered(BuildContext context) {

@@ -423,14 +423,15 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     var signedHash = signData(state, await getPrivateKey());
+    var tmpScope = Map();
 
     try {
-      scope = await refineScope(scope);
+      tmpScope = await buildScope();
     } catch (exception) {
       print(exception);
     }
 
-    var data = encrypt(jsonEncode(scope), publicKey, await getPrivateKey());
+    var data = encrypt(jsonEncode(tmpScope), publicKey, await getPrivateKey());
 
     await sendData(state, await signedHash, await data, selectedImageId);
 
@@ -451,24 +452,26 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  dynamic refineScope(scope) async {
+  dynamic buildScope() async {
+    Map tmpScope  = new Map.from(scope);
+
     var json = jsonDecode(await getScopePermissions());
     var permissions = json[widget.message['appId']]; // scope['derivedSeed']['appId']
     var keysOfPermissions = permissions.keys.toList();
 
     print("====================");
-    print(scope);
+    print(tmpScope);
     print(permissions);
     print(keysOfPermissions); 
     print("--------------------");
 
     keysOfPermissions.forEach((var value) {
       if (!permissions[value]['enabled']) {
-        scope.remove(value);
+        tmpScope.remove(value);
       }
     });
 
-    return scope;
+    return tmpScope;
   }
 
   bool checkMobile() {

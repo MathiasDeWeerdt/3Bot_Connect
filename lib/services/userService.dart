@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
+
+import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 import '3botService.dart';
 import 'cryptoService.dart';
@@ -29,8 +32,9 @@ Future<void> savePublicKey(key) async {
 Future<String> getPublicKey() async {
   final prefs = await SharedPreferences.getInstance();
 
-  // Older applications don't have the publickey stored yet, let's retrieve it. 
-  if(prefs.getString('publickey') == null || prefs.getString('publickey').isEmpty) {
+  // Older applications don't have the publickey stored yet, let's retrieve it.
+  if (prefs.getString('publickey') == null ||
+      prefs.getString('publickey').isEmpty) {
     var userInfoResponse = await getUserInfo(await getDoubleName());
 
     if (userInfoResponse.statusCode != 200) {
@@ -145,9 +149,9 @@ Future<bool> getFingerprint() async {
   final prefs = await SharedPreferences.getInstance();
   bool result = prefs.getBool('fingerprint');
 
-  if(result == null) {
-      await prefs.setBool('fingerprint', false);
-      result = prefs.getBool('fingerprint');
+  if (result == null) {
+    await prefs.setBool('fingerprint', false);
+    result = prefs.getBool('fingerprint');
   }
 
   return result;
@@ -175,15 +179,25 @@ Future<String> getScopePermissions() async {
   return prefs.getString('scopePermissions');
 }
 
-Future<void> clearData() async {
+Future<bool> clearData({context}) async {
   final prefs = await SharedPreferences.getInstance();
 
-  Response response = await removeDeviceId(prefs.getString('doubleName'));
+  Response response;
 
-  if (response.statusCode == 200) {
+  // Incase we are not connected to the internet or the DNS fails to resolve.
+  try {
+    response = await removeDeviceId(prefs.getString('doubleName'));
+  } catch (e) {
+    print(e);
+    response = null;
+  }
+
+  if (response != null && response.statusCode == 200) {
     print("Removing account");
     prefs.clear();
+    return true;
   } else {
     print("Something went wrong while removing your account");
+    return false;
   }
 }

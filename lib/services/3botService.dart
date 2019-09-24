@@ -96,8 +96,14 @@ Future<Response> removeDeviceId(String doubleName) async {
     'Content-type': 'application/json',
     'Jimber-Authorization': signedPayload
   };
-  return http.delete('$threeBotApiUrl/users/$doubleName/deviceid',
+  
+  try {
+    return await http.delete('$threeBotApiUrl/users/$doubleName/deviceid',
       headers: loginRequestHeaders);
+  } catch (e) {
+    return null;
+  }
+
 }
 
 Future<int> checkVersionNumber(BuildContext context, String version) async {

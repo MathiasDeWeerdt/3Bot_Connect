@@ -124,7 +124,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                                     return Material(
                                       child: ListTile(
                                         trailing: Padding(
-                                          padding: new EdgeInsets.only(right: 7.5),
+                                          padding:
+                                              new EdgeInsets.only(right: 7.5),
                                           child: Icon(Icons.visibility),
                                         ),
                                         leading: Icon(Icons.vpn_key),
@@ -244,7 +245,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
         image: Icons.error,
         title: "Enable Fingerprint",
         description: new Text(
-            "If you enable fingerprint, anyone who has a registered fingerprint on this device will have access to your account.", textAlign: TextAlign.center,),
+          "If you enable fingerprint, anyone who has a registered fingerprint on this device will have access to your account.",
+          textAlign: TextAlign.center,
+        ),
         actions: <Widget>[
           FlatButton(
             child: new Text("Cancel"),
@@ -276,7 +279,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
         image: Icons.error,
         title: "Disable Fingerprint",
         description: new Text(
-            "Are you sure you want to deactivate fingerprint as authentication method?", textAlign: TextAlign.center,),
+          "Are you sure you want to deactivate fingerprint as authentication method?",
+          textAlign: TextAlign.center,
+        ),
         actions: <Widget>[
           FlatButton(
             child: new Text("Cancel"),
@@ -308,7 +313,9 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
         image: Icons.error,
         title: "Are you sure?",
         description: new Text(
-            "If you confirm, your account will be removed from this device. You can always recover your account with your doublename, email and phrase.", textAlign: TextAlign.center,),
+          "If you confirm, your account will be removed from this device. You can always recover your account with your doublename, email and phrase.",
+          textAlign: TextAlign.center,
+        ),
         actions: <Widget>[
           FlatButton(
             child: new Text("Cancel"),
@@ -327,11 +334,29 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 }
               }
               hexColor = Color(0xff0f296a);
-              await clearData();
-              Navigator.popUntil(
-                context,
-                ModalRoute.withName('/'),
-              );
+              bool result = await clearData(context: context);
+              if (result) {
+                Navigator.popUntil(
+                  context,
+                  ModalRoute.withName('/'),
+                );
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => CustomDialog(
+                          title: 'Error',
+                          description: Text('You have no internet connection'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Ok'),
+                              onPressed: () {
+                                Navigator.popUntil(context,
+                                    ModalRoute.withName('/preference'));
+                              },
+                            )
+                          ],
+                        ));
+              }
             },
           ),
         ],
@@ -437,7 +462,8 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
         image: Icons.create,
         title: "Please write this down on a piece of paper",
         description: Text(
-          phrase.toString(), textAlign: TextAlign.center,
+          phrase.toString(),
+          textAlign: TextAlign.center,
         ),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog

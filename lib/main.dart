@@ -46,7 +46,7 @@ Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                "Oops something went Wrong.",
+                "Oops something went wrong.",
                 style: Theme.of(context)
                     .textTheme
                     .title
@@ -62,7 +62,7 @@ Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               child: Text(
-                'Please restart the application. If this error persist, press the button',
+                'Please restart the application. If this error persists, please contact support.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -71,15 +71,6 @@ Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
               ),
             ),
           ),
-          Center(
-            child: RaisedButton(
-              child: Text('Send to Support'),
-              onPressed: () {
-                // TODO: implement me
-                print('Has not been implemented yet');
-              },
-            ),
-          )
         ],
       ),
     ),
@@ -87,6 +78,7 @@ Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
 }
 
 void init() async {
+  WidgetsFlutterBinding.ensureInitialized();
   PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
     appName = packageInfo.appName;
     packageName = packageInfo.packageName;

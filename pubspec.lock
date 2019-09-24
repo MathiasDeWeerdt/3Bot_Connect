@@ -213,8 +213,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0+1"
-<<<<<<< Updated upstream
-=======
   petitparser:
     dependency: transitive
     description:
@@ -222,7 +220,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
->>>>>>> Stashed changes
   platform:
     dependency: transitive
     description:

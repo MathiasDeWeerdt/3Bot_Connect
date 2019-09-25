@@ -8,9 +8,11 @@ import 'package:threebotlogin/widgets/ReusableTextStep.dart';
 import 'package:threebotlogin/widgets/ReuseableTextFieldStep.dart';
 
 class MobileRegistrationScreen extends StatefulWidget {
-  @override
-  _MobileRegistrationScreenState createState() =>
-      _MobileRegistrationScreenState();
+  final String doubleName;
+
+  MobileRegistrationScreen({this.doubleName});
+  
+  _MobileRegistrationScreenState createState() => _MobileRegistrationScreenState();
 }
 
 class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
@@ -30,6 +32,13 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
   void initState() {
     _index = 0;
     errorStepperText = '';
+    logger.log('Attempting to set doubleName');
+    if(widget.doubleName != null) {
+      logger.log("widget.doubleName: " + widget.doubleName);
+      setState(() {
+        doubleNameController.text = widget.doubleName; 
+      });
+    }
     super.initState();
   }
 
@@ -135,23 +144,23 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => Dialog(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: 10,
-                ),
-                new CircularProgressIndicator(),
-                SizedBox(
-                  height: 10,
-                ),
-                new Text("Loading"),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 10,
             ),
-          ),
+            new CircularProgressIndicator(),
+            SizedBox(
+              height: 10,
+            ),
+            new Text("Loading"),
+            SizedBox(
+              height: 10,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -173,7 +182,10 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                     color: Colors.grey[200],
                   ),
                   FlatButton(
-                    onPressed: onStepContinue,
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      onStepContinue();
+                    },
                     child: const Text('CONTINUE'),
                     color: Colors.grey[200],
                   ),
@@ -197,12 +209,34 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             content: Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: ReuseableTextFieldStep(
-                  titleText: 'Hi! What is your 3bot name',
-                  labelText: 'Doublename',
-                  typeText: TextInputType.text,
-                  controller: doubleNameController,
-                  suffixText: '.3bot',
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'Hi! What is your 3bot name',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Divider(
+                      height: 50,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.5),
+                      child: TextField(
+                        autofocus: true,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Doublename',
+                          suffixText: '.3bot',
+                          suffixStyle: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        controller: doubleNameController,
+                      ),
+                    ),
+                    Divider(
+                      height: 50,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -252,8 +286,7 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
                       'Click on continue to finish registration.',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(
@@ -266,8 +299,8 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                       title: Text(doubleNameController.text),
                       trailing: Icon(Icons.edit),
                       onTap: () => setState(() {
-                            _index = 0;
-                          }),
+                        _index = 0;
+                      }),
                     ),
                   ),
                   Padding(

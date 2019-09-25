@@ -277,6 +277,7 @@ class _AppSelectorState extends State<AppSelector> {
             showButton = true;
             lastAppUsed = app['id'];
             keyboardUsedApp = app['id'];
+            print("keyboardapp open: " + keyboardUsedApp.toString());
             if (flutterWebViewPlugins[app['id']] == null) {
               await launchApp(size, app['id']);
               logger.log("Webviews was null");

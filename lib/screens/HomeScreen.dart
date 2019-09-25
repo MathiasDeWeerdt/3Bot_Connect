@@ -70,28 +70,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> webViewResizer(keyboardUp) async {
     double keyboardSize;
     var size = MediaQuery.of(context).size;
-    print(MediaQuery.of(context).size.height.toString());
+    print(MediaQuery.of(context).size.height.toString() + " size of screen");
+    var appKeyboard = flutterWebViewPlugins[keyboardUsedApp];
+    print(appKeyboard);
+    print(appKeyboard.webview);
 
     Future.delayed(
-        Duration(milliseconds: 100),
+        Duration(milliseconds: 150),
         () => {
               if (keyboardUp)
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(
-                          0, 75, size.width, size.height - keyboardSize - 75),
-                      instance: keyboardUsedApp),
-                  print(MediaQuery.of(context).size.height.toString()),
+                  flutterWebViewPlugins[keyboardUsedApp].resize(Rect.fromLTWH(
+                      0, 75, size.width, size.height - keyboardSize - 75), instance: appKeyboard.webview),
+                  print(keyboardSize.toString() + " size keyboard at opening"),
                   print('inside true keyboard')
                 }
               else
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(0, 75, size.width, size.height - 75),
-                      instance: keyboardUsedApp),
-                  print(keyboardSize),
+                      Rect.fromLTWH(0, 75, size.width, size.height - 75), instance: appKeyboard.webview),
+                  print(keyboardSize.toString() + " size keyboard at closing"),
                   print('inside false keyboard')
                 }
             });
@@ -113,24 +113,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         link.queryParameters,
         resetPin: false,
       ));
-    } else if(link.host == "registeraccount") {
+    } else if (link.host == "registeraccount") {
       logger.log('registeraccount HERE: ' + link.queryParameters['doubleName']);
 
-      // Check if we already have an account registered before showing this screen. 
+      // Check if we already have an account registered before showing this screen.
       String doubleName = await getDoubleName();
       String privateKey = await getPrivateKey();
 
-
-      if(doubleName == null || privateKey == null) {
+      if (doubleName == null || privateKey == null) {
         Navigator.popUntil(context, ModalRoute.withName('/'));
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MobileRegistrationScreen(doubleName: link.queryParameters['doubleName'])));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MobileRegistrationScreen(
+                    doubleName: link.queryParameters['doubleName'])));
       } else {
         showDialog(
           context: context,
           builder: (BuildContext context) => CustomDialog(
             image: Icons.check,
             title: "You're already logged in",
-            description: new Text("We cannot create a new account, you already have an account registered on your device."),
+            description: new Text(
+                "We cannot create a new account, you already have an account registered on your device."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Ok"),
@@ -143,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
         );
       }
-      
     }
     logger.log('==============');
   }
@@ -165,18 +168,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
             // Navigator.popUntil(context, ModalRoute.withName('/'));
 
-              Navigator.popUntil(context, (route) {
-                if (route.settings.name == "/") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(jsonDecode(attempt.body),
-                          closeWhenLoggedIn: true),
-                    ),
-                  );
-                }
-                return true;
-              });
+            Navigator.popUntil(context, (route) {
+              if (route.settings.name == "/") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(jsonDecode(attempt.body),
+                        closeWhenLoggedIn: true),
+                  ),
+                );
+              }
+              return true;
+            });
           } else {
             logger.log("We currently have no open login attempts.");
           }

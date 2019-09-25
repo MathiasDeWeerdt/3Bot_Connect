@@ -8,9 +8,11 @@ import 'package:threebotlogin/widgets/ReusableTextStep.dart';
 import 'package:threebotlogin/widgets/ReuseableTextFieldStep.dart';
 
 class MobileRegistrationScreen extends StatefulWidget {
-  @override
-  _MobileRegistrationScreenState createState() =>
-      _MobileRegistrationScreenState();
+  final String doubleName;
+
+  MobileRegistrationScreen({this.doubleName});
+  
+  _MobileRegistrationScreenState createState() => _MobileRegistrationScreenState();
 }
 
 class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
@@ -30,6 +32,13 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
   void initState() {
     _index = 0;
     errorStepperText = '';
+    logger.log('Attempting to set doubleName');
+    if(widget.doubleName != null) {
+      logger.log("widget.doubleName: " + widget.doubleName);
+      setState(() {
+        doubleNameController.text = widget.doubleName; 
+      });
+    }
     super.initState();
   }
 

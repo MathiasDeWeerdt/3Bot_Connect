@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
+import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/AppSelector.dart';
+import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:uni_links/uni_links.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
@@ -30,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
-  String initialLink;
+  String initialLink = null;
 
   @override
   void initState() {
@@ -42,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     if (initialLink == null) {
       getLinksStream().listen((String incomingLink) {
+        logger.log('Got initial link from stream: ' + incomingLink);
         checkWhatPageToOpen(Uri.parse(incomingLink));
       });
     }
@@ -98,17 +101,49 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     initialLink = await getInitialLink();
 
     if (initialLink != null) {
+      logger.log('Found initialLink: ' + initialLink);
       checkWhatPageToOpen(Uri.parse(initialLink));
     }
   }
 
-  checkWhatPageToOpen(Uri link) {
+  checkWhatPageToOpen(Uri link) async {
     if (link.host == 'register') {
       logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
         resetPin: false,
       ));
+    } else if(link.host == "registeraccount") {
+      logger.log('registeraccount HERE: ' + link.queryParameters['doubleName']);
+
+      // Check if we already have an account registered before showing this screen. 
+      String doubleName = await getDoubleName();
+      String privateKey = await getPrivateKey();
+
+
+      if(doubleName == null || privateKey == null) {
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MobileRegistrationScreen(doubleName: link.queryParameters['doubleName'])));
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => CustomDialog(
+            image: Icons.check,
+            title: "You're already logged in",
+            description: new Text("We cannot create a new account, you already have an account registered on your device."),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {});
+                },
+              ),
+            ],
+          ),
+        );
+      }
+      
     }
     logger.log('==============');
   }

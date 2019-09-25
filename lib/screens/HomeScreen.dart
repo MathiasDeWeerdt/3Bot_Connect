@@ -72,29 +72,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     var size = MediaQuery.of(context).size;
     print(MediaQuery.of(context).size.height.toString());
 
-    if (keyboardUsedApp == 0) {
-      Future.delayed(
-          Duration(milliseconds: 100),
-          () => {
-                if (keyboardUp)
-                  {
-                    keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                    flutterWebViewPlugins[keyboardUsedApp].resize(
-                        Rect.fromLTWH(
-                            0, 75, size.width, size.height - keyboardSize - 75),
-                        instance: keyboardUsedApp),
-                    print(MediaQuery.of(context).size.height.toString())
-                  }
-                else
-                  {
-                    keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                    flutterWebViewPlugins[keyboardUsedApp].resize(
-                        Rect.fromLTWH(0, 75, size.width, size.height - 75),
-                        instance: keyboardUsedApp),
-                    print(keyboardSize)
-                  }
-              });
-    }
+    Future.delayed(
+        Duration(milliseconds: 100),
+        () => {
+              if (keyboardUp)
+                {
+                  keyboardSize = MediaQuery.of(context).viewInsets.bottom,
+                  flutterWebViewPlugins[keyboardUsedApp].resize(
+                      Rect.fromLTWH(
+                          0, 75, size.width, size.height - keyboardSize - 75),
+                      instance: keyboardUsedApp),
+                  print(MediaQuery.of(context).size.height.toString()),
+                  print('inside true keyboard')
+                }
+              else
+                {
+                  keyboardSize = MediaQuery.of(context).viewInsets.bottom,
+                  flutterWebViewPlugins[keyboardUsedApp].resize(
+                      Rect.fromLTWH(0, 75, size.width, size.height - 75),
+                      instance: keyboardUsedApp),
+                  print(keyboardSize),
+                  print('inside false keyboard')
+                }
+            });
   }
 
   Future<Null> initUniLinks() async {
@@ -161,10 +161,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           if (attempt.body != '' && openPendingLoginAttempt) {
             logger.log("Found a login attempt, opening ...");
 
-              String name = ModalRoute.of(context).settings.name;
+            String name = ModalRoute.of(context).settings.name;
 
-
-              // Navigator.popUntil(context, ModalRoute.withName('/'));
+            // Navigator.popUntil(context, ModalRoute.withName('/'));
 
               Navigator.popUntil(context, (route) {
                 if (route.settings.name == "/") {
@@ -178,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 }
                 return true;
               });
-              
           } else {
             logger.log("We currently have no open login attempts.");
           }

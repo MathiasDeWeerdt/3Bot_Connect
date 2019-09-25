@@ -133,8 +133,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           builder: (BuildContext context) => CustomDialog(
             image: Icons.check,
             title: "You're already logged in",
-            description: new Text(
-                "We cannot create a new account, you already have an account registered on your device."),
+            description: new Text("We cannot create a new account, you already have an account registered on your device. Please restart the application if this message persists."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Ok"),

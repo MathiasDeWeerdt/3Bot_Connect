@@ -22,29 +22,40 @@
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
-		<dict/>
-	</array>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-	<key>NSExceptionDomains</key>
-	<dict>
-		<key>freeflowpages.com</key>
 		<dict>
-			<key>NSIncludesSubdomains</key>
-			<true />
-			<key>NSExceptionAllowsInsecureHTTPLoads</key>
-			<true />
-			</dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>org.jimber.threebotlogin.staging</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>threebot</string>
+			</array>
 		</dict>
-	</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>freeflowpages.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>I'll need access to your camera to scan QR</string>
+	<string>${PRODUCT_NAME} Camera Usage</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Why is my app authenticating using face id?</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>${PRODUCT_NAME} Microphone Usage</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -64,24 +75,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>org.jimber.threebotlogin.staging</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>threebot</string>
-			</array>
-		</dict>
-	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-    <string>${PRODUCT_NAME} Camera Usage</string>
-	<key>NSMicrophoneUsageDescription</key>
-    <string>${PRODUCT_NAME} Microphone Usage</string>
 </dict>
 </plist>

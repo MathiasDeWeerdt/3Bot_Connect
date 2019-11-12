@@ -308,7 +308,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('3bot'),
+        title: Text('3bot connect'),
         backgroundColor: hexColor,
         leading: FutureBuilder(
             future: getDoubleName(),
@@ -446,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text('Welcome to 3Bot.', style: TextStyle(fontSize: 24)),
+                Text('Welcome to 3bot connect.', style: TextStyle(fontSize: 24)),
                 SizedBox(
                   height: 10,
                 ),

@@ -6,7 +6,7 @@ import 'main.dart';
 
 void main() {
   var config = Config(
-      name: '3bot',
+      name: '3bot connect',
       threeBotApiUrl: 'https://login.threefold.me/api',
       openKycApiUrl: 'https://openkyc.live/',
       threeBotFrontEndUrl: 'https://login.threefold.me/',
@@ -40,7 +40,7 @@ void main() {
     },
     {
       "content": Text(
-        'NBH Digital Wallet',
+        '3bot wallet',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,
@@ -62,69 +62,6 @@ void main() {
       'errorText': false,
       'openInBrowser': true,
       'permissions': ['CAMERA']
-    },
-    {
-      "content": Text(
-        'OpenBrowser',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org/',
-      "bg": 'jimber.png',
-      "disabled": false,
-      "initialUrl": 'https://broker.jimber.org/',
-      "visible": false,
-      "id": 2,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
-    },
-    {
-      "content": Text(
-        'FreeFlowConnect',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "bg": 'om.jpg',
-      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "disabled": true,
-      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "visible": false,
-      "id": 3,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
-    },
-    {
-      "content": Icon(
-        Icons.add_circle,
-        size: 75,
-        color: Colors.white,
-      ),
-      "subheading": 'New Application',
-      "bg": 'example.jpg',
-      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "disabled": true,
-      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "visible": false,
-      "id": 4,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
     }
   ];
 

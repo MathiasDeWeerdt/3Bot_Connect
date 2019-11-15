@@ -4,9 +4,11 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
 import 'package:package_info/package_info.dart';
@@ -81,8 +83,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               if (keyboardUp)
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[keyboardUsedApp].resize(Rect.fromLTWH(
-                      0, 75, size.width, size.height - keyboardSize - 75), instance: appKeyboard.webview),
+                  flutterWebViewPlugins[keyboardUsedApp].resize(
+                      Rect.fromLTWH(
+                          0, 75, size.width, size.height - keyboardSize - 75),
+                      instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at opening"),
                   print('inside true keyboard')
                 }
@@ -90,7 +94,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(0, 75, size.width, size.height - 75), instance: appKeyboard.webview),
+                      Rect.fromLTWH(0, 75, size.width, size.height - 75),
+                      instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at closing"),
                   print('inside false keyboard')
                 }
@@ -133,7 +138,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           builder: (BuildContext context) => CustomDialog(
             image: Icons.check,
             title: "You're already logged in",
-            description: new Text("We cannot create a new account, you already have an account registered on your device. Please restart the application if this message persists."),
+            description: new Text(
+                "We cannot create a new account, you already have an account registered on your device. Please restart the application if this message persists."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Ok"),
@@ -343,24 +349,74 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               future: getDoubleName(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
-                  return IconButton(
-                    icon: Icon(Icons.settings),
-                    tooltip: 'Settings',
-                    onPressed: () {
-                      SystemChannels.textInput.invokeMethod('TextInput.hide');
-                      try {
-                        for (var flutterWebViewPlugin
-                            in flutterWebViewPlugins) {
-                          if (flutterWebViewPlugin != null) {
-                            flutterWebViewPlugin.hide();
+                  return Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.chat_bubble),
+                        tooltip: 'ChatBot',
+                        onPressed: () {
+                          SystemChannels.textInput
+                              .invokeMethod('TextInput.hide');
+                          try {
+                            for (var flutterWebViewPlugin
+                                in flutterWebViewPlugins) {
+                              if (flutterWebViewPlugin != null) {
+                                flutterWebViewPlugin.hide();
+                              }
+                            }
+                          } catch (Exception) {
+                            print('caught something');
                           }
-                        }
-                      } catch (Exception) {
-                        print('caught something');
-                      }
+                          if (flutterWebViewPlugins[apps.length] == null) {
+                            getEmail().then((mailObj) async {
+                              final email = mailObj['email'];
+                              final doubleName = snapshot.data;
+                              final keys = await
+                                  generateDerivedKeypair('me', doubleName);
+                              final pubKey = keys['derivedPublicKey'];
+                              var loadUrl =
+                                  "https://chatbot.threefold.io?3bot=$doubleName&email=${email}&pubkey=$pubKey";
+                              final size = MediaQuery.of(context).size;
+                              flutterWebViewPlugins[apps.length] =
+                                  new FlutterWebviewPlugin();
+                              flutterWebViewPlugins[apps.length].launch(loadUrl,
+                                  rect: Rect.fromLTWH(
+                                      0.0, 75, size.width, size.height - 75),
+                                  userAgent: kAndroidUserAgent,
+                                  hidden: false,
+                                  cookies: [],
+                                  withLocalStorage: true,
+                                  permissions: []);
+                              showButton = true;
+                            });
+                          } else {
+                            flutterWebViewPlugins[apps.length].hide();
+                            flutterWebViewPlugins[apps.length] = null;
+                            showButton = false;
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.settings),
+                        tooltip: 'Settings',
+                        onPressed: () {
+                          SystemChannels.textInput
+                              .invokeMethod('TextInput.hide');
+                          try {
+                            for (var flutterWebViewPlugin
+                                in flutterWebViewPlugins) {
+                              if (flutterWebViewPlugin != null) {
+                                flutterWebViewPlugin.hide();
+                              }
+                            }
+                          } catch (Exception) {
+                            print('caught something');
+                          }
 
-                      Navigator.pushNamed(context, '/preference');
-                    },
+                          Navigator.pushNamed(context, '/preference');
+                        },
+                      ),
+                    ],
                   );
                 } else
                   return Container();
@@ -405,113 +461,98 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget registered(BuildContext context) {
     var appList = Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[AppSelector(notifyParent: refresh)],
+      children: <Widget>[
+        AppSelector(notifyParent: refresh),
+      ],
     );
-    if (Platform.isIOS) {
-      if (showApps) {
-        return appList;
-      } else {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('You are registered.'),
-            SizedBox(
-              height: 20,
-            ),
-            Text('If you need to login you\'ll get a notification.'),
-          ],
-        );
-      }
-    } else {
-      return appList;
-    }
+    return appList;
   }
+}
 
-  ConstrainedBox notRegistered(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(
-          maxHeight: double.infinity,
-          maxWidth: double.infinity,
-          minHeight: 250,
-          minWidth: 250),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Container(),
-          Image.asset(
-            'assets/logo.png',
-            height: 100.0,
-          ),
-          IntrinsicWidth(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text('Welcome to 3bot connect.', style: TextStyle(fontSize: 24)),
-                SizedBox(
-                  height: 10,
+ConstrainedBox notRegistered(BuildContext context) {
+  return ConstrainedBox(
+    constraints: const BoxConstraints(
+        maxHeight: double.infinity,
+        maxWidth: double.infinity,
+        minHeight: 250,
+        minWidth: 250),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Container(),
+        Image.asset(
+          'assets/logo.png',
+          height: 100.0,
+        ),
+        IntrinsicWidth(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text('Welcome to 3bot connect.', style: TextStyle(fontSize: 24)),
+              SizedBox(
+                height: 10,
+              ),
+              RaisedButton(
+                shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30),
                 ),
-                RaisedButton(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30),
-                  ),
-                  color: Theme.of(context).primaryColor,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new Icon(
-                        CommunityMaterialIcons.account_edit,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Text(
-                        'Register Now!',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/registration');
-                  },
+                color: Theme.of(context).primaryColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Icon(
+                      CommunityMaterialIcons.account_edit,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      'Register Now!',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
                 ),
-                RaisedButton(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new Icon(
-                        CommunityMaterialIcons.qrcode,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Text(
-                        'Scan QR!',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/scan');
-                  },
+                onPressed: () {
+                  Navigator.pushNamed(context, '/registration');
+                },
+              ),
+              RaisedButton(
+                shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30),
                 ),
-              ],
-            ),
+                color: Theme.of(context).accentColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Icon(
+                      CommunityMaterialIcons.qrcode,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      'Scan QR!',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/scan');
+                },
+              ),
+            ],
           ),
-          Container(),
-          FlatButton(
-            child: Text('Recover account'),
-            onPressed: () {
-              Navigator.pushNamed(context, '/recover');
-            },
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        Container(),
+        FlatButton(
+          child: Text('Recover account'),
+          onPressed: () {
+            Navigator.pushNamed(context, '/recover');
+          },
+        ),
+      ],
+    ),
+  );
 }

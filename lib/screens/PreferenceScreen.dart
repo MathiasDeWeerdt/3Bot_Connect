@@ -334,29 +334,12 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 }
               }
               hexColor = Color(0xff0f296a);
-              bool result = await clearData(context: context);
-              if (result) {
-                Navigator.popUntil(
-                  context,
-                  ModalRoute.withName('/'),
-                );
-              } else {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) => CustomDialog(
-                          title: 'Error',
-                          description: Text('You have no internet connection'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('Ok'),
-                              onPressed: () {
-                                Navigator.popUntil(context,
-                                    ModalRoute.withName('/preference'));
-                              },
-                            )
-                          ],
-                        ));
-              }
+              await clearData(context: context);
+
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName('/'),
+              );
             },
           ),
         ],

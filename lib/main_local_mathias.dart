@@ -6,9 +6,9 @@ import 'main.dart';
 void main() async {
   var config = Config(
       name: '3bot local',
-      threeBotApiUrl: 'http://192.168.43.211:5000/api',
-      openKycApiUrl: 'http://192.168.43.211:5005',
-      threeBotFrontEndUrl: 'http://192.168.43.211:8081/',
+      threeBotApiUrl: 'http://192.168.1.3:5000/api',
+      openKycApiUrl: 'http://192.168.1.3:5005',
+      threeBotFrontEndUrl: 'http://192.168.1.3:8081/',
       child: new MyApp());
 
   init();
@@ -24,15 +24,17 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": 'Where privacy and social media co-exist.',
+      "url": 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://www2.freeflowpages.com/',
+      "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
       "id": 0,
       'cookieUrl':
-          'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
+          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
     },
     {

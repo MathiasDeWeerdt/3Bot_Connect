@@ -179,25 +179,14 @@ Future<String> getScopePermissions() async {
   return prefs.getString('scopePermissions');
 }
 
-Future<bool> clearData({context}) async {
+Future<void> clearData({context}) async {
   final prefs = await SharedPreferences.getInstance();
 
-  Response response;
-
-  // Incase we are not connected to the internet or the DNS fails to resolve.
   try {
-    response = await removeDeviceId(prefs.getString('doubleName'));
+    await removeDeviceId(prefs.getString('doubleName'));
   } catch (e) {
     print(e);
-    response = null;
   }
 
-  if (response != null && response.statusCode == 200) {
-    print("Removing account");
-    prefs.clear();
-    return true;
-  } else {
-    print("Something went wrong while removing your account");
-    return false;
-  }
+  prefs.clear();
 }

@@ -54,8 +54,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     KeyboardVisibilityNotification().addNewListener(
       onChange: (bool visible) {
-        print(visible);
-
         webViewResizer(visible);
       },
     );
@@ -169,8 +167,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           if (attempt.body != '' && openPendingLoginAttempt) {
             logger.log("Found a login attempt, opening ...");
 
-            String name = ModalRoute.of(context).settings.name;
-
             // Navigator.popUntil(context, ModalRoute.withName('/'));
 
             Navigator.popUntil(context, (route) {
@@ -198,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+       Navigator.popUntil(context, ModalRoute.withName('/'));
       onActivate(false);
     }
   }

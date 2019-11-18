@@ -79,7 +79,7 @@ packages:
       name: firebase_messaging
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.6"
+    version: "5.1.8"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -104,7 +104,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: f23b58cddd7d359659cd3ae95c195bc296bf9090
+      resolved-ref: "1ff5f6bff57616a75eb54527b4433ac3384c50e5"
       url: "https://github.com/coeneivan/flutter_webview_plugin"
     source: git
     version: "0.3.5"
@@ -170,7 +170,7 @@ packages:
       name: package_info
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0+6"
+    version: "0.4.0+10"
   password_hash:
     dependency: "direct main"
     description:
@@ -205,7 +205,7 @@ packages:
       name: pointycastle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   quiver:
     dependency: transitive
     description:
@@ -219,7 +219,7 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.3+4"
+    version: "0.5.4+5"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -289,7 +289,14 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.3"
+    version: "5.2.5"
+  url_launcher_platform_interface:
+    dependency: transitive
+    description:
+      name: url_launcher_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   vector_math:
     dependency: transitive
     description:
@@ -299,4 +306,4 @@ packages:
     version: "2.0.8"
 sdks:
   dart: ">=2.2.2 <3.0.0"
-  flutter: ">=1.5.0 <2.0.0"
+  flutter: ">=1.9.1+hotfix.4 <2.0.0"

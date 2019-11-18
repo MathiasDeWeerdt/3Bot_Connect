@@ -179,14 +179,24 @@ Future<String> getScopePermissions() async {
   return prefs.getString('scopePermissions');
 }
 
-Future<void> clearData({context}) async {
+Future<bool> clearData({context}) async {
+  Response response;
   final prefs = await SharedPreferences.getInstance();
 
   try {
+    response = await removeDeviceId(prefs.getString('doubleName'));
     await removeDeviceId(prefs.getString('doubleName'));
   } catch (e) {
     print(e);
+    response = null;
   }
 
-  prefs.clear();
+  if (response != null && response.statusCode == 200) {
+    print("Removing account");
+    prefs.clear();
+    return true;
+  } else {
+    print("Something went wrong while removing your account");
+    return false;
+  }
 }

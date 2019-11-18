@@ -166,9 +166,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         try {
           if (attempt.body != '' && openPendingLoginAttempt) {
             logger.log("Found a login attempt, opening ...");
-            
+
             Navigator.popUntil(context, (route) {
-              if (route.settings.name == "/" || route.settings.name == "/registered") {
+              if (route.settings.name == "/" ||
+                  route.settings.name == "/registered") {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -192,7 +193,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-       Navigator.popUntil(context, ModalRoute.withName('/'));
       onActivate(false);
     }
   }
@@ -366,8 +366,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             getEmail().then((mailObj) async {
                               final email = mailObj['email'];
                               final doubleName = snapshot.data;
-                              final keys = await
-                                  generateDerivedKeypair('me', doubleName);
+                              final keys = await generateDerivedKeypair(
+                                  'me', doubleName);
                               final pubKey = keys['derivedPublicKey'];
                               var loadUrl =
                                   "https://chatbot.threefold.io?3bot=$doubleName&email=${email}&pubkey=$pubKey";

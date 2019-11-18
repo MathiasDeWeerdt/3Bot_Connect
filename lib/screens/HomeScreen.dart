@@ -166,11 +166,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         try {
           if (attempt.body != '' && openPendingLoginAttempt) {
             logger.log("Found a login attempt, opening ...");
-
-            // Navigator.popUntil(context, ModalRoute.withName('/'));
-
+            
             Navigator.popUntil(context, (route) {
-              if (route.settings.name == "/") {
+              if (route.settings.name == "/" || route.settings.name == "/registered") {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

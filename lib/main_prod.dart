@@ -25,6 +25,7 @@ void main() {
         textAlign: TextAlign.center,
       ),
       "subheading": 'Where privacy and social media co-exist.',
+      "url": 'https://freeflowpages.com/',
       "bg": 'ffp.jpg',
       "disabled": false,
       "initialUrl": 'https://freeflowpages.com/',
@@ -34,7 +35,33 @@ void main() {
           'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
+    },
+    {
+      "content": Text(
+        'NBH Digital Wallet',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": '',
+      "url": 'https://wallet.threefold.me',
+      "appid": 'wallet.threefold.me',
+      "redirecturl": '/login',
+      "bg": 'nbh.png',
+      "disabled": false,
+      "initialUrl": 'https://wallet.threefold.me',
+      "visible": false,
+      "id": 1,
+      'cookieUrl': '',
+      'localStorageKeys': true,
+      'color': 0xFF34495e,
+      'errorText': false,
+      'openInBrowser': true,
+      'permissions': ['CAMERA']
     },
     {
       "content": Text(
@@ -51,15 +78,16 @@ void main() {
       "disabled": false,
       "initialUrl": 'https://broker.jimber.org/',
       "visible": false,
-      "id": 1,
+      "id": 2,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
     },
     {
       "content": Text(
-        'FreeflowConnect',
+        'FreeFlowConnect',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,
@@ -67,16 +95,17 @@ void main() {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'https://cowork-lochristi.threefold.work/',
       "bg": 'om.jpg',
+      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work/',
+      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "visible": false,
-      "id": 2,
+      "id": 3,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
-      'permissions': ['CAMERA', 'MICROPHONE']
+      'openInBrowser': false,
+      'permissions': []
     },
     {
       "content": Icon(
@@ -86,14 +115,15 @@ void main() {
       ),
       "subheading": 'New Application',
       "bg": 'example.jpg',
-      "url": 'https://jimber.org/app',
+      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work',
+      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
       "visible": false,
-      "id": 3,
+      "id": 4,
       'cookieUrl': '',
       'color': 0xFF0f296a,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
     }
   ];

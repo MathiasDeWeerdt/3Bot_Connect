@@ -249,7 +249,7 @@ class _AppSelectorState extends State<AppSelector> {
     if (Platform.isIOS && app['openInBrowser']) {
       String appid = app['appid'];
       String redirecturl = app['redirecturl'];
-      launch('https://$appid$redirecturl?username=${await getDoubleName()}&derivedSeed=${Uri.encodeQueryComponent(await getDerivedSeed(appid))}', forceSafariVC: false);
+      launch('https://$appid$redirecturl#username=${await getDoubleName()}&derivedSeed=${Uri.encodeQueryComponent(await getDerivedSeed(appid))}', forceSafariVC: false);
     } else {
       if (!app['disabled']) {
         final emailVer = await getEmail();
@@ -277,6 +277,7 @@ class _AppSelectorState extends State<AppSelector> {
             showButton = true;
             lastAppUsed = app['id'];
             keyboardUsedApp = app['id'];
+            print("keyboardapp open: " + keyboardUsedApp.toString());
             if (flutterWebViewPlugins[app['id']] == null) {
               await launchApp(size, app['id']);
               logger.log("Webviews was null");

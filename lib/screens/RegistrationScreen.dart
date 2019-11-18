@@ -11,6 +11,7 @@ import 'package:threebotlogin/widgets/Scanner.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final Widget registrationScreen;
+  
   RegistrationScreen({Key key, this.registrationScreen}) : super(key: key);
   _ScanScreenState createState() => _ScanScreenState();
 }

@@ -169,7 +169,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
             Navigator.popUntil(context, (route) {
               if (route.settings.name == "/" ||
-                  route.settings.name == "/registered") {
+                  route.settings.name == "/registered" ||
+                  route.settings.name == "/preference") {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

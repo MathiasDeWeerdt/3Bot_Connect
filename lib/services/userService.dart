@@ -180,13 +180,12 @@ Future<String> getScopePermissions() async {
 }
 
 Future<bool> clearData({context}) async {
+  Response response;
   final prefs = await SharedPreferences.getInstance();
 
-  Response response;
-
-  // Incase we are not connected to the internet or the DNS fails to resolve.
   try {
     response = await removeDeviceId(prefs.getString('doubleName'));
+    await removeDeviceId(prefs.getString('doubleName'));
   } catch (e) {
     print(e);
     response = null;

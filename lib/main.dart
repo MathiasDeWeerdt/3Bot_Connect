@@ -35,7 +35,6 @@ String appName;
 String packageName;
 String version;
 String buildNumber;
-bool showApps = false;
 List<Map<String, dynamic>> apps = [];
 
 Widget getErrorWidget(BuildContext context, FlutterErrorDetails error) {
@@ -105,9 +104,6 @@ void init() async {
     deviceId = t;
     logger.log('Got device id $deviceId');
   });
-  if(Platform.isIOS) {
-    showApps = (await getShowApps()).body != 'False';
-  }
 }
 
 bool get isInDebugMode {

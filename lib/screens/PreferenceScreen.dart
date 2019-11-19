@@ -342,20 +342,21 @@ class _PreferenceScreenState extends State<PreferenceScreen> {
                 );
               } else {
                 showDialog(
-                    context: context,
-                    builder: (BuildContext context) => CustomDialog(
-                          title: 'Error',
-                          description: Text('You have no internet connection'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('Ok'),
-                              onPressed: () {
-                                Navigator.popUntil(context,
-                                    ModalRoute.withName('/preference'));
-                              },
-                            )
-                          ],
-                        ));
+                  context: context,
+                  builder: (BuildContext context) => CustomDialog(
+                    title: 'Error',
+                    description: Text('You have no internet connection'),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Ok'),
+                        onPressed: () {
+                          Navigator.popUntil(
+                              context, ModalRoute.withName('/preference'));
+                        },
+                      )
+                    ],
+                  ),
+                );
               }
             },
           ),

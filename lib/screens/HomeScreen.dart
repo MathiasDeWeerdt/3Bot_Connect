@@ -347,51 +347,51 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 if (snapshot.hasData) {
                   return Row(
                     children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.chat_bubble),
-                        tooltip: 'ChatBot',
-                        onPressed: () {
-                          SystemChannels.textInput
-                              .invokeMethod('TextInput.hide');
-                          try {
-                            for (var flutterWebViewPlugin
-                                in flutterWebViewPlugins) {
-                              if (flutterWebViewPlugin != null) {
-                                flutterWebViewPlugin.hide();
-                              }
-                            }
-                          } catch (Exception) {
-                            print('caught something');
-                          }
-                          if (flutterWebViewPlugins[apps.length] == null) {
-                            getEmail().then((mailObj) async {
-                              final email = mailObj['email'];
-                              final doubleName = snapshot.data;
-                              final keys = await generateDerivedKeypair(
-                                  'me', doubleName);
-                              final pubKey = keys['derivedPublicKey'];
-                              var loadUrl =
-                                  "https://chatbot.threefold.io?3bot=$doubleName&email=${email}&pubkey=$pubKey";
-                              final size = MediaQuery.of(context).size;
-                              flutterWebViewPlugins[apps.length] =
-                                  new FlutterWebviewPlugin();
-                              flutterWebViewPlugins[apps.length].launch(loadUrl,
-                                  rect: Rect.fromLTWH(
-                                      0.0, 75, size.width, size.height - 75),
-                                  userAgent: kAndroidUserAgent,
-                                  hidden: false,
-                                  cookies: [],
-                                  withLocalStorage: true,
-                                  permissions: []);
-                              showButton = true;
-                            });
-                          } else {
-                            flutterWebViewPlugins[apps.length].hide();
-                            flutterWebViewPlugins[apps.length] = null;
-                            showButton = false;
-                          }
-                        },
-                      ),
+                      // IconButton(
+                      //   icon: Icon(Icons.chat_bubble),
+                      //   tooltip: 'ChatBot',
+                      //   onPressed: () {
+                      //     SystemChannels.textInput
+                      //         .invokeMethod('TextInput.hide');
+                      //     try {
+                      //       for (var flutterWebViewPlugin
+                      //           in flutterWebViewPlugins) {
+                      //         if (flutterWebViewPlugin != null) {
+                      //           flutterWebViewPlugin.hide();
+                      //         }
+                      //       }
+                      //     } catch (Exception) {
+                      //       print('caught something');
+                      //     }
+                      //     if (flutterWebViewPlugins[apps.length] == null) {
+                      //       getEmail().then((mailObj) async {
+                      //         final email = mailObj['email'];
+                      //         final doubleName = snapshot.data;
+                      //         final keys = await generateDerivedKeypair(
+                      //             'me', doubleName);
+                      //         final pubKey = keys['derivedPublicKey'];
+                      //         var loadUrl =
+                      //             "https://chatbot.threefold.io?3bot=$doubleName&email=${email}&pubkey=$pubKey";
+                      //         final size = MediaQuery.of(context).size;
+                      //         flutterWebViewPlugins[apps.length] =
+                      //             new FlutterWebviewPlugin();
+                      //         flutterWebViewPlugins[apps.length].launch(loadUrl,
+                      //             rect: Rect.fromLTWH(
+                      //                 0.0, 75, size.width, size.height - 75),
+                      //             userAgent: kAndroidUserAgent,
+                      //             hidden: false,
+                      //             cookies: [],
+                      //             withLocalStorage: true,
+                      //             permissions: []);
+                      //         showButton = true;
+                      //       });
+                      //     } else {
+                      //       flutterWebViewPlugins[apps.length].hide();
+                      //       flutterWebViewPlugins[apps.length] = null;
+                      //       showButton = false;
+                      //     }
+                      //   },
+                      // ),
                       IconButton(
                         icon: Icon(Icons.settings),
                         tooltip: 'Settings',

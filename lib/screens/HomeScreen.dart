@@ -17,7 +17,6 @@ import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/BottomNavbar.dart';
-import 'package:threebotlogin/widgets/FreeflowApp.dart';
 import 'package:uni_links/uni_links.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
@@ -25,7 +24,6 @@ import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:http/http.dart' as http;
-
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -41,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var email;
   String initialLink = null;
   int selectedIndex = 0;
+  AppBar appBar;
 
   @override
   void initState() {
@@ -67,12 +66,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
     WidgetsBinding.instance.addObserver(this);
     onActivate(true);
-  }
-
-  refresh(colorData) {
-    setState(() {
-      hexColor = Color(colorData);
-    });
   }
 
   Future<void> webViewResizer(keyboardUp) async {
@@ -318,67 +311,67 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('3bot connect'),
-        backgroundColor: hexColor,
-        leading: FutureBuilder(
-            future: getDoubleName(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                return Visibility(
-                    visible: showButton,
-                    child: IconButton(
-                        tooltip: 'Apps',
-                        icon: const Icon(Icons.apps),
-                        onPressed: () {
-                          SystemChannels.textInput
-                              .invokeMethod('TextInput.hide');
-                          for (var flutterWebViewPlugin
-                              in flutterWebViewPlugins) {
-                            if (flutterWebViewPlugin != null) {
-                              flutterWebViewPlugin.hide();
-                              lastAppUsed = null;
-                              showButton = false;
-                            }
-                          }
-                          setState(() {
-                            hexColor = Color(0xFF0f296a);
-                          });
-                        }));
-              } else
-                return Container();
-            }),
-        elevation: 0.0,
-        actions: <Widget>[
-          FutureBuilder(
-              future: getDoubleName(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return IconButton(
-                    icon: Icon(Icons.settings),
-                    tooltip: 'Settings',
-                    onPressed: () {
-                      SystemChannels.textInput.invokeMethod('TextInput.hide');
-                      try {
-                        for (var flutterWebViewPlugin
-                            in flutterWebViewPlugins) {
-                          if (flutterWebViewPlugin != null) {
-                            flutterWebViewPlugin.hide();
-                          }
-                        }
-                      } catch (Exception) {
-                        print('caught something');
-                      }
+    appBar = AppBar(
+      backgroundColor: hexColor,
+      // leading: FutureBuilder(
+      //     future: getDoubleName(),
+      //     builder: (BuildContext context, AsyncSnapshot snapshot) {
+      //       if (snapshot.hasData) {
+      //         return Visibility(
+      //             visible: showButton,
+      //             child: IconButton(
+      //                 tooltip: 'Apps',
+      //                 icon: const Icon(Icons.apps),
+      //                 onPressed: () {
+      //                   SystemChannels.textInput.invokeMethod('TextInput.hide');
+      //                   for (var flutterWebViewPlugin
+      //                       in flutterWebViewPlugins) {
+      //                     if (flutterWebViewPlugin != null) {
+      //                       flutterWebViewPlugin.hide();
+      //                       lastAppUsed = null;
+      //                       showButton = false;
+      //                     }
+      //                   }
+      //                   setState(() {
+      //                     hexColor = Color(0xFF0f296a);
+      //                   });
+      //                 }));
+      //       } else
+      //         return Container();
+      //     }),
 
-                      Navigator.pushNamed(context, '/preference');
-                    },
-                  );
-                } else
-                  return Container();
-              }),
-        ],
-      ),
+      elevation: 0.0,
+      // actions: <Widget>[
+      //   FutureBuilder(
+      //       future: getDoubleName(),
+      //       builder: (BuildContext context, AsyncSnapshot snapshot) {
+      //         if (snapshot.hasData) {
+      //           return IconButton(
+      //             icon: Icon(Icons.settings),
+      //             tooltip: 'Settings',
+      //             onPressed: () {
+      //               SystemChannels.textInput.invokeMethod('TextInput.hide');
+      //               try {
+      //                 for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+      //                   if (flutterWebViewPlugin != null) {
+      //                     flutterWebViewPlugin.hide();
+      //                   }
+      //                 }
+      //               } catch (Exception) {
+      //                 print('caught something');
+      //               }
+
+      //               Navigator.pushNamed(context, '/preference');
+      //             },
+      //           );
+      //         } else
+      //           return Container();
+      //       }),
+      // ],
+    );
+
+    return Scaffold(
+      appBar: PreferredSize(child: appBar, preferredSize: Size.fromHeight(20)),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -429,6 +422,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void onItemTapped(int index) {
     setState(() {
+      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+        if (flutterWebViewPlugin != null) {
+          flutterWebViewPlugin.hide();
+        }
+      }
       updateApp(apps[index]);
       selectedIndex = index;
     });
@@ -542,24 +540,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (emailVer['verified']) {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
-          final size = MediaQuery.of(context).size;
+          var contextSize = MediaQuery.of(context).size;
+
+          var preferredHeight = contextSize.height - 20 - 56;
+          var preferredWidth = contextSize.width;
+          var preferredSize = new Size(preferredWidth, preferredHeight);
 
           if (!prefs.containsKey('firstvalidation')) {
             logger.log(app['url']);
             logger.log("launching app " + app['id'].toString());
-            launchApp(size, app['id']);
+            launchApp(preferredSize, app['id']);
 
             prefs.setBool('firstvalidation', true);
           }
 
-
-          refresh(app['color']);
           showButton = true;
           lastAppUsed = app['id'];
           keyboardUsedApp = app['id'];
           print("keyboardapp open: " + keyboardUsedApp.toString());
           if (flutterWebViewPlugins[app['id']] == null) {
-            await launchApp(size, app['id']);
+            await launchApp(preferredSize, app['id']);
             logger.log("Webviews was null");
           }
           // The launch can change the webview to null if permissions weren't granted
@@ -589,8 +589,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         final request = new http.Request('GET', Uri.parse(url))
           ..followRedirects = false;
         final response = await client.send(request);
-        logger.log('-----');
-        logger.log(response.headers);
+
         final state =
             Uri.decodeFull(response.headers['location'].split("&state=")[1]);
         final privateKey = await getPrivateKey();
@@ -611,18 +610,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         final scopeData = {};
 
-        print("==================");
-        print(scope);
-        print("==================");
-
         if (scope != null && scope.contains("\"email\":")) {
           scopeData['email'] = await getEmail();
           print("adding scope");
         }
-
-        print("==================");
-        print(scopeData);
-        print("==================");
 
         var jsonData = jsonEncode(
             (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
@@ -636,7 +627,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                rect: Rect.fromLTWH(0.0, 63, size.width, size.height - 66),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: cookieList,
@@ -650,7 +641,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else if (localStorageKeys != null) {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl + '/error',
-                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                rect: Rect.fromLTWH(0.0, 63, size.width, size.height - 66),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],
@@ -722,11 +713,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-    void showPermissionsNeeded(BuildContext context, appId) {
+  void showPermissionsNeeded(BuildContext context, appId) {
     flutterWebViewPlugins[appId].close();
     flutterWebViewPlugins[appId] = null;
-
-    refresh(0xFF0f296a);
 
     showDialog(
       context: context,

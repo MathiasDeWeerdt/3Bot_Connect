@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:threebotlogin/screens/HomeScreen.dart';
 
 class BottomNavBar extends StatefulWidget {
   int selectedIndex;

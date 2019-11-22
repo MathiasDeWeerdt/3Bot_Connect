@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String initialLink = null;
   int selectedIndex = 0;
   AppBar appBar;
+  BottomNavBar bottomNavBar;
+  BuildContext bodyContext;
 
   @override
   void initState() {
@@ -313,61 +314,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     appBar = AppBar(
       backgroundColor: hexColor,
-      // leading: FutureBuilder(
-      //     future: getDoubleName(),
-      //     builder: (BuildContext context, AsyncSnapshot snapshot) {
-      //       if (snapshot.hasData) {
-      //         return Visibility(
-      //             visible: showButton,
-      //             child: IconButton(
-      //                 tooltip: 'Apps',
-      //                 icon: const Icon(Icons.apps),
-      //                 onPressed: () {
-      //                   SystemChannels.textInput.invokeMethod('TextInput.hide');
-      //                   for (var flutterWebViewPlugin
-      //                       in flutterWebViewPlugins) {
-      //                     if (flutterWebViewPlugin != null) {
-      //                       flutterWebViewPlugin.hide();
-      //                       lastAppUsed = null;
-      //                       showButton = false;
-      //                     }
-      //                   }
-      //                   setState(() {
-      //                     hexColor = Color(0xFF0f296a);
-      //                   });
-      //                 }));
-      //       } else
-      //         return Container();
-      //     }),
-
       elevation: 0.0,
-      // actions: <Widget>[
-      //   FutureBuilder(
-      //       future: getDoubleName(),
-      //       builder: (BuildContext context, AsyncSnapshot snapshot) {
-      //         if (snapshot.hasData) {
-      //           return IconButton(
-      //             icon: Icon(Icons.settings),
-      //             tooltip: 'Settings',
-      //             onPressed: () {
-      //               SystemChannels.textInput.invokeMethod('TextInput.hide');
-      //               try {
-      //                 for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-      //                   if (flutterWebViewPlugin != null) {
-      //                     flutterWebViewPlugin.hide();
-      //                   }
-      //                 }
-      //               } catch (Exception) {
-      //                 print('caught something');
-      //               }
+    );
 
-      //               Navigator.pushNamed(context, '/preference');
-      //             },
-      //           );
-      //         } else
-      //           return Container();
-      //       }),
-      // ],
+    bottomNavBar = BottomNavBar(
+      selectedIndex: selectedIndex,
+      onItemTapped: onItemTapped,
     );
 
     return Scaffold(
@@ -378,12 +330,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         color: Theme.of(context).primaryColor,
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-          ),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border.all(color: Colors.red)),
           child: Container(
             child: ClipRRect(
               borderRadius: BorderRadius.only(
@@ -408,10 +356,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            return BottomNavBar(
-              selectedIndex: selectedIndex,
-              onItemTapped: onItemTapped,
-            );
+            return bottomNavBar;
           } else {
             return new Container(width: 0.0, height: 0.0);
           }
@@ -433,6 +378,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Widget registered(BuildContext context) {
+    bodyContext = context;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -540,10 +486,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (emailVer['verified']) {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
-          var contextSize = MediaQuery.of(context).size;
+          var contextSize = MediaQuery.of(bodyContext).size;
 
-          var preferredHeight = contextSize.height - 20 - 60;
+          var preferredHeight = contextSize.height - appBar.preferredSize.height - 56;
           var preferredWidth = contextSize.width;
+
           var preferredSize = new Size(preferredWidth, preferredHeight);
 
           if (!prefs.containsKey('firstvalidation')) {
@@ -627,7 +574,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(0.0, 63, size.width, size.height - 66),
+                rect: Rect.fromLTWH(0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: cookieList,
@@ -641,7 +588,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else if (localStorageKeys != null) {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl + '/error',
-                rect: Rect.fromLTWH(0.0, 63, size.width, size.height - 66),
+                rect: Rect.fromLTWH(0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],

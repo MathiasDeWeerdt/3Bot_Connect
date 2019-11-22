@@ -4,21 +4,28 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
+import 'package:threebotlogin/services/toolsService.dart';
 import 'package:threebotlogin/services/userService.dart';
 import 'package:threebotlogin/services/firebaseService.dart';
+import 'package:threebotlogin/services/cryptoService.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
-import 'package:threebotlogin/widgets/AppSelector.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
+import 'package:threebotlogin/widgets/BottomNavbar.dart';
+import 'package:threebotlogin/widgets/FreeflowApp.dart';
 import 'package:uni_links/uni_links.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
 import 'dart:convert';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
+import 'package:http/http.dart' as http;
+
 
 class HomeScreen extends StatefulWidget {
   final Widget homeScreen;
@@ -33,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String doubleName = '';
   var email;
   String initialLink = null;
+  int selectedIndex = 0;
 
   @override
   void initState() {
@@ -81,8 +89,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               if (keyboardUp)
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
-                  flutterWebViewPlugins[keyboardUsedApp].resize(Rect.fromLTWH(
-                      0, 75, size.width, size.height - keyboardSize - 75), instance: appKeyboard.webview),
+                  flutterWebViewPlugins[keyboardUsedApp].resize(
+                      Rect.fromLTWH(
+                          0, 75, size.width, size.height - keyboardSize - 75),
+                      instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at opening"),
                   print('inside true keyboard')
                 }
@@ -90,7 +100,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(0, 75, size.width, size.height - 75), instance: appKeyboard.webview),
+                      Rect.fromLTWH(0, 75, size.width, size.height - 75),
+                      instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at closing"),
                   print('inside false keyboard')
                 }
@@ -133,7 +144,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           builder: (BuildContext context) => CustomDialog(
             image: Icons.check,
             title: "You're already logged in",
-            description: new Text("We cannot create a new account, you already have an account registered on your device. Please restart the application if this message persists."),
+            description: new Text(
+                "We cannot create a new account, you already have an account registered on your device. Please restart the application if this message persists."),
             actions: <Widget>[
               FlatButton(
                 child: new Text("Ok"),
@@ -399,32 +411,40 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
         ),
       ),
+      bottomNavigationBar: FutureBuilder(
+        future: getDoubleName(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return BottomNavBar(
+              selectedIndex: selectedIndex,
+              onItemTapped: onItemTapped,
+            );
+          } else {
+            return new Container(width: 0.0, height: 0.0);
+          }
+        },
+      ),
     );
   }
 
+  void onItemTapped(int index) {
+    setState(() {
+      updateApp(apps[index]);
+      selectedIndex = index;
+    });
+  }
+
   Widget registered(BuildContext context) {
-    var appList = Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[AppSelector(notifyParent: refresh)],
+      children: <Widget>[
+        Text('You are registered.'),
+        SizedBox(
+          height: 20,
+        ),
+        Text('If you need to login you\'ll get a notification.'),
+      ],
     );
-    if (Platform.isIOS) {
-      if (showApps) {
-        return appList;
-      } else {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('You are registered.'),
-            SizedBox(
-              height: 20,
-            ),
-            Text('If you need to login you\'ll get a notification.'),
-          ],
-        );
-      }
-    } else {
-      return appList;
-    }
   }
 
   ConstrainedBox notRegistered(BuildContext context) {
@@ -446,7 +466,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text('Welcome to 3bot connect.', style: TextStyle(fontSize: 24)),
+                Text('Welcome to 3bot connect.',
+                    style: TextStyle(fontSize: 24)),
                 SizedBox(
                   height: 10,
                 ),
@@ -508,6 +529,222 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             child: Text('Recover account'),
             onPressed: () {
               Navigator.pushNamed(context, '/recover');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> updateApp(app) async {
+    if (!app['disabled']) {
+      final emailVer = await getEmail();
+      if (emailVer['verified']) {
+        if (!app['errorText']) {
+          final prefs = await SharedPreferences.getInstance();
+          final size = MediaQuery.of(context).size;
+
+          if (!prefs.containsKey('firstvalidation')) {
+            logger.log(app['url']);
+            logger.log("launching app " + app['id'].toString());
+            launchApp(size, app['id']);
+
+            prefs.setBool('firstvalidation', true);
+          }
+
+
+          refresh(app['color']);
+          showButton = true;
+          lastAppUsed = app['id'];
+          keyboardUsedApp = app['id'];
+          print("keyboardapp open: " + keyboardUsedApp.toString());
+          if (flutterWebViewPlugins[app['id']] == null) {
+            await launchApp(size, app['id']);
+            logger.log("Webviews was null");
+          }
+          // The launch can change the webview to null if permissions weren't granted
+          if (flutterWebViewPlugins[app['id']] != null) {
+            logger.log("Webviews is showing");
+            flutterWebViewPlugins[app['id']].show();
+          }
+        }
+      }
+    }
+  }
+
+  Future<void> launchApp(size, appId) async {
+    if (flutterWebViewPlugins[appId] == null) {
+      flutterWebViewPlugins[appId] = new FlutterWebviewPlugin();
+    }
+    try {
+      var url = apps[appId]['cookieUrl'];
+      var loadUrl = apps[appId]['url'];
+
+      var localStorageKeys = apps[appId]['localStorageKeys'];
+
+      var cookies = '';
+      final union = '?';
+      if (url != '') {
+        final client = http.Client();
+        final request = new http.Request('GET', Uri.parse(url))
+          ..followRedirects = false;
+        final response = await client.send(request);
+        logger.log('-----');
+        logger.log(response.headers);
+        final state =
+            Uri.decodeFull(response.headers['location'].split("&state=")[1]);
+        final privateKey = await getPrivateKey();
+        final signedHash = signData(state, privateKey);
+
+        final redirecturl = Uri.decodeFull(response.headers['location']
+            .split("&redirecturl=")[1]
+            .split("&")[0]);
+        final appName = Uri.decodeFull(
+            response.headers['location'].split("appid=")[1].split("&")[0]);
+        logger.log(appName);
+        final scope = Uri.decodeFull(
+            response.headers['location'].split("&scope=")[1].split("&")[0]);
+        final publickey = Uri.decodeFull(
+            response.headers['location'].split("&publickey=")[1].split("&")[0]);
+        logger.log(response.headers['set-cookie'].toString() + " Lower");
+        cookies = response.headers['set-cookie'];
+
+        final scopeData = {};
+
+        print("==================");
+        print(scope);
+        print("==================");
+
+        if (scope != null && scope.contains("\"email\":")) {
+          scopeData['email'] = await getEmail();
+          print("adding scope");
+        }
+
+        print("==================");
+        print(scopeData);
+        print("==================");
+
+        var jsonData = jsonEncode(
+            (await encrypt(jsonEncode(scopeData), publickey, privateKey)));
+        var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
+        loadUrl =
+            'https://$appName$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeComponent(await signedHash)}&data=$data';
+
+        logger.log("!!!loadUrl: " + loadUrl);
+        var cookieList = List<Cookie>();
+        cookieList.add(Cookie.fromSetCookieValue(cookies));
+
+        flutterWebViewPlugins[appId]
+            .launch(loadUrl,
+                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                userAgent: kAndroidUserAgent,
+                hidden: true,
+                cookies: cookieList,
+                withLocalStorage: true,
+                permissions: new List<String>.from(apps[appId]['permissions']))
+            .then((permissionGranted) {
+          if (!permissionGranted) {
+            showPermissionsNeeded(context, appId);
+          }
+        });
+      } else if (localStorageKeys != null) {
+        await flutterWebViewPlugins[appId]
+            .launch(loadUrl + '/error',
+                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                userAgent: kAndroidUserAgent,
+                hidden: true,
+                cookies: [],
+                withLocalStorage: true,
+                permissions: new List<String>.from(apps[appId]['permissions']))
+            .then((permissionGranted) {
+          if (!permissionGranted) {
+            showPermissionsNeeded(context, appId);
+          }
+        });
+
+        var keys = await generateKeyPair();
+
+        final state = randomString(15);
+
+        final privateKey = await getPrivateKey();
+        final signedHash = await signData(state, privateKey);
+
+        var jsToExecute =
+            "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
+
+        // This should be removed in the future!
+        sleep(const Duration(seconds: 1));
+
+        final res =
+            await flutterWebViewPlugins[appId].evalJavascript(jsToExecute);
+        final appid = apps[appId]['appid'];
+        final redirecturl = apps[appId]['redirecturl'];
+        var scope = {};
+        scope['doubleName'] = await getDoubleName();
+        scope['derivedSeed'] = await getDerivedSeed(appid);
+
+        var encrypted =
+            await encrypt(jsonEncode(scope), keys["publicKey"], privateKey);
+        var jsonData = jsonEncode(encrypted);
+        var data = Uri.encodeQueryComponent(jsonData); //Uri.encodeFull();
+
+        loadUrl =
+            'https://$appid$redirecturl${union}username=${await getDoubleName()}&signedhash=${Uri.encodeQueryComponent(signedHash)}&data=$data';
+
+        logger.log("!!!loadUrl: " + loadUrl);
+
+        flutterWebViewPlugins[appId].reloadUrl(loadUrl);
+        print("Eval result: $res");
+
+        logger.log("Launching App" + [appId].toString());
+      } else {
+        flutterWebViewPlugins[appId]
+            .launch(loadUrl,
+                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                userAgent: kAndroidUserAgent,
+                hidden: true,
+                cookies: [],
+                withLocalStorage: true,
+                permissions: new List<String>.from(apps[appId]['permissions']))
+            .then((permissionGranted) {
+          if (!permissionGranted) {
+            showPermissionsNeeded(context, appId);
+          }
+        });
+        logger.log("Launching App" + [appId].toString());
+      }
+
+      logger.log(loadUrl);
+      logger.log(cookies);
+    } on NoSuchMethodError catch (exception) {
+      logger.log('error caught: $exception');
+      apps[appId]['errorText'] = true;
+    }
+  }
+
+    void showPermissionsNeeded(BuildContext context, appId) {
+    flutterWebViewPlugins[appId].close();
+    flutterWebViewPlugins[appId] = null;
+
+    refresh(0xFF0f296a);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+        image: Icons.error,
+        title: "Need permissions",
+        description: Container(
+          child: Text(
+            "Some ungranted permissions are needed to run this.",
+            textAlign: TextAlign.center,
+          ),
+        ), //TODO: if iOS -> place link to settings
+        actions: <Widget>[
+          // usually buttons at the bottom of the dialog
+          FlatButton(
+            child: new Text("Ok"),
+            onPressed: () {
+              Navigator.pop(context);
             },
           ),
         ],

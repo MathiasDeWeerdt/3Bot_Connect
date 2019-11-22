@@ -23,7 +23,7 @@ String validateEmail(String value) {
     return null;
   }
 
-bool validateSeedWords (String seed, String confirmationWords) {
+bool validateSeedWords(String seed, String confirmationWords) {
   List<String> words = confirmationWords.split(" ");
   List<String> seedWords = seed.split(" ");
 

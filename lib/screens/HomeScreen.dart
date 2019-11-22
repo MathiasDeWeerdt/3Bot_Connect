@@ -542,7 +542,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           final prefs = await SharedPreferences.getInstance();
           var contextSize = MediaQuery.of(context).size;
 
-          var preferredHeight = contextSize.height - 20 - 56;
+          var preferredHeight = contextSize.height - 20 - 60;
           var preferredWidth = contextSize.width;
           var preferredSize = new Size(preferredWidth, preferredHeight);
 

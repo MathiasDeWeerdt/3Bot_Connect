@@ -16,27 +16,7 @@ void main() async {
 
   apps = [
     {
-      "content": Text(
-        'FreeFlowPages',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": 'Where privacy and social media co-exist.',
-      "url": 'https://staging.freeflowpages.com/',
-      "bg": 'ffp.jpg',
-      "disabled": false,
-      "initialUrl": 'https://staging.freeflowpages.com/',
-      "visible": false,
-      "id": 0,
-      'cookieUrl':
-          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
-      'color': 0xFF708fa0,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
+      "disabled": true
     },
     {
       "content": Text(
@@ -64,67 +44,32 @@ void main() async {
       'permissions': ['CAMERA']
     },
     {
+      "disabled": true
+    },
+    {
       "content": Text(
-        'OpenBrowser',
+        'FreeFlowPages',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,
         ),
         textAlign: TextAlign.center,
       ),
-      "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org/',
-      "bg": 'jimber.png',
+      "subheading": 'Where privacy and social media co-exist.',
+      "url": 'https://staging.freeflowpages.com/',
+      "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://broker.jimber.org/',
+      "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
-      "id": 2,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
+      "id": 0,
+      'cookieUrl':'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
+      'color': 0xFF708fa0,
       'errorText': false,
       'openInBrowser': false,
       'permissions': []
     },
     {
-      "content": Text(
-        'FreeFlowConnect',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "bg": 'om.jpg',
-      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "disabled": true,
-      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "visible": false,
-      "id": 3,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
-    },
-    {
-      "content": Icon(
-        Icons.add_circle,
-        size: 75,
-        color: Colors.white,
-      ),
-      "subheading": 'New Application',
-      "bg": 'example.jpg',
-      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "disabled": true,
-      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "visible": false,
-      "id": 4,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
+      "disabled": true
     }
   ];
 

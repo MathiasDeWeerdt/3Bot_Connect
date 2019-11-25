@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   AppBar appBar;
   BottomNavBar bottomNavBar;
   BuildContext bodyContext;
+  final navbarKey = new GlobalKey<BottomNavBarState>();
 
   @override
   void initState() {
@@ -318,6 +319,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
 
     bottomNavBar = BottomNavBar(
+      key: navbarKey,
       selectedIndex: selectedIndex,
       onItemTapped: onItemTapped,
     );
@@ -480,6 +482,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  Size getBottomNavbarHeight() {
+    //returns null:
+    final State state = navbarKey.currentState;
+
+    //Error: The getter 'context' was called on null.
+    final RenderBox box = state.context.findRenderObject();
+
+    return box.size;
+  }
+
   Future<void> updateApp(app) async {
     if (!app['disabled']) {
       final emailVer = await getEmail();
@@ -488,7 +500,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           final prefs = await SharedPreferences.getInstance();
           var contextSize = MediaQuery.of(bodyContext).size;
 
-          var preferredHeight = contextSize.height - appBar.preferredSize.height - 56;
+          // preferredHeight is the height of our screen minus the top navbar height and minus the bottom navbar height
+          var preferredHeight = contextSize.height - appBar.preferredSize.height - getBottomNavbarHeight().height;
           var preferredWidth = contextSize.width;
 
           var preferredSize = new Size(preferredWidth, preferredHeight);

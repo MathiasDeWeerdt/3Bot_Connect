@@ -5,26 +5,13 @@ class BottomNavBar extends StatefulWidget {
   int selectedIndex;
   final Function(int) onItemTapped;
 
-  final _BottomNavBarState instance = _BottomNavBarState();
-  BottomNavBar({Key key, this.selectedIndex, this.onItemTapped}) : super(key: key);
+  BottomNavBar({GlobalKey key, this.selectedIndex, this.onItemTapped}) : super(key: key);
 
   @override
-  _BottomNavBarState createState() => instance;
+  State<StatefulWidget> createState() => new BottomNavBarState();
 }
 
-class HexColor extends Color {
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
-}
-
-class _BottomNavBarState extends State<BottomNavBar> {
+class BottomNavBarState extends State<BottomNavBar> {
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   final Color backgroundColor = HexColor("#0F296A");
   final Color selectedItemColor = HexColor("#ffb84d");
@@ -66,4 +53,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
       ],
     );
   }
+}
+
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

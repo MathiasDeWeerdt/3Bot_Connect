@@ -16,6 +16,37 @@ void main() {
 
   apps = [
     {
+      "disabled": true
+    },
+    {
+      "content": Text(
+        'NBH Digital Wallet',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": '',
+      "url": 'https://wallet.jimber.org',
+      "appid": 'wallet.staging.jimber.org',
+      "redirecturl": '/login',
+      "bg": 'nbh.png',
+      "disabled": false,
+      "initialUrl": 'https://wallet.jimber.org',
+      "visible": false,
+      "id": 1,
+      'cookieUrl': '',
+      'localStorageKeys': true,
+      'color': 0xFF34495e,
+      'errorText': false,
+      'openInBrowser': true,
+      'permissions': ['CAMERA']
+    },
+    {
+      "disabled": true
+    },
+    {
       "content": Text(
         'FreeFlowPages',
         style: TextStyle(
@@ -31,37 +62,14 @@ void main() {
       "initialUrl": 'https://freeflowpages.com/',
       "visible": false,
       "id": 0,
-      'cookieUrl':
-          'https://freeflowpages.com/user/auth/external?authclient=3bot',
+      'cookieUrl':'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
       'openInBrowser': false,
       'permissions': []
     },
     {
-      "content": Text(
-        '3bot wallet',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://wallet.threefold.me',
-      "appid": 'wallet.threefold.me',
-      "redirecturl": '/login',
-      "bg": 'nbh.png',
-      "disabled": false,
-      "initialUrl": 'https://wallet.threefold.me',
-      "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'localStorageKeys': true,
-      'color': 0xFF34495e,
-      'errorText': false,
-      'openInBrowser': true,
-      'permissions': ['CAMERA']
+      "disabled": true
     }
   ];
 

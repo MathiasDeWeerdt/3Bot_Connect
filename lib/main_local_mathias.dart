@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'config.dart';
 import 'main.dart';
@@ -69,6 +70,9 @@ void main() async {
     }
   ];
 
-  runApp(config);
-  logger.log("running main_local_mathias.dart");
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(config);
+    logger.log("running main_local_mathias.dart");
+  });
 }

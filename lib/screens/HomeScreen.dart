@@ -412,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text('Welcome to 3bot connect.',
+                Text('Welcome to 3Bot connect.',
                     style: TextStyle(fontSize: 24)),
                 SizedBox(
                   height: 10,

@@ -234,7 +234,7 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      'Hi! What is your 3bot name',
+                      'Hi! What is your 3Bot name',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Divider(

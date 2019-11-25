@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   BottomNavBar bottomNavBar;
   BuildContext bodyContext;
   final navbarKey = new GlobalKey<BottomNavBarState>();
+  bool showSettings = false;
 
   @override
   void initState() {
@@ -364,6 +365,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
         },
       ),
+      floatingActionButton: showSettings == true
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/preference');
+              },
+              child: Icon(Icons.settings),
+            )
+          : null,
     );
   }
 
@@ -376,6 +385,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
       updateApp(apps[index]);
       selectedIndex = index;
+      logger.log("INdex: ", index);
+      if (index == 4) {
+        showSettings = true;
+      } else {
+        showSettings = false;
+      }
     });
   }
 
@@ -451,32 +466,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       new Icon(
-                        CommunityMaterialIcons.qrcode,
+                        CommunityMaterialIcons.backup_restore,
                         color: Colors.white,
                       ),
                       SizedBox(
                         width: 10.0,
                       ),
                       Text(
-                        'Scan QR!',
+                        'Recover account',
                         style: TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/scan');
+                    Navigator.pushNamed(context, '/recover');
                   },
                 ),
               ],
             ),
           ),
           Container(),
-          FlatButton(
-            child: Text('Recover account'),
-            onPressed: () {
-              Navigator.pushNamed(context, '/recover');
-            },
-          ),
         ],
       ),
     );
@@ -501,7 +510,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           var contextSize = MediaQuery.of(bodyContext).size;
 
           // preferredHeight is the height of our screen minus the top navbar height and minus the bottom navbar height
-          var preferredHeight = contextSize.height - appBar.preferredSize.height - getBottomNavbarHeight().height;
+          var preferredHeight = contextSize.height -
+              appBar.preferredSize.height -
+              getBottomNavbarHeight().height;
           var preferredWidth = contextSize.width;
 
           var preferredSize = new Size(preferredWidth, preferredHeight);
@@ -587,7 +598,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(0.0, appBar.preferredSize.height, size.width, size.height),
+                rect: Rect.fromLTWH(
+                    0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: cookieList,
@@ -601,7 +613,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else if (localStorageKeys != null) {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl + '/error',
-                rect: Rect.fromLTWH(0.0, appBar.preferredSize.height, size.width, size.height),
+                rect: Rect.fromLTWH(
+                    0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],

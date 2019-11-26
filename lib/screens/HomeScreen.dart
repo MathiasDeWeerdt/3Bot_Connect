@@ -18,6 +18,7 @@ import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/BottomNavbar.dart';
 import 'package:threebotlogin/widgets/PreferenceWidget.dart';
 import 'package:uni_links/uni_links.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/openKYCService.dart';
@@ -93,7 +94,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
                       Rect.fromLTWH(
-                          0, 75, size.width, size.height - keyboardSize - 75),
+                          0,
+                          appBar.preferredSize.height,
+                          size.width,
+                          size.height -
+                              keyboardSize -
+                              appBar.preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at opening"),
                   print('inside true keyboard')
@@ -102,7 +108,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(0, 75, size.width, size.height - 75),
+                      Rect.fromLTWH(0, appBar.preferredSize.height,
+                          preferredSize.width, preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at closing"),
                   print('inside false keyboard')
@@ -371,15 +378,35 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
         },
       ),
+      floatingActionButtonAnimator: null,
       floatingActionButton: showSettings == true
-          ? FloatingActionButton(
-              onPressed: () {
-                logger.log("Pressed!");
-                setState(() {
-                  showPreference = true;
-                });
-              },
-              child: Icon(Icons.settings),
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15),
+                  child: FloatingActionButton(
+                    heroTag: "Support",
+                    onPressed: () async {
+                      logger.log("Pressed!");
+                      if (await canLaunch("https://t.me/tf_3_botsupport")) {
+                        await launch("https://t.me/tf_3_botsupport");
+                      }
+                    },
+                    child: Icon(Icons.info_outline),
+                  ),
+                ),
+                FloatingActionButton(
+                  heroTag: "Settings",
+                  onPressed: () {
+                    logger.log("Pressed!");
+                    setState(() {
+                      showPreference = true;
+                    });
+                  },
+                  child: Icon(Icons.settings),
+                )
+              ],
             )
           : null,
     );
@@ -553,23 +580,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void openFfp(int urlIndex) async {
-    setState(() {
-      selectedIndex = 3;
-      ffpUrlIndex = urlIndex;
-    });
-    if (preferredSize == null) {
-      preferredSize = preferredSize = getPreferredSizeForWebview();
-    }
-    if (flutterWebViewPlugins[apps[3]['id']] != null) {
-      await flutterWebViewPlugins[apps[3]['id']].close();
-      flutterWebViewPlugins[apps[3]['id']] = null;
-    }
+    var ffpInstance = flutterWebViewPlugins[apps[3]['id']];
 
-    logger.log("Webview was not null but another ffp link was clicked on");
-    await launchApp(preferredSize, apps[3]['id']);
-
-    logger.log("Webviews is showing ffp link");
-    flutterWebViewPlugins[apps[3]['id']].show();
+    if (ffpInstance != null) {
+      setState(() async {
+        await ffpInstance.evalJavascript(
+            "window.location.href = \"" + apps[3]['ffpUrls'][urlIndex] + "\"");
+        await ffpInstance.show();
+        selectedIndex = 3;
+      });
+    } else {}
   }
 
   ConstrainedBox notRegistered(BuildContext context) {

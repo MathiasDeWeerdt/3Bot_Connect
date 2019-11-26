@@ -38,9 +38,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var email;
   String initialLink = null;
   int selectedIndex = 0;
+  int ffpUrlIndex;
   AppBar appBar;
   BottomNavBar bottomNavBar;
   BuildContext bodyContext;
+  Size preferredSize;
+  bool isLoading = false;
+
   final navbarKey = new GlobalKey<BottomNavBarState>();
   bool showSettings = false;
 
@@ -333,8 +337,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         color: Theme.of(context).primaryColor,
         child: Container(
           decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              border: Border.all(color: Colors.red)),
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
           child: Container(
             child: ClipRRect(
               borderRadius: BorderRadius.only(
@@ -383,7 +387,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           flutterWebViewPlugin.hide();
         }
       }
-      updateApp(apps[index]);
+      ffpUrlIndex = null;
       selectedIndex = index;
       logger.log("INdex: ", index);
       if (index == 4) {
@@ -392,20 +396,127 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         showSettings = false;
       }
     });
+    updateApp(apps[index]);
   }
 
   Widget registered(BuildContext context) {
     bodyContext = context;
-    return Column(
+
+    var comingSoonWidget = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text('You are registered.'),
+        Text('Coming soon'),
         SizedBox(
           height: 20,
         ),
-        Text('If you need to login you\'ll get a notification.'),
       ],
     );
+
+    switch (selectedIndex) {
+      case 0:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'assets/3bot_bot.png',
+              height: 100.0,
+            ),
+            Text("Welcome to the first version of your 3Bot.",
+                style: TextStyle(fontSize: 24)),
+            Text("More functionality will be added soon.",
+                style: TextStyle(fontSize: 20)),
+            SizedBox(
+              height: 200,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                padding: new EdgeInsets.all(10.0),
+                child: Text("Your Circles",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                FloatingActionButton(
+                  backgroundColor: Colors.redAccent,
+                  elevation: 0,
+                  onPressed: () => openFfp(0),
+                ),
+                FloatingActionButton(
+                  backgroundColor: Colors.blue,
+                  elevation: 0,
+                  onPressed: () => openFfp(1),
+                ),
+                FloatingActionButton(
+                  backgroundColor: Colors.orange,
+                  elevation: 0,
+                  onPressed: () => openFfp(2),
+                ),
+                FloatingActionButton(
+                  backgroundColor: Colors.redAccent,
+                  elevation: 0,
+                  onPressed: () => openFfp(3),
+                ),
+                FloatingActionButton(
+                  backgroundColor: Colors.grey,
+                  elevation: 0,
+                  onPressed: () => openFfp(4),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                RawMaterialButton(
+                  onPressed: () {},
+                  child: new Icon(
+                    Icons.add,
+                    color: Colors.white,
+                    size: 20.0,
+                  ),
+                  shape: new CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.green,
+                  padding: const EdgeInsets.all(15.0),
+                )
+              ],
+            ),
+          ],
+        );
+      case 2:
+        return comingSoonWidget;
+      default:
+        return isLoading
+            ? Center(child: CircularProgressIndicator())
+            : comingSoonWidget;
+    }
+  }
+
+  void openFfp(int urlIndex) async {
+    setState(() {
+      selectedIndex = 3;
+      ffpUrlIndex = urlIndex;
+    });
+    if (preferredSize == null) {
+      preferredSize = preferredSize = getPreferredSizeForWebview();
+    }
+    if (flutterWebViewPlugins[apps[3]['id']] != null) {
+      await flutterWebViewPlugins[apps[3]['id']].close();
+      flutterWebViewPlugins[apps[3]['id']] = null;
+    }
+
+    logger.log("Webview was not null but another ffp link was clicked on");
+    await launchApp(preferredSize, apps[3]['id']);
+
+    logger.log("Webviews is showing ffp link");
+    flutterWebViewPlugins[apps[3]['id']].show();
   }
 
   ConstrainedBox notRegistered(BuildContext context) {
@@ -501,21 +612,26 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return box.size;
   }
 
+  Size getPreferredSizeForWebview() {
+    var contextSize = MediaQuery.of(bodyContext).size;
+
+    // preferredHeight is the height of our screen minus the top navbar height and minus the bottom navbar height
+    var preferredHeight = contextSize.height -
+        appBar.preferredSize.height -
+        getBottomNavbarHeight().height;
+    var preferredWidth = contextSize.width;
+
+    return new Size(preferredWidth, preferredHeight);
+  }
+
   Future<void> updateApp(app) async {
     if (!app['disabled']) {
       final emailVer = await getEmail();
       if (emailVer['verified']) {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
-          var contextSize = MediaQuery.of(bodyContext).size;
 
-          // preferredHeight is the height of our screen minus the top navbar height and minus the bottom navbar height
-          var preferredHeight = contextSize.height -
-              appBar.preferredSize.height -
-              getBottomNavbarHeight().height;
-          var preferredWidth = contextSize.width;
-
-          var preferredSize = new Size(preferredWidth, preferredHeight);
+          preferredSize = getPreferredSizeForWebview();
 
           if (!prefs.containsKey('firstvalidation')) {
             logger.log(app['url']);
@@ -544,6 +660,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Future<void> launchApp(size, appId) async {
+    this.setState(() => {isLoading = true});
     if (flutterWebViewPlugins[appId] == null) {
       flutterWebViewPlugins[appId] = new FlutterWebviewPlugin();
     }
@@ -556,10 +673,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       var cookies = '';
       final union = '?';
       if (url != '') {
+        if (ffpUrlIndex != null) {
+          url = apps[appId]['ffpUrls'][ffpUrlIndex];
+        }
         final client = http.Client();
-        final request = new http.Request('GET', Uri.parse(url))
+        var request = new http.Request('GET', Uri.parse(url))
           ..followRedirects = false;
-        final response = await client.send(request);
+        var response = await client.send(request);
+
+        if (response.statusCode == 401) {
+          url = apps[appId]['cookieUrl'];
+          request = new http.Request('GET', Uri.parse(url))
+            ..followRedirects = false;
+          response = await client.send(request);
+        }
 
         final state =
             Uri.decodeFull(response.headers['location'].split("&state=")[1]);
@@ -680,6 +807,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       logger.log(loadUrl);
       logger.log(cookies);
+
+      flutterWebViewPlugins[appId].onStateChanged.listen((viewData) async {
+        if (viewData.type == WebViewState.finishLoad) {
+          print('done loading.....');
+          this.setState(() => {isLoading = false});
+        }
+      });
     } on NoSuchMethodError catch (exception) {
       logger.log('error caught: $exception');
       apps[appId]['errorText'] = true;

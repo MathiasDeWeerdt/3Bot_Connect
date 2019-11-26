@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class BottomNavBar extends StatefulWidget {
-  int selectedIndex;
+  final int selectedIndex;
   final Function(int) onItemTapped;
 
   BottomNavBar({GlobalKey key, this.selectedIndex, this.onItemTapped}) : super(key: key);

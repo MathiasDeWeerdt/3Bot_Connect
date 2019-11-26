@@ -95,7 +95,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
                       Rect.fromLTWH(
-                          0, appBar.preferredSize.height, size.width, size.height - keyboardSize - appBar.preferredSize.height),
+                          0,
+                          appBar.preferredSize.height,
+                          size.width,
+                          size.height -
+                              keyboardSize -
+                              appBar.preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at opening"),
                   print('inside true keyboard')
@@ -104,7 +109,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(0, appBar.preferredSize.height, preferredSize.width, preferredSize.height),
+                      Rect.fromLTWH(0, appBar.preferredSize.height,
+                          preferredSize.width, preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at closing"),
                   print('inside false keyboard')
@@ -480,6 +486,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       backgroundColor: Colors.redAccent,
                       elevation: 0,
                       onPressed: () => openFfp(0),
+                      child: CircleAvatar(
+                        backgroundImage: ExactAssetImage(
+                            'assets/circle_images/tftokens.jpg'),
+                        minRadius: 90,
+                        maxRadius: 150,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(5),
@@ -493,6 +505,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       backgroundColor: Colors.greenAccent,
                       elevation: 0,
                       onPressed: () => openFfp(1),
+                      child: CircleAvatar(
+                        backgroundImage: ExactAssetImage(
+                            'assets/circle_images/tfgrid.jpg'),
+                        minRadius: 90,
+                        maxRadius: 150,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(5),
@@ -506,6 +524,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       backgroundColor: Colors.blueAccent,
                       elevation: 0,
                       onPressed: () => openFfp(2),
+                      child: CircleAvatar(
+                        backgroundImage: ExactAssetImage(
+                            'assets/circle_images/tffarmers.jpg'),
+                        minRadius: 90,
+                        maxRadius: 150,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(5),
@@ -519,6 +543,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       backgroundColor: Colors.grey,
                       elevation: 0,
                       onPressed: () => openFfp(3),
+                      child: CircleAvatar(
+                        backgroundImage: ExactAssetImage(
+                            'assets/circle_images/ffnation.jpg'),
+                        minRadius: 90,
+                        maxRadius: 150,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(5),
@@ -532,6 +562,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       backgroundColor: Colors.orangeAccent,
                       elevation: 0,
                       onPressed: () => openFfp(4),
+                      child: CircleAvatar(
+                        backgroundImage: ExactAssetImage(
+                            'assets/circle_images/3bot.jpg'),
+                        minRadius: 90,
+                        maxRadius: 150,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(5),
@@ -903,7 +939,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else {
         flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(0.0, appBar.preferredSize.height, size.width, size.height),
+                rect: Rect.fromLTWH(
+                    0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],

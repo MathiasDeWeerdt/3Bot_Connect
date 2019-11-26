@@ -334,10 +334,12 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
               hexColor = Color(0xff0f296a);
               bool result = await clearData(context: context);
               if (result) {
-                Navigator.popUntil(
-                  context,
-                  ModalRoute.withName('/'),
-                );
+                setState(() {
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName('/'),
+                  );
+                });
               } else {
                 showDialog(
                     context: context,

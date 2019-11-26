@@ -465,7 +465,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-
                 Column(
                   children: <Widget>[
                     FloatingActionButton(
@@ -479,7 +478,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-
                 Column(
                   children: <Widget>[
                     FloatingActionButton(
@@ -493,7 +491,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-
                 Column(
                   children: <Widget>[
                     FloatingActionButton(
@@ -507,7 +504,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-
                 Column(
                   children: <Widget>[
                     FloatingActionButton(
@@ -684,7 +680,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> updateApp(app) async {
     if (!app['disabled']) {
       final emailVer = await getEmail();
-      if (emailVer['verified']) {
+      // If email is verified or wallet app is selected, continue
+      if (emailVer['verified'] || selectedIndex == 1) {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
 
@@ -711,7 +708,50 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             logger.log("Webviews is showing");
             flutterWebViewPlugins[app['id']].show();
           }
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomDialog(
+              image: Icons.error,
+              title: "Service Unavailable",
+              description: new Text("Service Unavailable"),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  child: new Text("Ok"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          );
         }
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => CustomDialog(
+            image: Icons.error,
+            title: "Please verify email",
+            description: new Text("Please verify email before using this app"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              FlatButton(
+                child: new Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: new Text("Resend email"),
+                onPressed: () {
+                  sendVerificationEmail();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
       }
     }
   }
@@ -894,6 +934,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ), //TODO: if iOS -> place link to settings
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
+          FlatButton(
+            child: new Text("Ok"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void sendVerificationEmail() async {
+    final snackbarResending = SnackBar(
+        content: Text('Resending verification email...'),
+        duration: Duration(seconds: 1));
+    Scaffold.of(context).showSnackBar(snackbarResending);
+    await resendVerificationEmail();
+    _showResendEmailDialog();
+  }
+
+  void _showResendEmailDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+        image: Icons.check,
+        title: "Email has been resent.",
+        description: new Text("A new verification email has been sent."),
+        actions: <Widget>[
           FlatButton(
             child: new Text("Ok"),
             onPressed: () {

@@ -65,11 +65,11 @@ void main() async {
       'errorText': false,
       'permissions': [],
       'ffpUrls': [
-        'https://freeflowpages.com/s/3bot/user/auth/external?authclient=3bot',
-        'https://freeflowpages.com/s/tf-tech/user/auth/external?authclient=3bot',
-        'https://freeflowpages.com/s/3bot/user/auth/external?authclient=3bot',
-        'https://freeflowpages.com/s/tf-org-internal/user/auth/external?authclient=3bot',
-        'https://freeflowpages.com/s/3bot/user/auth/external?authclient=3bot'
+        'https://freeflowpages.com/s/3bot',
+        'https://freeflowpages.com/s/tf-tech',
+        'https://freeflowpages.com/s/3bot',
+        'https://freeflowpages.com/s/tf-org-internal',
+        'https://freeflowpages.com/s/3bot'
       ]
     },
     {

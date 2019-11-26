@@ -16,6 +16,7 @@ import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/BottomNavbar.dart';
+import 'package:threebotlogin/widgets/PreferenceWidget.dart';
 import 'package:uni_links/uni_links.dart';
 import 'ErrorScreen.dart';
 import 'RegistrationWithoutScanScreen.dart';
@@ -43,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   BuildContext bodyContext;
   final navbarKey = new GlobalKey<BottomNavBarState>();
   bool showSettings = false;
+  bool showPreference = false;
 
   @override
   void initState() {
@@ -368,7 +370,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       floatingActionButton: showSettings == true
           ? FloatingActionButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/preference');
+                setState(() {
+                  showPreference = true;
+                });
               },
               child: Icon(Icons.settings),
             )
@@ -385,18 +389,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
       updateApp(apps[index]);
       selectedIndex = index;
-      logger.log("INdex: ", index);
+      logger.log("Index: ", index);
       if (index == 4) {
         showSettings = true;
       } else {
         showSettings = false;
+        showPreference = false;
       }
     });
   }
 
   Widget registered(BuildContext context) {
     bodyContext = context;
-    return Column(
+    return showPreference == false ? Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text('You are registered.'),
@@ -405,7 +410,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         Text('If you need to login you\'ll get a notification.'),
       ],
-    );
+    ) : PreferenceWidget();
   }
 
   ConstrainedBox notRegistered(BuildContext context) {

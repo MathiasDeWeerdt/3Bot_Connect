@@ -63,7 +63,14 @@ void main() async {
       'cookieUrl': 'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
-      'permissions': []
+      'permissions': [],
+      'ffpUrls': [
+        'https://freeflowpages.com/s/3bot',
+        'https://freeflowpages.com/s/tf-tech',
+        'https://freeflowpages.com/s/3bot',
+        'https://freeflowpages.com/s/tf-org-internal',
+        'https://freeflowpages.com/s/3bot'
+      ]
     },
     {
       "disabled": true

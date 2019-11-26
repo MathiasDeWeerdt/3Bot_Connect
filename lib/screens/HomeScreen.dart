@@ -424,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-              'assets/3bot_bot.png',
+              'assets/logo.png',
               height: 100.0,
             ),
             Padding(

@@ -66,7 +66,14 @@ void main() async {
       'color': 0xFF708fa0,
       'errorText': false,
       'openInBrowser': false,
-      'permissions': []
+      'permissions': [],
+      'ffpUrls': [
+        'https://freeflowpages.com/s/3bot',
+        'https://freeflowpages.com/s/tf-tech',
+        'https://freeflowpages.com/s/3bot',
+        'https://freeflowpages.com/s/tf-org-internal',
+        'https://freeflowpages.com/s/3bot'
+      ]
     },
     {
       "disabled": true

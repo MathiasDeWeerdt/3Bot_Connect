@@ -88,12 +88,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     Future.delayed(
         Duration(milliseconds: 150),
         () => {
-              if (keyboardUp)
+              // Only resize if not on ios..
+              if (keyboardUp && !Platform.isIOS)
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
                       Rect.fromLTWH(
-                          0, 75, size.width, size.height - keyboardSize - 75),
+                          0, appBar.preferredSize.height, size.width, size.height - keyboardSize - appBar.preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at opening"),
                   print('inside true keyboard')
@@ -102,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(0, 75, size.width, size.height - 75),
+                      Rect.fromLTWH(0, appBar.preferredSize.height, preferredSize.width, preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at closing"),
                   print('inside false keyboard')
@@ -558,7 +559,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ffpUrlIndex = urlIndex;
     });
     if (preferredSize == null) {
-      preferredSize = preferredSize = getPreferredSizeForWebview();
+      preferredSize = getPreferredSizeForWebview();
     }
     if (flutterWebViewPlugins[apps[3]['id']] != null) {
       await flutterWebViewPlugins[apps[3]['id']].close();
@@ -888,7 +889,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else {
         flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(0.0, 75, size.width, size.height - 75),
+                rect: Rect.fromLTWH(0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],

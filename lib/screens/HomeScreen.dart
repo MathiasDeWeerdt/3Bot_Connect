@@ -46,6 +46,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   BuildContext bodyContext;
   Size preferredSize;
   bool isLoading = false;
+  int failedApp;
+
+  // We will treat this error as a singleton
+  WebViewHttpError webViewError;
 
   final navbarKey = new GlobalKey<BottomNavBarState>();
   bool showSettings = false;
@@ -414,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  void onItemTapped(int index) {
+  void onItemTapped(int index) async {
     setState(() {
       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
         if (flutterWebViewPlugin != null) {
@@ -755,6 +759,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           lastAppUsed = app['id'];
           keyboardUsedApp = app['id'];
           print("keyboardapp open: " + keyboardUsedApp.toString());
+          if (failedApp == app['id']) {
+            await launchApp(preferredSize, app['id']);
+            return;
+          }
           if (flutterWebViewPlugins[app['id']] == null) {
             await launchApp(preferredSize, app['id']);
             logger.log("Webviews was null");
@@ -762,7 +770,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           // The launch can change the webview to null if permissions weren't granted
           if (flutterWebViewPlugins[app['id']] != null) {
             logger.log("Webviews is showing");
-            await flutterWebViewPlugins[app['id']].show();
+            if (!isLoading) {
+              await flutterWebViewPlugins[app['id']].show();
+            }
           }
         } else {
           showDialog(
@@ -964,8 +974,49 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       flutterWebViewPlugins[appId].onStateChanged.listen((viewData) async {
         if (viewData.type == WebViewState.finishLoad) {
-          print('done loading.....');
           this.setState(() => {isLoading = false});
+          // Finished loading content ? Show the webview !
+          await flutterWebViewPlugins[appId].show();
+        }
+      });
+
+      flutterWebViewPlugins[appId].onDestroy.listen((_) {
+        if (Navigator.canPop(context)) {
+          Navigator.of(context).pop();
+        }
+      });
+
+      // If a http error occurs withing a webview show service unavailable modal
+      flutterWebViewPlugins[appId].onHttpError.listen((error) {
+        if (error.code != "200" && error != webViewError) {
+          // on ios this error is returned multiple times somehow (have seen apps with same issue).
+          // after we check if this error does not equal the one we get, we render 1 modal (else it will stack these modals).
+          webViewError = error;
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomDialog(
+              image: Icons.error,
+              title: "Service Unavailable",
+              description: new Text("Service Unavailable"),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  child: new Text("Ok"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      // Go back to home screen when user closes modal
+                      selectedIndex = 0;
+                      // Save the failed appId
+                      failedApp = appId;
+                      // As the user dismisses the modal, remove the saved error
+                      webViewError = null;
+                    });
+                  },
+                ),
+              ],
+            ),
+          );
         }
       });
     } on NoSuchMethodError catch (exception) {

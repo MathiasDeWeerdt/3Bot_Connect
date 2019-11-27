@@ -47,21 +47,10 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
             color: Theme.of(context).primaryColor,
             child: Container(
               child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                ),
                 child: Container(
                   child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.0),
-                        topRight: Radius.circular(20.0),
-                      ),
                     ),
                     child: Container(
                       padding: EdgeInsets.only(top: 24.0, bottom: 38.0),

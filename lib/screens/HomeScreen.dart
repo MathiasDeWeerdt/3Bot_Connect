@@ -344,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
 
     return Scaffold(
-      appBar: PreferredSize(child: appBar, preferredSize: Size.fromHeight(20)),
+      appBar: PreferredSize(child: appBar, preferredSize: Size.fromHeight(0)),
       body: Container(
         width: double.infinity,
         height: double.infinity,

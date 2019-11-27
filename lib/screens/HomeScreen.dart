@@ -380,6 +380,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15),
                   child: FloatingActionButton(
+                    heroTag: "fab1",
                     onPressed: () async {
                       logger.log("Pressed!");
                       if (await canLaunch("https://t.me/tf_3_botsupport")) {
@@ -390,6 +391,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                 ),
                 FloatingActionButton(
+                  heroTag: "fab2",
                   onPressed: () {
                     logger.log("Pressed!");
                     setState(() {

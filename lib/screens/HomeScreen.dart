@@ -587,7 +587,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           backgroundColor: HexColor("#2d4052"),
         );
       case 4:
-        return showPreference ? PreferenceWidget() : Text("");
+        return showPreference ? PreferenceWidget(routeToHome: routeToHome) : Text("");
       default:
         return isLoading
             ? Center(child: CircularProgressIndicator())
@@ -596,6 +596,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   backgroundColor: HexColor("#2d4052"),
                 ));
     }
+  }
+
+  void routeToHome () {
+    setState(() {
+      selectedIndex = 0;
+    });
   }
 
   void openFfp(int urlIndex) async {
@@ -804,11 +810,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 child: new Text("Ok"),
                 onPressed: () {
                   Navigator.pop(context);
+                  this.routeToHome();
                 },
               ),
               FlatButton(
                 child: new Text("Resend email"),
                 onPressed: () {
+                  this.routeToHome();
                   sendVerificationEmail();
                   Navigator.pop(context);
                 },
@@ -1003,13 +1011,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   onPressed: () {
                     Navigator.pop(context);
                     setState(() {
-                      // Go back to home screen when user closes modal
-                      selectedIndex = 0;
                       // Save the failed appId
                       failedApp = appId;
                       // As the user dismisses the modal, remove the saved error
                       webViewError = null;
                     });
+                    // Go back to home screen when user closes modal
+                    this.routeToHome();
                   },
                 ),
               ],
@@ -1055,7 +1063,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final snackbarResending = SnackBar(
         content: Text('Resending verification email...'),
         duration: Duration(seconds: 1));
-    Scaffold.of(context).showSnackBar(snackbarResending);
+    Scaffold.of(bodyContext).showSnackBar(snackbarResending);
     await resendVerificationEmail();
     _showResendEmailDialog();
   }

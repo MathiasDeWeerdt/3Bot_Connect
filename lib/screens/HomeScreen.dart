@@ -506,8 +506,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       elevation: 0,
                       onPressed: () => openFfp(1),
                       child: CircleAvatar(
-                        backgroundImage: ExactAssetImage(
-                            'assets/circle_images/tfgrid.jpg'),
+                        backgroundImage:
+                            ExactAssetImage('assets/circle_images/tfgrid.jpg'),
                         minRadius: 90,
                         maxRadius: 150,
                       ),
@@ -563,8 +563,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       elevation: 0,
                       onPressed: () => openFfp(4),
                       child: CircleAvatar(
-                        backgroundImage: ExactAssetImage(
-                            'assets/circle_images/3bot.jpg'),
+                        backgroundImage:
+                            ExactAssetImage('assets/circle_images/3bot.jpg'),
                         minRadius: 90,
                         maxRadius: 150,
                       ),
@@ -613,6 +613,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void openFfp(int urlIndex) async {
     var ffpInstance = flutterWebViewPlugins[apps[3]['id']];
 
+    if (ffpInstance == null) {
+      await updateApp(apps[3]);
+    }
+
     if (ffpInstance != null) {
       setState(() async {
         await ffpInstance.evalJavascript(
@@ -620,7 +624,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         await ffpInstance.show();
         selectedIndex = 3;
       });
-    } else {}
+    }
   }
 
   ConstrainedBox notRegistered(BuildContext context) {
@@ -741,9 +745,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           if (!prefs.containsKey('firstvalidation')) {
             logger.log(app['url']);
             logger.log("launching app " + app['id'].toString());
-            launchApp(preferredSize, app['id']);
 
-            prefs.setBool('firstvalidation', true);
+            await launchApp(preferredSize, app['id']);
+            await prefs.setBool('firstvalidation', true);
           }
 
           showButton = true;
@@ -757,7 +761,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           // The launch can change the webview to null if permissions weren't granted
           if (flutterWebViewPlugins[app['id']] != null) {
             logger.log("Webviews is showing");
-            flutterWebViewPlugins[app['id']].show();
+            await flutterWebViewPlugins[app['id']].show();
           }
         } else {
           showDialog(
@@ -932,12 +936,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         logger.log("!!!loadUrl: " + loadUrl);
 
-        flutterWebViewPlugins[appId].reloadUrl(loadUrl);
+        await flutterWebViewPlugins[appId].reloadUrl(loadUrl);
         print("Eval result: $res");
 
         logger.log("Launching App" + [appId].toString());
       } else {
-        flutterWebViewPlugins[appId]
+        await flutterWebViewPlugins[appId]
             .launch(loadUrl,
                 rect: Rect.fromLTWH(
                     0.0, appBar.preferredSize.height, size.width, size.height),
@@ -969,8 +973,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-  void showPermissionsNeeded(BuildContext context, appId) {
-    flutterWebViewPlugins[appId].close();
+  void showPermissionsNeeded(BuildContext context, appId) async {
+    await flutterWebViewPlugins[appId].close();
     flutterWebViewPlugins[appId] = null;
 
     showDialog(

@@ -99,7 +99,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
                       Rect.fromLTWH(
-                          0, 30, size.width, size.height - keyboardSize - 30),
+                          0,
+                          appBar.preferredSize.height,
+                          size.width,
+                          size.height -
+                              keyboardSize -
+                              appBar.preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at opening"),
                   print('inside true keyboard')
@@ -108,8 +113,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(
-                          0, 30, preferredSize.width, preferredSize.height),
+                      Rect.fromLTWH(0, appBar.preferredSize.height,
+                          preferredSize.width, preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at closing"),
                   print('inside false keyboard')
@@ -327,6 +332,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    appBar = AppBar(
+      backgroundColor: HexColor("#2d4052"),
+      elevation: 0.0,
+    );
+
     bottomNavBar = BottomNavBar(
       key: navbarKey,
       selectedIndex: selectedIndex,
@@ -334,6 +344,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
 
     return Scaffold(
+      appBar: PreferredSize(child: appBar, preferredSize: Size.fromHeight(20)),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -343,21 +354,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: Container(
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-              child: FutureBuilder(
-                future: getDoubleName(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    return registered(context);
-                  } else {
-                    return notRegistered(context);
-                  }
-                },
-              ),
+            child: FutureBuilder(
+              future: getDoubleName(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return registered(context);
+                } else {
+                  return notRegistered(context);
+                }
+              },
             ),
           ),
         ),
@@ -418,9 +423,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       selectedIndex = index;
       logger.log("Index: ", index);
       if (index == 4) {
-        showSettings = true;
+        // showSettings = true;
+        showPreference = true;
       } else {
-        showSettings = false;
+        // showSettings = false;
         showPreference = false;
       }
     });
@@ -465,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               alignment: Alignment.centerLeft,
               child: Container(
                 padding: new EdgeInsets.all(10.0),
-                child: Text("Your Circles",
+                child: Text("Pages",
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               ),
@@ -574,33 +580,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             SizedBox(
               height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                RawMaterialButton(
-                  onPressed: () {},
-                  child: new Icon(
-                    Icons.add,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  shape: new CircleBorder(),
-                  elevation: 2.0,
-                  fillColor: Colors.green,
-                  padding: const EdgeInsets.all(1.0),
-                )
-              ],
-            ),
           ],
         );
       case 2:
-        return comingSoonWidget;
+        return Scaffold(
+          backgroundColor: HexColor("#2d4052"),
+        );
       case 4:
         return showPreference ? PreferenceWidget() : Text("");
       default:
         return isLoading
             ? Center(child: CircularProgressIndicator())
-            : comingSoonWidget;
+            : Container(
+                child: Scaffold(
+                  backgroundColor: HexColor("#2d4052"),
+                ));
     }
   }
 
@@ -622,7 +616,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             await ffpInstance.evalJavascript("window.location.href = \"" +
                 apps[3]['ffpUrls'][urlIndex] +
                 "\"");
-                callbackSuccess = true;
+            callbackSuccess = true;
           }
         });
       } else {
@@ -733,8 +727,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     var contextSize = MediaQuery.of(bodyContext).size;
 
     // preferredHeight is the height of our screen minus the top navbar height and minus the bottom navbar height
-    var preferredHeight =
-        contextSize.height - 30 - getBottomNavbarHeight().height;
+    var preferredHeight = contextSize.height -
+        appBar.preferredSize.height -
+        getBottomNavbarHeight().height;
     var preferredWidth = contextSize.width;
 
     return new Size(preferredWidth, preferredHeight);
@@ -891,7 +886,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         await flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(0.0, 30, size.width, size.height),
+                rect: Rect.fromLTWH(
+                    0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: cookieList,
@@ -905,7 +901,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else if (localStorageKeys != null) {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl + '/error',
-                rect: Rect.fromLTWH(0.0, 30, size.width, size.height),
+                rect: Rect.fromLTWH(
+                    0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],
@@ -955,7 +952,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(0.0, 30, size.width, size.height),
+                rect: Rect.fromLTWH(
+                    0.0, appBar.preferredSize.height, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],
@@ -1080,4 +1078,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ),
     );
   }
+}
+
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

@@ -63,7 +63,7 @@ class ReuseableTextStep extends StatelessWidget {
               size: 22.0,
             ),
             Text(
-              "This phrase is used to recover your account.",
+              "Seed phrase is needed to recover.",
               style: TextStyle(fontSize: 13),
             ),
           ],

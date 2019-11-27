@@ -403,6 +403,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     logger.log("Pressed!");
                     setState(() {
                       showPreference = true;
+                      showSettings = false;
                     });
                   },
                   child: Icon(Icons.settings),

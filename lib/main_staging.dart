@@ -68,11 +68,11 @@ void main() async {
       'openInBrowser': false,
       'permissions': [],
       'ffpUrls': [
-        'https://staging.freeflowpages.com/s/3bot',
-        'https://staging.freeflowpages.com/s/tf-tech',
-        'https://staging.freeflowpages.com/s/3bot',
-        'https://staging.freeflowpages.com/s/tf-org-internal',
-        'https://staging.freeflowpages.com/s/3bot'
+        'https://freeflowpages.com/s/tf-tokens',
+        'https://freeflowpages.com/s/tf-grid-users',
+        'https://freeflowpages.com/s/tf-grid-farming',
+        'https://freeflowpages.com/s/freeflownation',
+        'https://freeflowpages.com/s/3bot'
       ]
     },
     {

@@ -589,18 +589,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           backgroundColor: HexColor("#2d4052"),
         );
       case 4:
-        return showPreference ? PreferenceWidget(routeToHome: routeToHome) : Text("");
+        return showPreference
+            ? PreferenceWidget(routeToHome: routeToHome)
+            : Text("");
       default:
         return isLoading
             ? Center(child: CircularProgressIndicator())
             : Container(
                 child: Scaffold(
-                  backgroundColor: HexColor("#2d4052"),
-                ));
+                backgroundColor: HexColor("#2d4052"),
+              ));
     }
   }
 
-  void routeToHome () {
+  void routeToHome() {
     setState(() {
       selectedIndex = 0;
     });
@@ -628,13 +630,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
         });
       } else {
-        await ffpInstance.evalJavascript(
-            "window.location.href = \"" + apps[3]['ffpUrls'][urlIndex] + "\"");
-        await ffpInstance.show();
+        setState(() {
+          onItemTapped(3);
+        });
+        ffpInstance = flutterWebViewPlugins[apps[3]['id']];
+        var url = apps[3]['ffpUrls'][urlIndex];
+        // await ffpInstance.evalJavascript("window.location.href = \"" + url + "\"");
       }
-      setState(() {
-        selectedIndex = 3;
-      });
     }
   }
 

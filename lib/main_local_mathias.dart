@@ -65,10 +65,10 @@ void main() async {
       'errorText': false,
       'permissions': [],
       'ffpUrls': [
-        'https://freeflowpages.com/s/3bot',
-        'https://freeflowpages.com/s/tf-tech',
-        'https://freeflowpages.com/s/3bot',
-        'https://freeflowpages.com/s/tf-org-internal',
+        'https://freeflowpages.com/s/tf-tokens',
+        'https://freeflowpages.com/s/tf-grid-users',
+        'https://freeflowpages.com/s/tf-grid-farming',
+        'https://freeflowpages.com/s/freeflownation',
         'https://freeflowpages.com/s/3bot'
       ]
     },

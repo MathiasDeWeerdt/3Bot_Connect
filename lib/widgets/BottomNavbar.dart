@@ -15,7 +15,7 @@ class BottomNavBar extends StatefulWidget {
 class BottomNavBarState extends State<BottomNavBar> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final Color backgroundColor = HexColor("#0F296A");
+  final Color backgroundColor = HexColor("#2d4052");
   final Color selectedItemColor = HexColor("#ffb84d");
 
   void _onItemTapped(int index) {

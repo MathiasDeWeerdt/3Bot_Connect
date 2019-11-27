@@ -95,12 +95,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
                       Rect.fromLTWH(
-                          0,
-                          appBar.preferredSize.height,
-                          size.width,
-                          size.height -
-                              keyboardSize -
-                              appBar.preferredSize.height),
+                          0, 30, size.width, size.height - keyboardSize - 30),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at opening"),
                   print('inside true keyboard')
@@ -109,8 +104,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 {
                   keyboardSize = MediaQuery.of(context).viewInsets.bottom,
                   flutterWebViewPlugins[keyboardUsedApp].resize(
-                      Rect.fromLTWH(0, appBar.preferredSize.height,
-                          preferredSize.width, preferredSize.height),
+                      Rect.fromLTWH(
+                          0, 30, preferredSize.width, preferredSize.height),
                       instance: appKeyboard.webview),
                   print(keyboardSize.toString() + " size keyboard at closing"),
                   print('inside false keyboard')
@@ -328,11 +323,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    appBar = AppBar(
-      backgroundColor: hexColor,
-      elevation: 0.0,
-    );
-
     bottomNavBar = BottomNavBar(
       key: navbarKey,
       selectedIndex: selectedIndex,
@@ -340,7 +330,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
 
     return Scaffold(
-      appBar: PreferredSize(child: appBar, preferredSize: Size.fromHeight(20)),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -387,7 +376,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 Padding(
                   padding: EdgeInsets.only(bottom: 15),
                   child: FloatingActionButton(
-                    heroTag: "Support",
                     onPressed: () async {
                       logger.log("Pressed!");
                       if (await canLaunch("https://t.me/tf_3_botsupport")) {
@@ -398,7 +386,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                 ),
                 FloatingActionButton(
-                  heroTag: "Settings",
                   onPressed: () {
                     logger.log("Pressed!");
                     setState(() {
@@ -613,16 +600,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void openFfp(int urlIndex) async {
     var ffpInstance = flutterWebViewPlugins[apps[3]['id']];
+    bool hadToStartInstance = false;
+    bool callbackSuccess = false;
 
     if (ffpInstance == null) {
       await updateApp(apps[3]);
+      ffpInstance = flutterWebViewPlugins[apps[3]['id']];
+      hadToStartInstance = true;
     }
 
     if (ffpInstance != null) {
-      setState(() async {
+      if (hadToStartInstance) {
+        ffpInstance.onStateChanged.listen((viewData) async {
+          if (viewData.type == WebViewState.finishLoad && !callbackSuccess) {
+            await ffpInstance.evalJavascript("window.location.href = \"" +
+                apps[3]['ffpUrls'][urlIndex] +
+                "\"");
+                callbackSuccess = true;
+          }
+        });
+      } else {
         await ffpInstance.evalJavascript(
             "window.location.href = \"" + apps[3]['ffpUrls'][urlIndex] + "\"");
         await ffpInstance.show();
+      }
+      setState(() {
         selectedIndex = 3;
       });
     }
@@ -725,9 +727,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     var contextSize = MediaQuery.of(bodyContext).size;
 
     // preferredHeight is the height of our screen minus the top navbar height and minus the bottom navbar height
-    var preferredHeight = contextSize.height -
-        appBar.preferredSize.height -
-        getBottomNavbarHeight().height;
+    var preferredHeight =
+        contextSize.height - 30 - getBottomNavbarHeight().height;
     var preferredWidth = contextSize.width;
 
     return new Size(preferredWidth, preferredHeight);
@@ -876,10 +877,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         var cookieList = List<Cookie>();
         cookieList.add(Cookie.fromSetCookieValue(cookies));
 
-        flutterWebViewPlugins[appId]
+        await flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(
-                    0.0, appBar.preferredSize.height, size.width, size.height),
+                rect: Rect.fromLTWH(0.0, 30, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: cookieList,
@@ -893,8 +893,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else if (localStorageKeys != null) {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl + '/error',
-                rect: Rect.fromLTWH(
-                    0.0, appBar.preferredSize.height, size.width, size.height),
+                rect: Rect.fromLTWH(0.0, 30, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],
@@ -944,8 +943,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else {
         await flutterWebViewPlugins[appId]
             .launch(loadUrl,
-                rect: Rect.fromLTWH(
-                    0.0, appBar.preferredSize.height, size.width, size.height),
+                rect: Rect.fromLTWH(0.0, 30, size.width, size.height),
                 userAgent: kAndroidUserAgent,
                 hidden: true,
                 cookies: [],

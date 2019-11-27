@@ -413,6 +413,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void onItemTapped(int index) async {
+    if (isLoading) return;
+
     setState(() {
       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
         if (flutterWebViewPlugin != null) {

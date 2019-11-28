@@ -412,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  void onItemTapped(int index) async {
+  void onItemTapped(int index) {
     if (isLoading) return;
 
     setState(() {
@@ -609,13 +609,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void openFfp(int urlIndex) async {
-    var ffpInstance = flutterWebViewPlugins[apps[3]['id']];
+    var ffpInstance = flutterWebViewPlugins[3];
     bool hadToStartInstance = false;
     bool callbackSuccess = false;
 
+    setState(() {
+      for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+        if (flutterWebViewPlugin != null) {
+          flutterWebViewPlugin.dispose();
+        }
+      }
+      selectedIndex = 3;
+    });
+
     if (ffpInstance == null) {
       await updateApp(apps[3]);
-      ffpInstance = flutterWebViewPlugins[apps[3]['id']];
+      ffpInstance = flutterWebViewPlugins[3];
       hadToStartInstance = true;
     }
 
@@ -630,12 +639,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
         });
       } else {
-        setState(() {
-          onItemTapped(3);
-        });
-        ffpInstance = flutterWebViewPlugins[apps[3]['id']];
         var url = apps[3]['ffpUrls'][urlIndex];
-        // await ffpInstance.evalJavascript("window.location.href = \"" + url + "\"");
+
+        await ffpInstance.reloadUrl(url);
+        return ffpInstance.show();
       }
     }
   }

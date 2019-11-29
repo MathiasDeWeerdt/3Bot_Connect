@@ -66,10 +66,36 @@ void main() {
       'color': 0xFF708fa0,
       'errorText': false,
       'openInBrowser': false,
-      'permissions': []
+      'permissions': [],
+      'ffpUrls': [
+        'https://staging.freeflowpages.com/s/tf-tokens',
+        'https://staging.freeflowpages.com/s/tf-grid-users',
+        'https://staging.freeflowpages.com/s/tf-grid-farming',
+        'https://staging.freeflowpages.com/s/freeflownation',
+        'https://staging.freeflowpages.com/s/3bot'
+      ]
     },
     {
       "disabled": true
+    },
+    {
+      "content": Text(
+        'ChatApp',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'Chat with your 3Bot',
+      "disabled": false,
+      "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "visible": false,
+      "id": 5,
+      'color': 0xFF708fa0,
+      'errorText': false,
+      'permissions': [],
     }
   ];
 

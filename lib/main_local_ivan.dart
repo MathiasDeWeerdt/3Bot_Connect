@@ -15,9 +15,7 @@ void main() async {
   init();
 
   apps = [
-    {
-      "disabled": true
-    },
+    {"disabled": true},
     {
       "content": Text(
         'NBH Digital Wallet',
@@ -43,9 +41,7 @@ void main() async {
       'openInBrowser': true,
       'permissions': ['CAMERA']
     },
-    {
-      "disabled": true
-    },
+    {"disabled": true},
     {
       "content": Text(
         'FreeFlowPages',
@@ -62,14 +58,39 @@ void main() async {
       "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
       "id": 3,
-      'cookieUrl':'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
+      'cookieUrl':
+          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
       'openInBrowser': false,
       'permissions': []
     },
+    {"disabled": true},
     {
-      "disabled": true
+      "content": Text(
+        'ChatApp',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'Chat with your 3Bot',
+      "disabled": false,
+      "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "visible": false,
+      "id": 5,
+      'color': 0xFF708fa0,
+      'errorText': false,
+      'permissions': [],
+      'ffpUrls': [
+        'https://staging.freeflowpages.com/s/tf-tokens',
+        'https://staging.freeflowpages.com/s/tf-grid-users',
+        'https://staging.freeflowpages.com/s/tf-grid-farming',
+        'https://staging.freeflowpages.com/s/freeflownation',
+        'https://staging.freeflowpages.com/s/3bot'
+      ]
     }
   ];
 

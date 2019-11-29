@@ -73,7 +73,6 @@ void main() async {
       ]
     },
     {
-      "disabled": false,
       "content": Text(
         'ChatApp',
         style: TextStyle(
@@ -84,11 +83,10 @@ void main() async {
       ),
       "subheading": 'Chat with your 3Bot',
       "disabled": false,
-      "url": 'https://google.com/',
-      "initialUrl": 'https://google.com/',
-      'cookieUrl': '',
+      "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "visible": false,
-      "id": 4,
+      "id": 5,
       'color': 0xFF708fa0,
       'errorText': false,
       'permissions': [],

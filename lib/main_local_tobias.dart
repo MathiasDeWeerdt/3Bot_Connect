@@ -70,6 +70,25 @@ void main() async {
     },
     {
       "disabled": true
+    },
+    {
+      "content": Text(
+        'ChatApp',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'Chat with your 3Bot',
+      "disabled": false,
+      "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "visible": false,
+      "id": 5,
+      'color': 0xFF708fa0,
+      'errorText': false,
+      'permissions': [],
     }
   ];
 

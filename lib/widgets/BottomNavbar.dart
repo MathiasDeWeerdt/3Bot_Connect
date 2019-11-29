@@ -16,7 +16,6 @@ class BottomNavBarState extends State<BottomNavBar> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   final Color backgroundColor = HexColor("#2d4052");
-  final Color selectedItemColor = HexColor("#ffb84d");
 
   void _onItemTapped(int index) {
     if (index == 2) return;
@@ -28,10 +27,10 @@ class BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      backgroundColor: backgroundColor,
+      backgroundColor: Theme.of(context).primaryColor,
       currentIndex: widget.selectedIndex,
-      selectedItemColor: selectedItemColor,
-      unselectedItemColor: Colors.white,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white.withAlpha(100),
       onTap: _onItemTapped,
       items: [
         new BottomNavigationBarItem(
@@ -43,10 +42,10 @@ class BottomNavBarState extends State<BottomNavBar> {
           title: Text('Pay'),
         ),
         new BottomNavigationBarItem(
-            backgroundColor: Colors.grey,
+            backgroundColor: Colors.grey.shade700,
             icon: Icon(
               Icons.supervised_user_circle,
-              color: Colors.grey,
+              color: Colors.grey.shade700,
             ),
             title: new RichText(
               text: new TextSpan(
@@ -54,7 +53,7 @@ class BottomNavBarState extends State<BottomNavBar> {
                   new TextSpan(
                     text: "Circles",
                     style: new TextStyle(
-                      color: Colors.grey,
+                      color: Colors.grey.shade700,
                     ),
                   ),
                 ],

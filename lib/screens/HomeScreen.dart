@@ -16,6 +16,7 @@ import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/BottomNavbar.dart';
+import 'package:threebotlogin/widgets/CustomScaffold.dart';
 import 'package:threebotlogin/widgets/PreferenceWidget.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -340,45 +341,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       onItemTapped: onItemTapped,
     );
 
-    return Scaffold(
-      appBar: PreferredSize(child: appBar, preferredSize: Size.fromHeight(0)),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          FloatingActionButton(
-              elevation: 10.0,
-              child: Icon(Icons.settings),
-              onPressed: () {
-                setState(() {
-                  showPreference = true;
-                });
-                print('I am Floating button');
-              }),
-        ],
+    return CustomScaffold(
+      renderBackground: selectedIndex != 0,
+      appBar: appBar,
+      body: FutureBuilder(
+        future: getDoubleName(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return registered(context);
+          } else {
+            return notRegistered(context);
+          }
+        },
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Theme.of(context).primaryColor,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          child: Container(
-            child: FutureBuilder(
-              future: getDoubleName(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return registered(context);
-                } else {
-                  return notRegistered(context);
-                }
-              },
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: FutureBuilder(
+      footer: FutureBuilder(
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
@@ -388,38 +364,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
         },
       ),
-      // floatingActionButtonAnimator: null,
-      // floatingActionButton: showSettings == true
-      //     ? Column(
-      //         mainAxisAlignment: MainAxisAlignment.end,
-      //         children: <Widget>[
-      //           Padding(
-      //             padding: EdgeInsets.only(bottom: 15),
-      //             child: FloatingActionButton(
-      //               heroTag: "fab1",
-      //               onPressed: () async {
-      //                 logger.log("Pressed!");
-      //                 if (await canLaunch("https://t.me/tf_3_botsupport")) {
-      //                   await launch("https://t.me/tf_3_botsupport");
-      //                 }
-      //               },
-      //               child: Icon(Icons.info_outline),
-      //             ),
-      //           ),
-      //           FloatingActionButton(
-      //             heroTag: "fab2",
-      //             onPressed: () {
-      //               logger.log("Pressed!");
-      //               setState(() {
-      //                 showPreference = true;
-      //                 showSettings = false;
-      //               });
-      //             },
-      //             child: Icon(Icons.settings),
-      //           )
-      //         ],
-      //       )
-      //     : null,
     );
   }
 
@@ -435,160 +379,175 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ffpUrlIndex = null;
       selectedIndex = index;
       logger.log("Index: ", index);
+      if (index == 4) {
+        showPreference = true;
+      } else {
+        showPreference = false;
+      }
     });
     updateApp(apps[index]);
   }
 
   Widget registered(BuildContext context) {
     bodyContext = context;
-    if (showPreference) {
-      return PreferenceWidget(routeToHome: routeToHome);
-    }
 
     switch (selectedIndex) {
       case 0:
         return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Row(
+            SizedBox(height: 50.0),
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset(
-                  'assets/logo.png',
-                  height: 100.0,
+                Container(
+                  width: 200.0,
+                  height: 200.0,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        fit: BoxFit.fill, image: AssetImage('assets/logo.png')),
+                  ),
                 ),
-                FloatingActionButton(
-                  onPressed: () {
-                    onItemTapped(4);
-                  },
-                  child: Icon(Icons.chat_bubble),
+                SizedBox(height: 10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/newLogo.png',
+                      height: 40,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        "Bot",
+                        style: TextStyle(
+                            fontSize: 40, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            Padding(
-                padding: EdgeInsets.only(top: 15, bottom: 5),
-                child: Text(
-                  "Welcome to the first version of your 3Bot.",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                )),
-            Text("More functionality will be added soon.",
-                style: TextStyle(fontSize: 18)),
-            SizedBox(
-              height: 150,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                padding: new EdgeInsets.all(10.0),
-                child: Text("Pages",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
+            Column(
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.redAccent,
-                      elevation: 0,
-                      onPressed: () => openFfp(0),
-                      child: CircleAvatar(
-                        backgroundImage: ExactAssetImage(
-                            'assets/circle_images/tftokens.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("TF Tokens"),
-                    ),
-                  ],
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: new EdgeInsets.all(10.0),
+                    child: Text("Pages",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
+                  ),
                 ),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.greenAccent,
-                      elevation: 0,
-                      onPressed: () => openFfp(1),
-                      child: CircleAvatar(
-                        backgroundImage:
-                            ExactAssetImage('assets/circle_images/tfgrid.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.redAccent,
+                          elevation: 0,
+                          onPressed: () => openFfp(0),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/tftokens.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("TF Tokens"),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("TF Grid"),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.greenAccent,
+                          elevation: 0,
+                          onPressed: () => openFfp(1),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/tfgrid.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("TF Grid"),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.blueAccent,
-                      elevation: 0,
-                      onPressed: () => openFfp(2),
-                      child: CircleAvatar(
-                        backgroundImage: ExactAssetImage(
-                            'assets/circle_images/tffarmers.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.blueAccent,
+                          elevation: 0,
+                          onPressed: () => openFfp(2),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/tffarmers.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("TF Farmers"),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("TF Farmers"),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.grey,
+                          elevation: 0,
+                          onPressed: () => openFfp(3),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/ffnation.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("FF Nation"),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.grey,
-                      elevation: 0,
-                      onPressed: () => openFfp(3),
-                      child: CircleAvatar(
-                        backgroundImage: ExactAssetImage(
-                            'assets/circle_images/ffnation.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("FF Nation"),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.orangeAccent,
-                      elevation: 0,
-                      onPressed: () => openFfp(4),
-                      child: CircleAvatar(
-                        backgroundImage:
-                            ExactAssetImage('assets/circle_images/3bot.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("3Bot"),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.orangeAccent,
+                          elevation: 0,
+                          onPressed: () => openFfp(4),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/3bot.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("3Bot"),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
-            SizedBox(
-              height: 10,
+            Text(
+              "More functionality will be added soon.",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         );
@@ -603,10 +562,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       default:
         return isLoading
             ? Center(child: CircularProgressIndicator())
-            : Container(
-                child: Scaffold(
-                backgroundColor: HexColor("#2d4052"),
-              ));
+            : Container();
     }
   }
 
@@ -677,9 +633,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: <Widget>[
                 Text('Welcome to 3Bot connect.',
                     style: TextStyle(fontSize: 24)),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 RaisedButton(
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30),
@@ -692,9 +646,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         CommunityMaterialIcons.account_edit,
                         color: Colors.white,
                       ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
+                      SizedBox(width: 10.0),
                       Text(
                         'Register Now!',
                         style: TextStyle(color: Colors.white),
@@ -717,9 +669,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         CommunityMaterialIcons.backup_restore,
                         color: Colors.white,
                       ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
+                      SizedBox(width: 10.0),
                       Text(
                         'Recover account',
                         style: TextStyle(color: Colors.white),
@@ -740,10 +690,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Size getBottomNavbarHeight() {
-    //returns null:
     final State state = navbarKey.currentState;
-
-    //Error: The getter 'context' was called on null.
     final RenderBox box = state.context.findRenderObject();
 
     return box.size;
@@ -752,7 +699,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Size getPreferredSizeForWebview() {
     var contextSize = MediaQuery.of(bodyContext).size;
 
-    // preferredHeight is the height of our screen minus the top navbar height and minus the bottom navbar height
     var preferredHeight = contextSize.height -
         appBar.preferredSize.height -
         getBottomNavbarHeight().height;
@@ -764,7 +710,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> updateApp(app) async {
     if (!app['disabled']) {
       final emailVer = await getEmail();
-      // If email is verified or wallet app is selected, continue
       if (emailVer['verified'] || selectedIndex == 1) {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
@@ -791,7 +736,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             await launchApp(preferredSize, app['id']);
             logger.log("Webviews was null");
           }
-          // The launch can change the webview to null if permissions weren't granted
           if (flutterWebViewPlugins[app['id']] != null) {
             logger.log("Webviews is showing");
             if (!isLoading) {
@@ -806,7 +750,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               title: "Service Unavailable",
               description: new Text("Service Unavailable"),
               actions: <Widget>[
-                // usually buttons at the bottom of the dialog
                 FlatButton(
                   child: new Text("Ok"),
                   onPressed: () {
@@ -825,7 +768,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             title: "Please verify email",
             description: new Text("Please verify email before using this app"),
             actions: <Widget>[
-              // usually buttons at the bottom of the dialog
               FlatButton(
                 child: new Text("Ok"),
                 onPressed: () {
@@ -952,7 +894,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         var jsToExecute =
             "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
 
-        // This should be removed in the future!
         sleep(const Duration(seconds: 1));
 
         final res =
@@ -1001,7 +942,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       flutterWebViewPlugins[appId].onStateChanged.listen((viewData) async {
         if (viewData.type == WebViewState.finishLoad) {
           this.setState(() => {isLoading = false});
-          // Finished loading content ? Show the webview !
           await flutterWebViewPlugins[appId].show();
         }
       });
@@ -1012,11 +952,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
       });
 
-      // If a http error occurs withing a webview show service unavailable modal
       flutterWebViewPlugins[appId].onHttpError.listen((error) {
         if (error.code != "200" && error != webViewError) {
-          // on ios this error is returned multiple times somehow (have seen apps with same issue).
-          // after we check if this error does not equal the one we get, we render 1 modal (else it will stack these modals).
           webViewError = error;
           showDialog(
             context: context,
@@ -1031,12 +968,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   onPressed: () {
                     Navigator.pop(context);
                     setState(() {
-                      // Save the failed appId
                       failedApp = appId;
-                      // As the user dismisses the modal, remove the saved error
                       webViewError = null;
                     });
-                    // Go back to home screen when user closes modal
                     this.routeToHome();
                   },
                 ),
@@ -1069,9 +1003,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             "Some ungranted permissions are needed to run this.",
             textAlign: TextAlign.center,
           ),
-        ), //TODO: if iOS -> place link to settings
+        ),
         actions: <Widget>[
-          // usually buttons at the bottom of the dialog
           FlatButton(
             child: new Text("Ok"),
             onPressed: () {

@@ -345,40 +345,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return CustomScaffold(
       renderBackground: selectedIndex != 0,
       appBar: appBar,
-      floatingActionButton: FutureBuilder(
-        future: getDoubleName(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            if (selectedIndex == 0) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  showPreference
-                      ? FloatingActionButton(
-                          elevation: 10.0,
-                          child: Icon(Icons.arrow_back),
-                          onPressed: () {
-                            setState(() {
-                              showPreference = false;
-                            });
-                          })
-                      : FloatingActionButton(
-                          elevation: 10.0,
-                          child: Icon(Icons.settings),
-                          onPressed: () {
-                            setState(() {
-                              showPreference = true;
-                            });
-                          })
-                ],
-              );
-            } else {
-              return new Container(width: 0.0, height: 0.0);
-            }
-          } else {
-            return new Container(width: 0.0, height: 0.0);
-          }
-        }),
       body: FutureBuilder(
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {

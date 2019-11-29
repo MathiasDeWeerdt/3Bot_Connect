@@ -16,6 +16,7 @@ import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/BottomNavbar.dart';
+import 'package:threebotlogin/widgets/CustomScaffold.dart';
 import 'package:threebotlogin/widgets/PreferenceWidget.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -332,42 +333,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    appBar = AppBar(
-      backgroundColor: HexColor("#2d4052"),
-      elevation: 0.0,
-    );
-
     bottomNavBar = BottomNavBar(
       key: navbarKey,
       selectedIndex: selectedIndex,
       onItemTapped: onItemTapped,
     );
 
-    return Scaffold(
-      appBar: PreferredSize(child: appBar, preferredSize: Size.fromHeight(0)),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Theme.of(context).primaryColor,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          child: Container(
-            child: FutureBuilder(
-              future: getDoubleName(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return registered(context);
-                } else {
-                  return notRegistered(context);
-                }
-              },
-            ),
-          ),
-        ),
+    return CustomScaffold(
+      body: FutureBuilder(
+        future: getDoubleName(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return registered(context);
+          } else {
+            return notRegistered(context);
+          }
+        },
       ),
-      bottomNavigationBar: FutureBuilder(
+      footer: FutureBuilder(
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
@@ -377,38 +360,38 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
         },
       ),
-      floatingActionButtonAnimator: null,
-      floatingActionButton: showSettings == true
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(bottom: 15),
-                  child: FloatingActionButton(
-                    heroTag: "fab1",
-                    onPressed: () async {
-                      logger.log("Pressed!");
-                      if (await canLaunch("https://t.me/tf_3_botsupport")) {
-                        await launch("https://t.me/tf_3_botsupport");
-                      }
-                    },
-                    child: Icon(Icons.info_outline),
-                  ),
-                ),
-                FloatingActionButton(
-                  heroTag: "fab2",
-                  onPressed: () {
-                    logger.log("Pressed!");
-                    setState(() {
-                      showPreference = true;
-                      showSettings = false;
-                    });
-                  },
-                  child: Icon(Icons.settings),
-                )
-              ],
-            )
-          : null,
+      // floatingActionButtonAnimator: null,
+      // floatingActionButton: showSettings == true
+      //     ? Column(
+      //         mainAxisAlignment: MainAxisAlignment.end,
+      //         children: <Widget>[
+      //           Padding(
+      //             padding: EdgeInsets.only(bottom: 15),
+      //             child: FloatingActionButton(
+      //               heroTag: "fab1",
+      //               onPressed: () async {
+      //                 logger.log("Pressed!");
+      //                 if (await canLaunch("https://t.me/tf_3_botsupport")) {
+      //                   await launch("https://t.me/tf_3_botsupport");
+      //                 }
+      //               },
+      //               child: Icon(Icons.info_outline),
+      //             ),
+      //           ),
+      //           FloatingActionButton(
+      //             heroTag: "fab2",
+      //             onPressed: () {
+      //               logger.log("Pressed!");
+      //               setState(() {
+      //                 showPreference = true;
+      //                 showSettings = false;
+      //               });
+      //             },
+      //             child: Icon(Icons.settings),
+      //           )
+      //         ],
+      //       )
+      //     : null,
     );
   }
 
@@ -425,10 +408,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       selectedIndex = index;
       logger.log("Index: ", index);
       if (index == 4) {
-        // showSettings = true;
         showPreference = true;
       } else {
-        // showSettings = false;
         showPreference = false;
       }
     });
@@ -451,142 +432,166 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     switch (selectedIndex) {
       case 0:
         return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Image.asset(
-              'assets/logo.png',
-              height: 100.0,
-            ),
-            Padding(
-                padding: EdgeInsets.only(top: 15, bottom: 5),
-                child: Text(
-                  "Welcome to the first version of your 3Bot.",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                )),
-            Text("More functionality will be added soon.",
-                style: TextStyle(fontSize: 18)),
-            SizedBox(
-              height: 200,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                padding: new EdgeInsets.all(10.0),
-                child: Text("Pages",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
+            SizedBox(height: 50.0),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.redAccent,
-                      elevation: 0,
-                      onPressed: () => openFfp(0),
-                      child: CircleAvatar(
-                        backgroundImage: ExactAssetImage(
-                            'assets/circle_images/tftokens.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("TF Tokens"),
-                    ),
-                  ],
+                Container(
+                  width: 200.0,
+                  height: 200.0,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        fit: BoxFit.fill, image: AssetImage('assets/logo.png')),
+                  ),
                 ),
-                Column(
+                SizedBox(height: 10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.greenAccent,
-                      elevation: 0,
-                      onPressed: () => openFfp(1),
-                      child: CircleAvatar(
-                        backgroundImage:
-                            ExactAssetImage('assets/circle_images/tfgrid.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
+                    Image.asset(
+                      'assets/newLogo.png',
+                      height: 40,
                     ),
                     Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("TF Grid"),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.blueAccent,
-                      elevation: 0,
-                      onPressed: () => openFfp(2),
-                      child: CircleAvatar(
-                        backgroundImage: ExactAssetImage(
-                            'assets/circle_images/tffarmers.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        "Bot",
+                        style: TextStyle(
+                            fontSize: 40, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("TF Farmers"),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.grey,
-                      elevation: 0,
-                      onPressed: () => openFfp(3),
-                      child: CircleAvatar(
-                        backgroundImage: ExactAssetImage(
-                            'assets/circle_images/ffnation.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("FF Nation"),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: Colors.orangeAccent,
-                      elevation: 0,
-                      onPressed: () => openFfp(4),
-                      child: CircleAvatar(
-                        backgroundImage:
-                            ExactAssetImage('assets/circle_images/3bot.jpg'),
-                        minRadius: 90,
-                        maxRadius: 150,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("3Bot"),
                     ),
                   ],
                 ),
               ],
             ),
-            SizedBox(
-              height: 10,
+            Column(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: new EdgeInsets.all(10.0),
+                    child: Text("Pages",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.redAccent,
+                          elevation: 0,
+                          onPressed: () => openFfp(0),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/tftokens.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("TF Tokens"),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.greenAccent,
+                          elevation: 0,
+                          onPressed: () => openFfp(1),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/tfgrid.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("TF Grid"),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.blueAccent,
+                          elevation: 0,
+                          onPressed: () => openFfp(2),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/tffarmers.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("TF Farmers"),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.grey,
+                          elevation: 0,
+                          onPressed: () => openFfp(3),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/ffnation.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("FF Nation"),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        FloatingActionButton(
+                          backgroundColor: Colors.orangeAccent,
+                          elevation: 0,
+                          onPressed: () => openFfp(4),
+                          child: CircleAvatar(
+                            backgroundImage: ExactAssetImage(
+                                'assets/circle_images/3bot.jpg'),
+                            minRadius: 90,
+                            maxRadius: 150,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(5),
+                          child: Text("3Bot"),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Text(
+              "More functionality will be added soon.",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         );
       case 2:
         return Scaffold(
-          backgroundColor: HexColor("#2d4052"),
+          backgroundColor: Theme.of(context).primaryColor,
         );
       case 4:
         return showPreference
@@ -597,7 +602,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ? Center(child: CircularProgressIndicator())
             : Container(
                 child: Scaffold(
-                backgroundColor: HexColor("#2d4052"),
+                backgroundColor: Theme.of(context).primaryColor,
               ));
     }
   }
@@ -668,9 +673,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: <Widget>[
                 Text('Welcome to 3Bot connect.',
                     style: TextStyle(fontSize: 24)),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 RaisedButton(
                   shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30),
@@ -683,9 +686,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         CommunityMaterialIcons.account_edit,
                         color: Colors.white,
                       ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
+                      SizedBox(width: 10.0),
                       Text(
                         'Register Now!',
                         style: TextStyle(color: Colors.white),
@@ -708,9 +709,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         CommunityMaterialIcons.backup_restore,
                         color: Colors.white,
                       ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
+                      SizedBox(width: 10.0),
                       Text(
                         'Recover account',
                         style: TextStyle(color: Colors.white),

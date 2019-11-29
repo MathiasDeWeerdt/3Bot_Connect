@@ -6,6 +6,8 @@ class CustomScaffold extends StatelessWidget {
   final Widget bottom;
   final double padding;
   final Widget footer;
+  final Widget appBar;
+  final bool renderBackground;
 
   const CustomScaffold(
       {Key key,
@@ -13,12 +15,18 @@ class CustomScaffold extends StatelessWidget {
       this.title = '3Bot connect',
       this.bottom,
       this.footer,
-      this.padding = 8.0})
+      this.padding = 8.0,
+      this.appBar,
+      this.renderBackground = false})
       : super(key: key);
 
   @override
   Scaffold build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        child: appBar,
+        preferredSize: Size.fromHeight(0),
+      ),
       body: Container(
         color: Theme.of(context).primaryColor,
         child: Column(
@@ -35,6 +43,9 @@ class CustomScaffold extends StatelessWidget {
                 child: Container(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   child: Container(
+                    decoration: renderBackground ? BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                    ) : BoxDecoration(),
                     width: double.infinity,
                     padding: EdgeInsets.all(padding),
                     child: body,

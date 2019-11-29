@@ -333,6 +333,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    appBar = AppBar(
+      backgroundColor: HexColor("#2d4052"),
+      elevation: 0.0,
+    );
+
     bottomNavBar = BottomNavBar(
       key: navbarKey,
       selectedIndex: selectedIndex,
@@ -340,6 +345,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
 
     return CustomScaffold(
+      renderBackground: selectedIndex != 0,
+      appBar: appBar,
       body: FutureBuilder(
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -360,38 +367,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
         },
       ),
-      // floatingActionButtonAnimator: null,
-      // floatingActionButton: showSettings == true
-      //     ? Column(
-      //         mainAxisAlignment: MainAxisAlignment.end,
-      //         children: <Widget>[
-      //           Padding(
-      //             padding: EdgeInsets.only(bottom: 15),
-      //             child: FloatingActionButton(
-      //               heroTag: "fab1",
-      //               onPressed: () async {
-      //                 logger.log("Pressed!");
-      //                 if (await canLaunch("https://t.me/tf_3_botsupport")) {
-      //                   await launch("https://t.me/tf_3_botsupport");
-      //                 }
-      //               },
-      //               child: Icon(Icons.info_outline),
-      //             ),
-      //           ),
-      //           FloatingActionButton(
-      //             heroTag: "fab2",
-      //             onPressed: () {
-      //               logger.log("Pressed!");
-      //               setState(() {
-      //                 showPreference = true;
-      //                 showSettings = false;
-      //               });
-      //             },
-      //             child: Icon(Icons.settings),
-      //           )
-      //         ],
-      //       )
-      //     : null,
     );
   }
 
@@ -418,16 +393,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Widget registered(BuildContext context) {
     bodyContext = context;
-
-    var comingSoonWidget = Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text('Coming soon'),
-        SizedBox(
-          height: 20,
-        ),
-      ],
-    );
 
     switch (selectedIndex) {
       case 0:
@@ -591,7 +556,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         );
       case 2:
         return Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: HexColor("#2d4052"),
         );
       case 4:
         return showPreference
@@ -600,10 +565,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       default:
         return isLoading
             ? Center(child: CircularProgressIndicator())
-            : Container(
-                child: Scaffold(
-                backgroundColor: Theme.of(context).primaryColor,
-              ));
+            : Container();
     }
   }
 
@@ -730,10 +692,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Size getBottomNavbarHeight() {
-    //returns null:
     final State state = navbarKey.currentState;
-
-    //Error: The getter 'context' was called on null.
     final RenderBox box = state.context.findRenderObject();
 
     return box.size;
@@ -742,7 +701,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Size getPreferredSizeForWebview() {
     var contextSize = MediaQuery.of(bodyContext).size;
 
-    // preferredHeight is the height of our screen minus the top navbar height and minus the bottom navbar height
     var preferredHeight = contextSize.height -
         appBar.preferredSize.height -
         getBottomNavbarHeight().height;
@@ -754,7 +712,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> updateApp(app) async {
     if (!app['disabled']) {
       final emailVer = await getEmail();
-      // If email is verified or wallet app is selected, continue
       if (emailVer['verified'] || selectedIndex == 1) {
         if (!app['errorText']) {
           final prefs = await SharedPreferences.getInstance();
@@ -781,7 +738,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             await launchApp(preferredSize, app['id']);
             logger.log("Webviews was null");
           }
-          // The launch can change the webview to null if permissions weren't granted
           if (flutterWebViewPlugins[app['id']] != null) {
             logger.log("Webviews is showing");
             if (!isLoading) {
@@ -796,7 +752,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               title: "Service Unavailable",
               description: new Text("Service Unavailable"),
               actions: <Widget>[
-                // usually buttons at the bottom of the dialog
                 FlatButton(
                   child: new Text("Ok"),
                   onPressed: () {
@@ -815,7 +770,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             title: "Please verify email",
             description: new Text("Please verify email before using this app"),
             actions: <Widget>[
-              // usually buttons at the bottom of the dialog
               FlatButton(
                 child: new Text("Ok"),
                 onPressed: () {
@@ -942,7 +896,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         var jsToExecute =
             "(function() { try {window.localStorage.setItem('tempKeys', \'{\"privateKey\": \"${keys["privateKey"]}\", \"publicKey\": \"${keys["publicKey"]}\"}\');  window.localStorage.setItem('state', '$state'); } catch (err) { return err; } })();";
 
-        // This should be removed in the future!
         sleep(const Duration(seconds: 1));
 
         final res =
@@ -991,7 +944,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       flutterWebViewPlugins[appId].onStateChanged.listen((viewData) async {
         if (viewData.type == WebViewState.finishLoad) {
           this.setState(() => {isLoading = false});
-          // Finished loading content ? Show the webview !
           await flutterWebViewPlugins[appId].show();
         }
       });
@@ -1002,11 +954,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
       });
 
-      // If a http error occurs withing a webview show service unavailable modal
       flutterWebViewPlugins[appId].onHttpError.listen((error) {
         if (error.code != "200" && error != webViewError) {
-          // on ios this error is returned multiple times somehow (have seen apps with same issue).
-          // after we check if this error does not equal the one we get, we render 1 modal (else it will stack these modals).
           webViewError = error;
           showDialog(
             context: context,
@@ -1021,12 +970,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   onPressed: () {
                     Navigator.pop(context);
                     setState(() {
-                      // Save the failed appId
                       failedApp = appId;
-                      // As the user dismisses the modal, remove the saved error
                       webViewError = null;
                     });
-                    // Go back to home screen when user closes modal
                     this.routeToHome();
                   },
                 ),
@@ -1055,9 +1001,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             "Some ungranted permissions are needed to run this.",
             textAlign: TextAlign.center,
           ),
-        ), //TODO: if iOS -> place link to settings
+        ),
         actions: <Widget>[
-          // usually buttons at the bottom of the dialog
           FlatButton(
             child: new Text("Ok"),
             onPressed: () {

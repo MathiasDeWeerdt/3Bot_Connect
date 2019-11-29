@@ -130,7 +130,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: config.name,
       theme: ThemeData(
-          primaryColor: Color(0xff0f296a), accentColor: Color(0xff16a085)),
+          primaryColor: HexColor("#2d4052"), accentColor: Color(0xff16a085)),
       routes: {
         '/': (context) => HomeScreen(),
         '/scan': (context) => RegistrationScreen(),

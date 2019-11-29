@@ -67,17 +67,17 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
               });
             } else {
               setState(() {
-                errorStepperText = 'User exists already';
+                errorStepperText = 'Name already exists.';
               });
             }
           } else {
             setState(() {
-              errorStepperText = 'Doublename needs to be alphanumeric';
+              errorStepperText = 'Name needs to be alphanumeric';
             });
           }
         } else {
           setState(() {
-            errorStepperText = 'Doublename can\'t be empty';
+            errorStepperText = 'Name can\'t be empty';
           });
         }
         Navigator.pop(context);

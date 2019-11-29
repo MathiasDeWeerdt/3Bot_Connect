@@ -606,7 +606,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     setState(() {
       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-        if (flutterWebViewPlugin != null) {
+        if (flutterWebViewPlugin != null && ffpInstance != flutterWebViewPlugin) {
           flutterWebViewPlugin.dispose();
         }
       }

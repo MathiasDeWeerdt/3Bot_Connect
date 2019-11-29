@@ -15,9 +15,7 @@ void main() async {
   init();
 
   apps = [
-    {
-      "disabled": true
-    },
+    {"disabled": true},
     {
       "content": Text(
         'NBH Digital Wallet',
@@ -43,9 +41,7 @@ void main() async {
       'openInBrowser': true,
       'permissions': ['CAMERA']
     },
-    {
-      "disabled": true
-    },
+    {"disabled": true},
     {
       "content": Text(
         'FreeFlowPages',
@@ -62,7 +58,8 @@ void main() async {
       "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
       "id": 3,
-      'cookieUrl':'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
+      'cookieUrl':
+          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
       'openInBrowser': false,
@@ -76,7 +73,25 @@ void main() async {
       ]
     },
     {
-      "disabled": true
+      "disabled": false,
+      "content": Text(
+        'ChatApp',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'Chat with your 3Bot',
+      "disabled": false,
+      "url": 'https://google.com/',
+      "initialUrl": 'https://google.com/',
+      'cookieUrl': '',
+      "visible": false,
+      "id": 4,
+      'color': 0xFF708fa0,
+      'errorText': false,
+      'permissions': [],
     }
   ];
 

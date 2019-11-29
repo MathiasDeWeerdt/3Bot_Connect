@@ -63,7 +63,7 @@ class BottomNavBarState extends State<BottomNavBar> {
         new BottomNavigationBarItem(
             icon: Icon(Icons.people), title: Text('Social')),
         new BottomNavigationBarItem(
-            icon: Icon(Icons.settings), title: Text('Settings'))
+            icon: Icon(Icons.chat_bubble), title: Text('ChatBot'))
       ],
     );
   }

@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Size preferredSize;
   bool isLoading = false;
   int failedApp;
+  bool chatViewIsShown = false;
 
   // We will treat this error as a singleton
   WebViewHttpError webViewError;
@@ -189,8 +190,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           if (attempt.body != '' && openPendingLoginAttempt) {
             logger.log("Found a login attempt, opening ...");
 
-            String name = ModalRoute.of(context).settings.name;
-
             // Navigator.popUntil(context, ModalRoute.withName('/'));
 
             Navigator.popUntil(context, (route) {
@@ -232,8 +231,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (initFirebase) {
         initFirebaseMessagingListener(context);
       }
-
-      String dn = await getDoubleName();
 
       String tmpDoubleName = await getDoubleName();
 
@@ -345,6 +342,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     return Scaffold(
       appBar: PreferredSize(child: appBar, preferredSize: Size.fromHeight(0)),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          FloatingActionButton(
+              elevation: 10.0,
+              child: Icon(Icons.settings),
+              onPressed: () {
+                setState(() {
+                  showPreference = true;
+                });
+                print('I am Floating button');
+              }),
+        ],
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -377,38 +388,38 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           }
         },
       ),
-      floatingActionButtonAnimator: null,
-      floatingActionButton: showSettings == true
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(bottom: 15),
-                  child: FloatingActionButton(
-                    heroTag: "fab1",
-                    onPressed: () async {
-                      logger.log("Pressed!");
-                      if (await canLaunch("https://t.me/tf_3_botsupport")) {
-                        await launch("https://t.me/tf_3_botsupport");
-                      }
-                    },
-                    child: Icon(Icons.info_outline),
-                  ),
-                ),
-                FloatingActionButton(
-                  heroTag: "fab2",
-                  onPressed: () {
-                    logger.log("Pressed!");
-                    setState(() {
-                      showPreference = true;
-                      showSettings = false;
-                    });
-                  },
-                  child: Icon(Icons.settings),
-                )
-              ],
-            )
-          : null,
+      // floatingActionButtonAnimator: null,
+      // floatingActionButton: showSettings == true
+      //     ? Column(
+      //         mainAxisAlignment: MainAxisAlignment.end,
+      //         children: <Widget>[
+      //           Padding(
+      //             padding: EdgeInsets.only(bottom: 15),
+      //             child: FloatingActionButton(
+      //               heroTag: "fab1",
+      //               onPressed: () async {
+      //                 logger.log("Pressed!");
+      //                 if (await canLaunch("https://t.me/tf_3_botsupport")) {
+      //                   await launch("https://t.me/tf_3_botsupport");
+      //                 }
+      //               },
+      //               child: Icon(Icons.info_outline),
+      //             ),
+      //           ),
+      //           FloatingActionButton(
+      //             heroTag: "fab2",
+      //             onPressed: () {
+      //               logger.log("Pressed!");
+      //               setState(() {
+      //                 showPreference = true;
+      //                 showSettings = false;
+      //               });
+      //             },
+      //             child: Icon(Icons.settings),
+      //           )
+      //         ],
+      //       )
+      //     : null,
     );
   }
 
@@ -424,38 +435,35 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ffpUrlIndex = null;
       selectedIndex = index;
       logger.log("Index: ", index);
-      if (index == 4) {
-        // showSettings = true;
-        showPreference = true;
-      } else {
-        // showSettings = false;
-        showPreference = false;
-      }
     });
     updateApp(apps[index]);
   }
 
   Widget registered(BuildContext context) {
     bodyContext = context;
-
-    var comingSoonWidget = Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text('Coming soon'),
-        SizedBox(
-          height: 20,
-        ),
-      ],
-    );
+    if (showPreference) {
+      return PreferenceWidget(routeToHome: routeToHome);
+    }
 
     switch (selectedIndex) {
       case 0:
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset(
-              'assets/logo.png',
-              height: 100.0,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'assets/logo.png',
+                  height: 100.0,
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    onItemTapped(4);
+                  },
+                  child: Icon(Icons.chat_bubble),
+                ),
+              ],
             ),
             Padding(
                 padding: EdgeInsets.only(top: 15, bottom: 5),
@@ -467,7 +475,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             Text("More functionality will be added soon.",
                 style: TextStyle(fontSize: 18)),
             SizedBox(
-              height: 200,
+              height: 150,
             ),
             Align(
               alignment: Alignment.centerLeft,
@@ -588,10 +596,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         return Scaffold(
           backgroundColor: HexColor("#2d4052"),
         );
-      case 4:
-        return showPreference
-            ? PreferenceWidget(routeToHome: routeToHome)
-            : Text("");
+      // case 4:
+      //   return showPreference
+      //       ? PreferenceWidget(routeToHome: routeToHome)
+      //       : Text("");
       default:
         return isLoading
             ? Center(child: CircularProgressIndicator())
@@ -605,6 +613,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void routeToHome() {
     setState(() {
       selectedIndex = 0;
+      showPreference = false;
     });
   }
 
@@ -1039,6 +1048,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } on NoSuchMethodError catch (exception) {
       logger.log('error caught: $exception');
       apps[appId]['errorText'] = true;
+      setState(() {
+        isLoading:
+        false;
+      });
     }
   }
 

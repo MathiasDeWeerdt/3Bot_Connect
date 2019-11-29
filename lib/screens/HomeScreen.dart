@@ -344,32 +344,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return CustomScaffold(
       renderBackground: selectedIndex != 0,
       appBar: appBar,
-      floatingActionButton: selectedIndex == 0
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                showPreference
-                    ? FloatingActionButton(
-                        elevation: 10.0,
-                        child: Icon(Icons.arrow_back),
-                        onPressed: () {
-                          setState(() {
-                            showPreference = false;
-                          });
-                          print('I am Floating button');
-                        })
-                    : FloatingActionButton(
-                        elevation: 10.0,
-                        child: Icon(Icons.settings),
-                        onPressed: () {
-                          setState(() {
-                            showPreference = true;
-                          });
-                          print('I am Floating button');
-                        })
-              ],
-            )
-          : null,
       body: FutureBuilder(
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -410,11 +384,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     updateApp(apps[index]);
   }
 
+  void updatePreference(bool preference) {
+    setState(() {
+      this.showPreference = preference;
+    });
+  }
+
   Widget registered(BuildContext context) {
     bodyContext = context;
 
     if (showPreference) {
-      return PreferenceWidget(routeToHome: routeToHome);
+      return PreferenceWidget(updatePreference, routeToHome: routeToHome);
     }
 
     switch (selectedIndex) {
@@ -571,9 +551,32 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            Text(
-              "More functionality will be added soon.",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+            Column(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Text(
+                      "More functionality will be added soon.",
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        !showPreference
+                            ? FloatingActionButton(
+                                elevation: 10.0,
+                                child: Icon(Icons.settings),
+                                onPressed: () {
+                                  setState(() {
+                                    showPreference = true;
+                                  });
+                                })
+                            : null
+                      ],
+                    )
+                  ],
+                ),
+              ],
             ),
           ],
         );

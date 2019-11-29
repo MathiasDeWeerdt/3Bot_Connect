@@ -9,7 +9,9 @@ import 'package:threebotlogin/widgets/PinField.dart';
 
 class PreferenceWidget extends StatefulWidget {
   final Function() routeToHome;
-  PreferenceWidget({Key key, this.routeToHome}) : super(key: key);
+  final Function(bool) showPreference;
+  PreferenceWidget(this.showPreference, {Key key, this.routeToHome})
+      : super(key: key);
   @override
   _PreferenceWidgetState createState() => _PreferenceWidgetState();
 }
@@ -40,6 +42,14 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
     return WillPopScope(
         onWillPop: _onWillPop,
         child: new Scaffold(
+          floatingActionButton: FloatingActionButton(
+              elevation: 10.0,
+              child: Icon(Icons.arrow_back),
+              onPressed: () {
+                setState(() {
+                  widget.showPreference(false);
+                });
+              }),
           key: _prefScaffold,
           body: Container(
             width: double.infinity,

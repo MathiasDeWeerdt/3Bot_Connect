@@ -344,6 +344,32 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return CustomScaffold(
       renderBackground: selectedIndex != 0,
       appBar: appBar,
+      floatingActionButton: selectedIndex == 0
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                showPreference
+                    ? FloatingActionButton(
+                        elevation: 10.0,
+                        child: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          setState(() {
+                            showPreference = false;
+                          });
+                          print('I am Floating button');
+                        })
+                    : FloatingActionButton(
+                        elevation: 10.0,
+                        child: Icon(Icons.settings),
+                        onPressed: () {
+                          setState(() {
+                            showPreference = true;
+                          });
+                          print('I am Floating button');
+                        })
+              ],
+            )
+          : null,
       body: FutureBuilder(
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -376,20 +402,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           flutterWebViewPlugin.hide();
         }
       }
+      showPreference = false;
       ffpUrlIndex = null;
       selectedIndex = index;
       logger.log("Index: ", index);
-      if (index == 4) {
-        showPreference = true;
-      } else {
-        showPreference = false;
-      }
     });
     updateApp(apps[index]);
   }
 
   Widget registered(BuildContext context) {
     bodyContext = context;
+
+    if (showPreference) {
+      return PreferenceWidget(routeToHome: routeToHome);
+    }
 
     switch (selectedIndex) {
       case 0:
@@ -555,10 +581,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         return Scaffold(
           backgroundColor: HexColor("#2d4052"),
         );
-      // case 4:
-      //   return showPreference
-      //       ? PreferenceWidget(routeToHome: routeToHome)
-      //       : Text("");
       default:
         return isLoading
             ? Center(child: CircularProgressIndicator())

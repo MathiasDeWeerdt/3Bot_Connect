@@ -158,6 +158,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else {
         showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) => CustomDialog(
             image: Icons.check,
             title: "You're already logged in",
@@ -813,6 +814,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         } else {
           showDialog(
             context: context,
+            barrierDismissible: false,
             builder: (BuildContext context) => CustomDialog(
               image: Icons.error,
               title: "Service Unavailable",
@@ -831,6 +833,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else {
         showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) => CustomDialog(
             image: Icons.error,
             title: "Please verify email",
@@ -1025,6 +1028,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           webViewError = error;
           showDialog(
             context: context,
+            barrierDismissible: false,
             builder: (BuildContext context) => CustomDialog(
               image: Icons.error,
               title: "Service Unavailable",
@@ -1063,6 +1067,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) => CustomDialog(
         image: Icons.error,
         title: "Need permissions",
@@ -1096,6 +1101,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void _showResendEmailDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) => CustomDialog(
         image: Icons.check,
         title: "Email has been resent.",

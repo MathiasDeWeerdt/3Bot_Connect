@@ -86,9 +86,10 @@ void main() async {
       "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "visible": false,
-      "id": 5,
+      "id": 4,
       'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': [],
     }
   ];

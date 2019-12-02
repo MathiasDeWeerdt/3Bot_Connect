@@ -344,7 +344,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     return CustomScaffold(
       renderBackground: selectedIndex != 0,
-      appBar: appBar,
+      appBar: PreferredSize(
+        child: appBar,
+        preferredSize: Size.fromHeight(0),
+      ),
       body: FutureBuilder(
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -658,9 +661,39 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Container(),
-          Image.asset(
-            'assets/logo.png',
-            height: 100.0,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 200.0,
+                height: 200.0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      fit: BoxFit.fill, image: AssetImage('assets/logo.png')),
+                ),
+              ),
+              SizedBox(height: 10.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/newLogo.png',
+                    height: 40,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      "Bot",
+                      style:
+                          TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           IntrinsicWidth(
             child: Column(

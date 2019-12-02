@@ -15,7 +15,7 @@ class CustomScaffold extends StatelessWidget {
       this.title = '3Bot connect',
       this.bottom,
       this.footer,
-      this.padding = 8.0,
+      this.padding = 0.0,
       this.appBar,
       this.renderBackground = false})
       : super(key: key);
@@ -23,10 +23,7 @@ class CustomScaffold extends StatelessWidget {
   @override
   Scaffold build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        child: appBar,
-        preferredSize: Size.fromHeight(0),
-      ),
+      appBar: appBar,
       body: Container(
         color: Theme.of(context).primaryColor,
         child: Column(

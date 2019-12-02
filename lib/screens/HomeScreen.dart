@@ -383,7 +383,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
       showPreference = false;
       ffpUrlIndex = null;
-      selectedIndex = index;
+      if (!Platform.isIOS && !apps[index]['openInBrowser']) {
+        selectedIndex = index;
+      }
       logger.log("Index: ", index);
     });
     updateApp(apps[index]);

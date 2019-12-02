@@ -284,22 +284,22 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
                   // flutterWebViewPlugin.resetWebviews();
                 }
               }
+
               hexColor = Color(0xff0f296a);
               bool result = await clearData(context: context);
+
               if (result) {
                 setState(() {
-                  Navigator.popUntil(
-                    context,
-                    ModalRoute.withName('/'),
-                  );
+                  Navigator.popUntil(context, ModalRoute.withName('/'), );
+                  Navigator.pushNamed(context, '/');
                 });
-                widget.routeToHome();
+                // widget.routeToHome();
               } else {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) => CustomDialog(
                           title: 'Error',
-                          description: Text('You have no internet connection'),
+                          description: Text('Something went wrong when trying to remove your account.'),
                           actions: <Widget>[
                             FlatButton(
                               child: Text('Ok'),
@@ -311,6 +311,10 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
                           ],
                         ));
               }
+
+              setState(() {
+              });
+
             },
           ),
         ],

@@ -55,7 +55,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     var body = json.decode(userKInfoResult.body);
 
     if (body['publicKey'] != keys['publicKey']) {
-      throw new Exception('Keys do not correspond to given user');
+      throw new Exception('Seed phrase does not correspond to given name');
     }
   }
 

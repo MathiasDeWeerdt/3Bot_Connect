@@ -15,7 +15,7 @@ void main() async {
   init();
 
   apps = [
-    {"disabled": true},
+    {"disabled": true, 'openInBrowser': false},
     {
       "content": Text(
         'NBH Digital Wallet',
@@ -41,7 +41,7 @@ void main() async {
       'openInBrowser': true,
       'permissions': ['CAMERA']
     },
-    {"disabled": true},
+    {"disabled": true, 'openInBrowser': false},
     {
       "content": Text(
         'FreeFlowPages',

@@ -15,9 +15,7 @@ void main() async {
   init();
 
   apps = [
-    {
-      "disabled": true
-    },
+    {"disabled": true, 'openInBrowser': false},
     {
       "content": Text(
         'NBH Digital Wallet',
@@ -28,23 +26,22 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'http://192.168.2.62:8082',
+      "url": 'https://wallet.staging.jimber.org',
+      "appid": 'wallet.staging.jimber.org',
+      "redirecturl": '/login',
       "bg": 'nbh.png',
       "disabled": false,
-      "initialUrl": 'http://192.168.2.62:8082',
+      "initialUrl": 'https://wallet.staging.jimber.org',
       "visible": false,
       "id": 1,
-      "appid": '192.168.8.66:8082',
-      "redirecturl": '/login',
       'cookieUrl': '',
       'localStorageKeys': true,
       'color': 0xFF34495e,
       'errorText': false,
+      'openInBrowser': true,
       'permissions': ['CAMERA']
     },
-    {
-      "disabled": true
-    },
+    {"disabled": true, 'openInBrowser': false},
     {
       "content": Text(
         'FreeFlowPages',
@@ -55,14 +52,17 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": 'Where privacy and social media co-exist.',
+      "url": 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://freeflowpages.com/',
+      "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
       "id": 3,
-      'cookieUrl': 'https://freeflowpages.com/user/auth/external?authclient=3bot',
+      'cookieUrl':
+          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': [],
       'ffpUrls': [
         'https://staging.freeflowpages.com/s/tf-tokens',
@@ -71,9 +71,6 @@ void main() async {
         'https://staging.freeflowpages.com/s/freeflownation',
         'https://staging.freeflowpages.com/s/3bot'
       ]
-    },
-    {
-      "disabled": true
     },
     {
       "content": Text(
@@ -89,9 +86,10 @@ void main() async {
       "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "visible": false,
-      "id": 5,
+      "id": 4,
       'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': [],
     }
   ];

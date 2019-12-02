@@ -777,7 +777,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Future<void> updateApp(app) async {
-    if (!app['disabled']) {
+    if (Platform.isIOS && app['openInBrowser']) {
+      String appid = app['appid'];
+      String redirecturl = app['redirecturl'];
+      launch('https://$appid$redirecturl#username=${await getDoubleName()}&derivedSeed=${Uri.encodeQueryComponent(await getDerivedSeed(appid))}', forceSafariVC: false);
+    } else if (!app['disabled']) {
       final emailVer = await getEmail();
       if (emailVer['verified'] || selectedIndex == 1) {
         if (!app['errorText']) {

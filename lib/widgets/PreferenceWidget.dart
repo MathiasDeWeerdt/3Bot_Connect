@@ -290,7 +290,10 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
 
               if (result) {
                 setState(() {
-                  Navigator.popUntil(context, ModalRoute.withName('/'), );
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName('/'),
+                  );
                   Navigator.pushNamed(context, '/');
                 });
                 // widget.routeToHome();
@@ -299,7 +302,8 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
                     context: context,
                     builder: (BuildContext context) => CustomDialog(
                           title: 'Error',
-                          description: Text('Something went wrong when trying to remove your account.'),
+                          description: Text(
+                              'Something went wrong when trying to remove your account.'),
                           actions: <Widget>[
                             FlatButton(
                               child: Text('Ok'),
@@ -312,9 +316,7 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
                         ));
               }
 
-              setState(() {
-              });
-
+              setState(() {});
             },
           ),
         ],
@@ -324,7 +326,7 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
 
   void sendVerificationEmail() async {
     final snackBar = SnackBar(content: Text('Resending verification email...'));
-    _prefScaffold.currentState.showSnackBar(snackBar);
+    Scaffold.of(context).showSnackBar(snackBar);
     await resendVerificationEmail();
     _showResendEmailDialog();
   }
@@ -385,9 +387,16 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
 
   Future copySeedPhrase() async {
     Clipboard.setData(new ClipboardData(text: await getPhrase()));
-    _prefScaffold.currentState.showSnackBar(SnackBar(
+
+    final seedCopied = SnackBar(
       content: Text('Seedphrase copied to clipboard'),
-    ));
+      duration: Duration(seconds: 1),
+    );
+    Scaffold.of(context).showSnackBar(seedCopied);
+
+    // _prefScaffold.currentState.showSnackBar(SnackBar(
+    //   content: Text('Seedphrase copied to clipboard'),
+    // ));
   }
 
   void checkPin(pin, callbackParam) async {
@@ -403,7 +412,7 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
       }
     } else {
       Navigator.pop(context);
-      _prefScaffold.currentState.showSnackBar(SnackBar(
+      Scaffold.of(context).showSnackBar(SnackBar(
         content: Text('Pin invalid'),
       ));
     }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
-import 'package:threebotlogin/screens/PreferenceScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/loggingService.dart';
 import 'config.dart';
@@ -139,7 +138,6 @@ class MyApp extends StatelessWidget {
         '/registered': (context) => SuccessfulScreen(registration: true),
         '/error': (context) => ErrorScreen(),
         '/recover': (context) => RecoverScreen(),
-        '/preference': (context) => PreferenceScreen(),
         '/changepin': (context) => ChangePinScreen(),
         '/registration': (context) => MobileRegistrationScreen()
       },

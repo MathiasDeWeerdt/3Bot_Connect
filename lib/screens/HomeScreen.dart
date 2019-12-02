@@ -403,7 +403,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            SizedBox(height: 50.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                SizedBox(height: 50.0),
+                !showPreference
+                    ? FloatingActionButton(
+                        heroTag: "preference",
+                        elevation: 0.0,
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Theme.of(context).accentColor,
+                        child: Icon(Icons.settings),
+                        onPressed: () {
+                          setState(() {
+                            showPreference = true;
+                          });
+                        })
+                    : null
+              ],
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -456,6 +474,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     Column(
                       children: <Widget>[
                         FloatingActionButton(
+                          heroTag: "tft",
                           backgroundColor: Colors.redAccent,
                           elevation: 0,
                           onPressed: () => openFfp(0),
@@ -475,6 +494,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     Column(
                       children: <Widget>[
                         FloatingActionButton(
+                          heroTag: "tfgrid",
                           backgroundColor: Colors.greenAccent,
                           elevation: 0,
                           onPressed: () => openFfp(1),
@@ -494,6 +514,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     Column(
                       children: <Widget>[
                         FloatingActionButton(
+                          heroTag: "tftfarmers",
                           backgroundColor: Colors.blueAccent,
                           elevation: 0,
                           onPressed: () => openFfp(2),
@@ -513,6 +534,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     Column(
                       children: <Widget>[
                         FloatingActionButton(
+                          heroTag: "ffnation",
                           backgroundColor: Colors.grey,
                           elevation: 0,
                           onPressed: () => openFfp(3),
@@ -532,6 +554,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     Column(
                       children: <Widget>[
                         FloatingActionButton(
+                          heroTag: "3bot",
                           backgroundColor: Colors.orangeAccent,
                           elevation: 0,
                           onPressed: () => openFfp(4),
@@ -560,21 +583,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       "More functionality will be added soon.",
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        !showPreference
-                            ? FloatingActionButton(
-                                elevation: 10.0,
-                                child: Icon(Icons.settings),
-                                onPressed: () {
-                                  setState(() {
-                                    showPreference = true;
-                                  });
-                                })
-                            : null
-                      ],
-                    )
                   ],
                 ),
               ],
@@ -606,7 +614,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     setState(() {
       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-        if (flutterWebViewPlugin != null && ffpInstance != flutterWebViewPlugin) {
+        if (flutterWebViewPlugin != null &&
+            ffpInstance != flutterWebViewPlugin) {
           flutterWebViewPlugin.dispose();
         }
       }

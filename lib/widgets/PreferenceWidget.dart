@@ -39,174 +39,128 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: _onWillPop,
-        child: new Scaffold(
-          floatingActionButton: FloatingActionButton(
-              elevation: 10.0,
+    return ListView(
+      children: <Widget>[
+        AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          title: Text(
+            'Settings',
+            style: TextStyle(color: Colors.black),
+          ),
+          leading: FlatButton(
               child: Icon(Icons.arrow_back),
               onPressed: () {
                 setState(() {
                   widget.showPreference(false);
                 });
               }),
-          key: _prefScaffold,
-          body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).primaryColor,
-            child: Container(
-              child: Container(
-                child: Container(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                    ),
-                    child: Container(
-                      padding: EdgeInsets.only(top: 24.0, bottom: 38.0),
-                      child: Center(
-                        child: Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          child: ListView(
-                            children: <Widget>[
-                              ListTile(
-                                title: Text("Profile"),
-                              ),
-                              Material(
-                                child: ListTile(
-                                  leading: Icon(Icons.person),
-                                  title: Text(doubleName),
-                                ),
-                              ),
-                              Material(
-                                child: ListTile(
-                                  trailing: !emailVerified
-                                      ? Icon(Icons.refresh)
-                                      : null,
-                                  leading: Icon(Icons.mail),
-                                  title: Text(emailAdress.toLowerCase()),
-                                  subtitle: !emailVerified
-                                      ? Text(
-                                          "Unverified",
-                                          style: TextStyle(color: Colors.grey),
-                                        )
-                                      : Text(
-                                          "Verified",
-                                          style: TextStyle(color: Colors.green),
-                                        ),
-                                  onTap: !emailVerified
-                                      ? sendVerificationEmail
-                                      : null,
-                                ),
-                              ),
-                              FutureBuilder(
-                                future: getPhrase(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    return Material(
-                                      child: ListTile(
-                                        trailing: Padding(
-                                          padding:
-                                              new EdgeInsets.only(right: 7.5),
-                                          child: Icon(Icons.visibility),
-                                        ),
-                                        leading: Icon(Icons.vpn_key),
-                                        title: Text("Show Phrase"),
-                                        onTap: () {
-                                          _chooseFunctionalityPhrase();
-                                        },
-                                      ),
-                                    );
-                                  } else {
-                                    return Container();
-                                  }
-                                },
-                              ),
-                              Visibility(
-                                visible: biometricsCheck,
-                                child: Material(
-                                  child: CheckboxListTile(
-                                    secondary: Icon(Icons.fingerprint),
-                                    value: finger,
-                                    title: Text("Fingerprint"),
-                                    activeColor: Theme.of(context).accentColor,
-                                    onChanged: (bool newValue) {
-                                      setState(() {
-                                        logger.log(
-                                            'newvalue:', newValue, finger);
-                                      });
-
-                                      _chooseDialogFingerprint(newValue);
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Material(
-                                child: ListTile(
-                                  leading: Icon(Icons.lock),
-                                  title: Text("Change pincode"),
-                                  onTap: () {
-                                    Navigator.pushNamed(context, '/changepin');
-                                  },
-                                ),
-                              ),
-                              Material(
-                                child: ListTile(
-                                  leading: Icon(Icons.info_outline),
-                                  title: Text("Version: " +
-                                      version +
-                                      " - " +
-                                      buildNumber),
-                                ),
-                              ),
-                              ExpansionTile(
-                                title: Text(
-                                  "Advanced settings",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                children: <Widget>[
-                                  Material(
-                                    child: ListTile(
-                                      leading: Icon(Icons.person),
-                                      title: Text(
-                                        "Remove Account From Device",
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                      trailing: Icon(
-                                        Icons.remove_circle,
-                                        color: Colors.red,
-                                      ),
-                                      onTap: _showDialog,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+        ),
+        ListTile(
+          title: Text("Profile"),
+        ),
+        Material(
+          child: ListTile(
+            leading: Icon(Icons.person),
+            title: Text(doubleName),
+          ),
+        ),
+        Material(
+          child: ListTile(
+            trailing: !emailVerified ? Icon(Icons.refresh) : null,
+            leading: Icon(Icons.mail),
+            title: Text(emailAdress.toLowerCase()),
+            subtitle: !emailVerified
+                ? Text(
+                    "Unverified",
+                    style: TextStyle(color: Colors.grey),
+                  )
+                : Text(
+                    "Verified",
+                    style: TextStyle(color: Colors.green),
                   ),
+            onTap: !emailVerified ? sendVerificationEmail : null,
+          ),
+        ),
+        FutureBuilder(
+          future: getPhrase(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Material(
+                child: ListTile(
+                  trailing: Padding(
+                    padding: new EdgeInsets.only(right: 7.5),
+                    child: Icon(Icons.visibility),
+                  ),
+                  leading: Icon(Icons.vpn_key),
+                  title: Text("Show Phrase"),
+                  onTap: () {
+                    _chooseFunctionalityPhrase();
+                  },
                 ),
-              ),
+              );
+            } else {
+              return Container();
+            }
+          },
+        ),
+        Visibility(
+          visible: biometricsCheck,
+          child: Material(
+            child: CheckboxListTile(
+              secondary: Icon(Icons.fingerprint),
+              value: finger,
+              title: Text("Fingerprint"),
+              activeColor: Theme.of(context).accentColor,
+              onChanged: (bool newValue) {
+                setState(() {
+                  logger.log('newvalue:', newValue, finger);
+                });
+
+                _chooseDialogFingerprint(newValue);
+              },
             ),
           ),
-        ));
-  }
-
-  Future<bool> _onWillPop() {
-    var index = 0;
-    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-      if (flutterWebViewPlugin != null) {
-        if (index == lastAppUsed) {
-          flutterWebViewPlugin.show();
-          showButton = true;
-        }
-        index++;
-      }
-    }
-    return Future.value(true);
+        ),
+        Material(
+          child: ListTile(
+            leading: Icon(Icons.lock),
+            title: Text("Change pincode"),
+            onTap: () {
+              Navigator.pushNamed(context, '/changepin');
+            },
+          ),
+        ),
+        Material(
+          child: ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text("Version: " + version + " - " + buildNumber),
+          ),
+        ),
+        ExpansionTile(
+          title: Text(
+            "Advanced settings",
+            style: TextStyle(color: Colors.black),
+          ),
+          children: <Widget>[
+            Material(
+              child: ListTile(
+                leading: Icon(Icons.person),
+                title: Text(
+                  "Remove Account From Device",
+                  style: TextStyle(color: Colors.red),
+                ),
+                trailing: Icon(
+                  Icons.remove_circle,
+                  color: Colors.red,
+                ),
+                onTap: _showDialog,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   checkBiometrics() async {

@@ -7,7 +7,6 @@ class CustomScaffold extends StatelessWidget {
   final double padding;
   final Widget footer;
   final Widget appBar;
-  final Widget floatingActionButton;
   final bool renderBackground;
 
   const CustomScaffold(
@@ -18,7 +17,6 @@ class CustomScaffold extends StatelessWidget {
       this.footer,
       this.padding = 8.0,
       this.appBar,
-      this.floatingActionButton,
       this.renderBackground = false})
       : super(key: key);
 
@@ -29,8 +27,6 @@ class CustomScaffold extends StatelessWidget {
         child: appBar,
         preferredSize: Size.fromHeight(0),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: floatingActionButton,
       body: Container(
         color: Theme.of(context).primaryColor,
         child: Column(

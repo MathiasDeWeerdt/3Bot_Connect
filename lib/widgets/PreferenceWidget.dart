@@ -297,7 +297,6 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
                 );
 
                 await Navigator.pushNamed(preferenceContext, '/');
-                setState(() {});
               } else {
                 showDialog(
                     context: preferenceContext,

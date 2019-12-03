@@ -404,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     bodyContext = context;
 
     if (showPreference) {
-      return PreferenceWidget(updatePreference, routeToHome: routeToHome);
+      return PreferenceWidget(updatePreference);
     }
 
     switch (selectedIndex) {

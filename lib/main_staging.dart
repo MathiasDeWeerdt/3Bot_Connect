@@ -83,6 +83,7 @@ void main() async {
       ),
       "subheading": 'Chat with your 3Bot',
       "disabled": false,
+      'cookieUrl': '',
       "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "visible": false,

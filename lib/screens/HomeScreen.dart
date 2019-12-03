@@ -373,7 +373,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void onItemTapped(int index) {
-    if (isLoading) return;
+    if (isLoading) {
+      flutterWebViewPlugins[selectedIndex].close();
+      flutterWebViewPlugins[selectedIndex] = null;
+      setState(() {
+        isLoading = false;
+      });
+    }
 
     setState(() {
       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
@@ -383,10 +389,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
       showPreference = false;
       ffpUrlIndex = null;
-      if (!(apps[index]['openInBrowser'] && Platform.isIOS)) {
-        selectedIndex = index;
-      }
-      logger.log("Index: ", index);
+      selectedIndex = index;
     });
     updateApp(apps[index]);
   }
@@ -1063,8 +1066,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       logger.log('error caught: $exception');
       apps[appId]['errorText'] = true;
       setState(() {
-        isLoading:
-        false;
+        isLoading = false;
       });
     }
   }

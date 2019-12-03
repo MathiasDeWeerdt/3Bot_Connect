@@ -25,6 +25,7 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
   Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_down);
   String emailAdress = '';
   final _prefScaffold = GlobalKey<ScaffoldState>();
+  BuildContext preferenceContext;
   bool biometricsCheck = false;
   bool finger = false;
 
@@ -39,6 +40,7 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
 
   @override
   Widget build(BuildContext context) {
+    preferenceContext = context;
     return ListView(
       children: <Widget>[
         AppBar(
@@ -277,39 +279,37 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
           FlatButton(
             child: new Text("Yes"),
             onPressed: () async {
+              Navigator.pop(context);
+
               for (var flutterWebViewPlugin in flutterWebViewPlugins) {
                 if (flutterWebViewPlugin != null) {
-                  flutterWebViewPlugin.cleanCookies();
-                  flutterWebViewPlugin.close();
-                  // flutterWebViewPlugin.resetWebviews();
+                  await flutterWebViewPlugin.cleanCookies();
+                  await flutterWebViewPlugin.close();
                 }
               }
 
               hexColor = Color(0xff0f296a);
-              bool result = await clearData(context: context);
+              bool result = await clearData();
 
               if (result) {
-                setState(() {
-                  Navigator.popUntil(
-                    context,
+                Navigator.popUntil(
+                    preferenceContext,
                     ModalRoute.withName('/'),
-                  );
-                  Navigator.pushNamed(context, '/');
-                });
-                // widget.routeToHome();
+                );
+                
+                await Navigator.pushNamed(preferenceContext, '/');
+                setState(() {});
               } else {
                 showDialog(
-                    context: context,
+                    context: preferenceContext,
                     builder: (BuildContext context) => CustomDialog(
                           title: 'Error',
-                          description: Text(
-                              'Something went wrong when trying to remove your account.'),
+                          description: Text('Something went wrong when trying to remove your account.'),
                           actions: <Widget>[
                             FlatButton(
                               child: Text('Ok'),
                               onPressed: () {
-                                Navigator.popUntil(context,
-                                    ModalRoute.withName('/preference'));
+                                Navigator.popUntil(context, ModalRoute.withName('/preference'));
                               },
                             )
                           ],

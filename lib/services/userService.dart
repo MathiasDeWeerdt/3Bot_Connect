@@ -179,7 +179,7 @@ Future<String> getScopePermissions() async {
   return prefs.getString('scopePermissions');
 }
 
-Future<bool> clearData({context}) async {
+Future<bool> clearData() async {
   final prefs = await SharedPreferences.getInstance();
 
   Response response;

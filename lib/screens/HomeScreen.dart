@@ -1034,34 +1034,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
       });
 
-      flutterWebViewPlugins[appId].onHttpError.listen((error) {
-        if (error.code != "200" && error != webViewError) {
-          webViewError = error;
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) => CustomDialog(
-              image: Icons.error,
-              title: "Service Unavailable",
-              description: new Text("Service Unavailable"),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                FlatButton(
-                  child: new Text("Ok"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    setState(() {
-                      failedApp = appId;
-                      webViewError = null;
-                    });
-                    this.routeToHome();
-                  },
-                ),
-              ],
-            ),
-          );
-        }
-      });
+      // flutterWebViewPlugins[appId].onHttpError.listen((error) {
+      //   if (error.code != "200" && error != webViewError) {
+      //     webViewError = error;
+      //     showDialog(
+      //       context: context,
+      //       barrierDismissible: false,
+      //       builder: (BuildContext context) => CustomDialog(
+      //         image: Icons.error,
+      //         title: "Service Unavailable",
+      //         description: new Text("Service Unavailable"),
+      //         actions: <Widget>[
+      //           // usually buttons at the bottom of the dialog
+      //           FlatButton(
+      //             child: new Text("Ok"),
+      //             onPressed: () {
+      //               Navigator.pop(context);
+      //               setState(() {
+      //                 failedApp = appId;
+      //                 webViewError = null;
+      //               });
+      //               this.routeToHome();
+      //             },
+      //           ),
+      //         ],
+      //       ),
+      //     );
+      //   }
+      // });
     } on NoSuchMethodError catch (exception) {
       logger.log('error caught: $exception');
       apps[appId]['errorText'] = true;

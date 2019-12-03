@@ -19,9 +19,6 @@ class BottomNavBarState extends State<BottomNavBar> {
 
   void _onItemTapped(int index) {
     if (index == 2) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Coming soon"),
-      ));
       return;
     }
 

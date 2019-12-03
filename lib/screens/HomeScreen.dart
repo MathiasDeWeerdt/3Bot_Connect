@@ -41,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var email;
   String initialLink = null;
   int selectedIndex = 0;
-  int ffpUrlIndex;
   AppBar appBar;
   BottomNavBar bottomNavBar;
   BuildContext bodyContext;
@@ -388,8 +387,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
       }
       showPreference = false;
-      ffpUrlIndex = null;
-      selectedIndex = index;
+      if (!(apps[index]['openInBrowser'] && Platform.isIOS)) {
+        selectedIndex = index;
+      }
     });
     updateApp(apps[index]);
   }
@@ -889,9 +889,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       var cookies = '';
       final union = '?';
       if (url != '') {
-        if (ffpUrlIndex != null) {
-          url = apps[appId]['ffpUrls'][ffpUrlIndex];
-        }
         final client = http.Client();
         var request = new http.Request('GET', Uri.parse(url))
           ..followRedirects = false;

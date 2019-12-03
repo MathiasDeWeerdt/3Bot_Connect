@@ -588,9 +588,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                    Text(
-                      "More functionality will be added soon.",
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        "More functionality will be added soon.",
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
                     ),
                   ],
                 ),
@@ -1022,7 +1025,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       logger.log(cookies);
 
       flutterWebViewPlugins[appId].onStateChanged.listen((viewData) async {
-        if (viewData.type == WebViewState.finishLoad) {
+        if (viewData.type == WebViewState.finishLoad && isLoading) {
           this.setState(() => {isLoading = false});
           await flutterWebViewPlugins[appId].show();
         }

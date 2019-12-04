@@ -8,9 +8,8 @@ import 'package:threebotlogin/widgets/CustomDialog.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
 
 class PreferenceWidget extends StatefulWidget {
-  final Function() routeToHome;
   final Function(bool) showPreference;
-  PreferenceWidget(this.showPreference, {Key key, this.routeToHome})
+  PreferenceWidget(this.showPreference, {Key key})
       : super(key: key);
   @override
   _PreferenceWidgetState createState() => _PreferenceWidgetState();
@@ -296,9 +295,8 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
                     preferenceContext,
                     ModalRoute.withName('/'),
                 );
-                
+
                 await Navigator.pushNamed(preferenceContext, '/');
-                setState(() {});
               } else {
                 showDialog(
                     context: preferenceContext,

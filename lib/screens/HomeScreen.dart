@@ -41,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var email;
   String initialLink = null;
   int selectedIndex = 0;
-  int ffpUrlIndex;
   AppBar appBar;
   BottomNavBar bottomNavBar;
   BuildContext bodyContext;
@@ -388,8 +387,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
       }
       showPreference = false;
-      ffpUrlIndex = null;
-      selectedIndex = index;
+      if (!(apps[index]['openInBrowser'] && Platform.isIOS)) {
+        selectedIndex = index;
+      }
     });
     updateApp(apps[index]);
   }
@@ -404,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     bodyContext = context;
 
     if (showPreference) {
-      return PreferenceWidget(updatePreference, routeToHome: routeToHome);
+      return PreferenceWidget(updatePreference);
     }
 
     switch (selectedIndex) {
@@ -588,9 +588,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                    Text(
-                      "More functionality will be added soon.",
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        "More functionality will be added soon.",
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
                     ),
                   ],
                 ),
@@ -886,9 +889,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       var cookies = '';
       final union = '?';
       if (url != '') {
-        if (ffpUrlIndex != null) {
-          url = apps[appId]['ffpUrls'][ffpUrlIndex];
-        }
         final client = http.Client();
         var request = new http.Request('GET', Uri.parse(url))
           ..followRedirects = false;
@@ -1022,7 +1022,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       logger.log(cookies);
 
       flutterWebViewPlugins[appId].onStateChanged.listen((viewData) async {
-        if (viewData.type == WebViewState.finishLoad) {
+        if (viewData.type == WebViewState.finishLoad && isLoading) {
           this.setState(() => {isLoading = false});
           await flutterWebViewPlugins[appId].show();
         }
@@ -1034,34 +1034,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
       });
 
-      flutterWebViewPlugins[appId].onHttpError.listen((error) {
-        if (error.code != "200" && error != webViewError) {
-          webViewError = error;
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) => CustomDialog(
-              image: Icons.error,
-              title: "Service Unavailable",
-              description: new Text("Service Unavailable"),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                FlatButton(
-                  child: new Text("Ok"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    setState(() {
-                      failedApp = appId;
-                      webViewError = null;
-                    });
-                    this.routeToHome();
-                  },
-                ),
-              ],
-            ),
-          );
-        }
-      });
+      // flutterWebViewPlugins[appId].onHttpError.listen((error) {
+      //   if (error.code != "200" && error != webViewError) {
+      //     webViewError = error;
+      //     showDialog(
+      //       context: context,
+      //       barrierDismissible: false,
+      //       builder: (BuildContext context) => CustomDialog(
+      //         image: Icons.error,
+      //         title: "Service Unavailable",
+      //         description: new Text("Service Unavailable"),
+      //         actions: <Widget>[
+      //           // usually buttons at the bottom of the dialog
+      //           FlatButton(
+      //             child: new Text("Ok"),
+      //             onPressed: () {
+      //               Navigator.pop(context);
+      //               setState(() {
+      //                 failedApp = appId;
+      //                 webViewError = null;
+      //               });
+      //               this.routeToHome();
+      //             },
+      //           ),
+      //         ],
+      //       ),
+      //     );
+      //   }
+      // });
     } on NoSuchMethodError catch (exception) {
       logger.log('error caught: $exception');
       apps[appId]['errorText'] = true;

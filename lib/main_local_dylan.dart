@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'config.dart';
 import 'main.dart';
@@ -7,17 +6,15 @@ import 'main.dart';
 void main() async {
   var config = Config(
       name: '3bot local',
-      threeBotApiUrl: 'http://dev.jimber.org:5000/api',
-      openKycApiUrl: 'https://openkyc.staging.jimber.org/',
-      threeBotFrontEndUrl: 'http://dev.jimber.org:8080/',
+      threeBotApiUrl: 'http://192.168.0.225:5000/api',
+      openKycApiUrl: 'http://192.168.0.225:5005',
+      threeBotFrontEndUrl: 'http://192.168.0.225:8081/',
       child: new MyApp());
 
   init();
 
   apps = [
-    {
-      "disabled": true
-    },
+    {"disabled": true},
     {
       "content": Text(
         'NBH Digital Wallet',
@@ -28,24 +25,21 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'https://wallet.staging.jimber.org',
-      "appid": 'wallet.staging.jimber.org',
-      "redirecturl": '/login',
+      "url": 'http://192.168.0.225:8082',
       "bg": 'nbh.png',
       "disabled": false,
-      "initialUrl": 'https://wallet.staging.jimber.org',
+      "initialUrl": 'http://192.168.0.225:8082',
       "visible": false,
       "id": 1,
+      "appid": '192.168.0.225:8082',
+      "redirecturl": '/login',
       'cookieUrl': '',
       'localStorageKeys': true,
       'color': 0xFF34495e,
       'errorText': false,
-      'openInBrowser': true,
       'permissions': ['CAMERA']
     },
-    {
-      "disabled": true
-    },
+    {"disabled": true},
     {
       "content": Text(
         'FreeFlowPages',
@@ -56,21 +50,25 @@ void main() async {
         textAlign: TextAlign.center,
       ),
       "subheading": 'Where privacy and social media co-exist.',
-      "url": 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
       "disabled": false,
-      "initialUrl": 'https://staging.freeflowpages.com/',
+      "initialUrl": 'https://freeflowpages.com/',
       "visible": false,
       "id": 3,
-      'cookieUrl':'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
+      'cookieUrl':
+          'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
+      'permissions': [],
+      'ffpUrls': [
+        'https://freeflowpages.com/s/3bot',
+        'https://freeflowpages.com/s/tf-tech',
+        'https://freeflowpages.com/s/3bot',
+        'https://freeflowpages.com/s/tf-org-internal',
+        'https://freeflowpages.com/s/3bot'
+      ]
     },
-    {
-      "disabled": true
-    },
+    {"disabled": true},
     {
       "content": Text(
         'ChatApp',
@@ -92,9 +90,6 @@ void main() async {
     }
   ];
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
-    runApp(config);
-    logger.log("running main_local_alex.dart");
-  });
+  runApp(config);
+  logger.log("running dylan.dart");
 }

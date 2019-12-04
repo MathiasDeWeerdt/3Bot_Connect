@@ -15,29 +15,7 @@ void main() async {
   init();
 
   apps = [
-    {
-      "content": Text(
-        'FreeFlowPages',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": 'Where privacy and social media co-exist.',
-      "url": 'https://staging.freeflowpages.com/',
-      "bg": 'ffp.jpg',
-      "disabled": false,
-      "initialUrl": 'https://staging.freeflowpages.com/',
-      "visible": false,
-      "id": 0,
-      'cookieUrl':
-          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
-      'color': 0xFF708fa0,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
-    },
+    {"disabled": true, 'openInBrowser': false},
     {
       "content": Text(
         '3bot Wallet',
@@ -62,6 +40,58 @@ void main() async {
       'errorText': false,
       'openInBrowser': true,
       'permissions': ['CAMERA']
+    },
+    {"disabled": true, 'openInBrowser': false},
+    {
+      "content": Text(
+        'FreeFlowPages',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'Where privacy and social media co-exist.',
+      "url": 'https://staging.freeflowpages.com/',
+      "bg": 'ffp.jpg',
+      "disabled": false,
+      "initialUrl": 'https://staging.freeflowpages.com/',
+      "visible": false,
+      "id": 3,
+      'cookieUrl':
+          'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
+      'color': 0xFF708fa0,
+      'errorText': false,
+      'openInBrowser': false,
+      'permissions': [],
+      'ffpUrls': [
+        'https://staging.freeflowpages.com/s/tf-tokens',
+        'https://staging.freeflowpages.com/s/tf-grid-users',
+        'https://staging.freeflowpages.com/s/tf-grid-farming',
+        'https://staging.freeflowpages.com/s/freeflownation',
+        'https://staging.freeflowpages.com/s/3bot'
+      ]
+    },
+    {
+      "content": Text(
+        'ChatApp',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'Chat with your 3Bot',
+      "disabled": false,
+      'cookieUrl': '',
+      "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "visible": false,
+      "id": 4,
+      'color': 0xFF708fa0,
+      'errorText': false,
+      'openInBrowser': false,
+      'permissions': [],
     }
   ];
 

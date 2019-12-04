@@ -23,6 +23,22 @@ String validateEmail(String value) {
     return null;
   }
 
+bool validateSeedWords(String seed, String confirmationWords) {
+  List<String> words = confirmationWords.split(" ");
+  List<String> seedWords = seed.split(" ");
+
+  // if lenght is not correct return already here
+  if (words.length != 3) return false;
+
+  for(final word in words){
+    // check every word in list against the seed
+    if (!seedWords.contains(word)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 String validateDoubleName(String value) {
   Pattern pattern = r'^[a-zA-Z0-9]+$';
   RegExp regex = new RegExp(pattern);

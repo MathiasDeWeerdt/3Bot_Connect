@@ -15,6 +15,33 @@ void main() async {
   init();
 
   apps = [
+    {"disabled": true},
+    {
+      "content": Text(
+        'NBH Digital Wallet',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": '',
+      "url": 'https://wallet.staging.jimber.org',
+      "appid": 'wallet.staging.jimber.org',
+      "redirecturl": '/login',
+      "bg": 'nbh.png',
+      "disabled": false,
+      "initialUrl": 'https://wallet.staging.jimber.org',
+      "visible": false,
+      "id": 1,
+      'cookieUrl': '',
+      'localStorageKeys': true,
+      'color': 0xFF34495e,
+      'errorText': false,
+      'openInBrowser': true,
+      'permissions': ['CAMERA']
+    },
+    {"disabled": true},
     {
       "content": Text(
         'FreeFlowPages',
@@ -27,10 +54,10 @@ void main() async {
       "subheading": 'Where privacy and social media co-exist.',
       "url": 'https://staging.freeflowpages.com/',
       "bg": 'ffp.jpg',
-      "disabled": true,
+      "disabled": false,
       "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
-      "id": 0,
+      "id": 3,
       'cookieUrl':
           'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
@@ -38,99 +65,38 @@ void main() async {
       'openInBrowser': false,
       'permissions': []
     },
+    {"disabled": true},
     {
       "content": Text(
-        'NBH Digital Wallet',
+        'ChatApp',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,
         ),
         textAlign: TextAlign.center,
       ),
-      "subheading": '',
-      "url": 'https://192.168.2.80:8080/',
-      "appid": '192.168.2.80:8080',
-      "redirecturl": '/login',
-      "bg": 'nbh.png',
+      "subheading": 'Chat with your 3Bot',
       "disabled": false,
-      "initialUrl": 'https://192.168.2.80:8080/',
+      "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'localStorageKeys': true,
-      'color': 0xFF34495e,
+      "id": 5,
+      'color': 0xFF708fa0,
       'errorText': false,
-      'openInBrowser': true,
-      'permissions': ['CAMERA']
-    },
-    {
-      "content": Text(
-        'OpenBrowser',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org/',
-      "bg": 'jimber.png',
-      "disabled": false,
-      "initialUrl": 'https://broker.jimber.org/',
-      "visible": false,
-      "id": 2,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
-    },
-    {
-      "content": Text(
-        'FreeFlowConnect',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'https://janus.conf.meetecho.com/videoroomtest.html',
-      "bg": 'om.jpg',
-      "disabled": true,
-      "initialUrl": 'https://janus.conf.meetecho.com/videoroomtest.html',
-      "visible": false,
-      "id": 3,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
-    },
-    {
-      "content": Icon(
-        Icons.add_circle,
-        size: 75,
-        color: Colors.white,
-      ),
-      "subheading": 'New Application',
-      "bg": 'example.jpg',
-      "url": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "disabled": true,
-      "initialUrl": 'https://codepen.io/ivancoene/full/YzKjMdP',
-      "visible": false,
-      "id": 4,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'openInBrowser': false,
-      'permissions': []
+      'permissions': [],
+      'ffpUrls': [
+        'https://staging.freeflowpages.com/s/tf-tokens',
+        'https://staging.freeflowpages.com/s/tf-grid-users',
+        'https://staging.freeflowpages.com/s/tf-grid-farming',
+        'https://staging.freeflowpages.com/s/freeflownation',
+        'https://staging.freeflowpages.com/s/3bot'
+      ]
     }
   ];
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(config);
-    logger.log("running main_staging.dart");
+    logger.log("running main_local_ivan.dart");
   });
 }

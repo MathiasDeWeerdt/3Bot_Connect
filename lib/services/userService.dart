@@ -44,7 +44,7 @@ Future<String> getPublicKey() async {
     var userInfo = json.decode(userInfoResponse.body);
 
     if (userInfo['publicKey'] != null) {
-      throw new Exception('Keys do not correspond to given user');
+      throw new Exception('Seed phrase does not correspond to given name');
     }
 
     prefs.setString("publickey", userInfo['publicKey']);
@@ -179,10 +179,9 @@ Future<String> getScopePermissions() async {
   return prefs.getString('scopePermissions');
 }
 
-Future<bool> clearData({context}) async {
-  Response response;
+Future<bool> clearData() async {
   final prefs = await SharedPreferences.getInstance();
-
+  Response response;
   try {
     response = await removeDeviceId(prefs.getString('doubleName'));
     await removeDeviceId(prefs.getString('doubleName'));

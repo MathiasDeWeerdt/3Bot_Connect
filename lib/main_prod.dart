@@ -65,11 +65,11 @@ void main() {
       'openInBrowser': false,
       'permissions': [],
       'ffpUrls': [
-        'https://freeflowpages.com/s/tf-tokens',
-        'https://freeflowpages.com/s/tf-grid-users',
-        'https://freeflowpages.com/s/tf-grid-farming',
-        'https://freeflowpages.com/s/freeflownation',
-        'https://freeflowpages.com/s/3bot'
+        'https://freeflowpages.com/join/tf-tokens',
+        'https://freeflowpages.com/join/tf-grid-users',
+        'https://freeflowpages.com/join/tf-grid-farming',
+        'https://freeflowpages.com/join/freeflownation',
+        'https://freeflowpages.com/join/3bot'
       ]
     },
     {

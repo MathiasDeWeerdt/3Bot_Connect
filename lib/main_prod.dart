@@ -15,9 +15,7 @@ void main() {
   init();
 
   apps = [
-    {
-      "disabled": true
-    },
+    {"disabled": true, 'openInBrowser': false},
     {
       "content": Text(
         'NBH Digital Wallet',
@@ -28,12 +26,12 @@ void main() {
         textAlign: TextAlign.center,
       ),
       "subheading": '',
-      "url": 'https://wallet.jimber.org',
-      "appid": 'wallet.staging.jimber.org',
+      "url": 'https://wallet.threefold.me',
+      "appid": 'wallet.threefold.me',
       "redirecturl": '/login',
       "bg": 'nbh.png',
       "disabled": false,
-      "initialUrl": 'https://wallet.jimber.org',
+      "initialUrl": 'https://wallet.threefold.me',
       "visible": false,
       "id": 1,
       'cookieUrl': '',
@@ -43,9 +41,7 @@ void main() {
       'openInBrowser': true,
       'permissions': ['CAMERA']
     },
-    {
-      "disabled": true
-    },
+    {"disabled": true, 'openInBrowser': false},
     {
       "content": Text(
         'FreeFlowPages',
@@ -62,7 +58,8 @@ void main() {
       "initialUrl": 'https://freeflowpages.com/',
       "visible": false,
       "id": 3,
-      'cookieUrl':'https://freeflowpages.com/user/auth/external?authclient=3bot',
+      'cookieUrl':
+          'https://freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
       'openInBrowser': false,
@@ -76,9 +73,6 @@ void main() {
       ]
     },
     {
-      "disabled": true
-    },
-    {
       "content": Text(
         'ChatApp',
         style: TextStyle(
@@ -89,12 +83,14 @@ void main() {
       ),
       "subheading": 'Chat with your 3Bot',
       "disabled": false,
+      'cookieUrl': '',
       "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "visible": false,
-      "id": 5,
+      "id": 4,
       'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': [],
     }
   ];

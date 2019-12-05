@@ -459,12 +459,6 @@ class _LoginScreenState extends State<LoginScreen> {
     var permissions = json[widget.message['appId']]; // scope['derivedSeed']['appId']
     var keysOfPermissions = permissions.keys.toList();
 
-    print("====================");
-    print(tmpScope);
-    print(permissions);
-    print(keysOfPermissions); 
-    print("--------------------");
-
     keysOfPermissions.forEach((var value) {
       if (!permissions[value]['enabled']) {
         tmpScope.remove(value);

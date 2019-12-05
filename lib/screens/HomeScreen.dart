@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:threebotlogin/helpers/HexColor.dart';
 import 'package:threebotlogin/screens/LoginScreen.dart';
 import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
 import 'package:threebotlogin/screens/RegisteredScreen.dart';
@@ -60,7 +61,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     if (initialLink == null) {
       getLinksStream().listen((String incomingLink) {
-        logger.log('Got initial link from stream: ' + incomingLink);
         checkWhatPageToOpen(Uri.parse(incomingLink));
       });
     }
@@ -68,7 +68,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     KeyboardVisibilityNotification().addNewListener(
       onChange: (bool visible) {
-        webViewResizer(visible, bodyContext, this.getPreferredSizeForWebview(), appBar.preferredSize);
+        webViewResizer(visible, bodyContext, this.getPreferredSizeForWebview(),
+            appBar.preferredSize);
       },
     );
     WidgetsBinding.instance.addObserver(this);
@@ -79,21 +80,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     initialLink = await getInitialLink();
 
     if (initialLink != null) {
-      logger.log('Found initialLink: ' + initialLink);
       checkWhatPageToOpen(Uri.parse(initialLink));
     }
   }
 
   checkWhatPageToOpen(Uri link) async {
     if (link.host == 'register') {
-      logger.log('Register via link');
       openPage(RegistrationWithoutScanScreen(
         link.queryParameters,
         resetPin: false,
       ));
     } else if (link.host == "registeraccount") {
-      logger.log('registeraccount HERE: ' + link.queryParameters['doubleName']);
-
       // Check if we already have an account registered before showing this screen.
       String doubleName = await getDoubleName();
       String privateKey = await getPrivateKey();
@@ -101,10 +98,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (doubleName == null || privateKey == null) {
         Navigator.popUntil(context, ModalRoute.withName('/'));
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MobileRegistrationScreen(
-                    doubleName: link.queryParameters['doubleName'])));
+          context,
+          MaterialPageRoute(
+            builder: (context) => MobileRegistrationScreen(
+                doubleName: link.queryParameters['doubleName']),
+          ),
+        );
       } else {
         showDialog(
           context: context,
@@ -136,13 +135,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void checkIfThereAreLoginAttempts(dn) async {
     if (await getPrivateKey() != null && deviceId != null) {
       checkLoginAttempts(dn).then((attempt) {
-        logger.log("Checking if there are login attempts.");
         try {
           if (attempt.body != '' && openPendingLoginAttempt) {
-            logger.log("Found a login attempt, opening ...");
-
-            // Navigator.popUntil(context, ModalRoute.withName('/'));
-
             Navigator.popUntil(context, (route) {
               if (route.settings.name == "/" ||
                   route.settings.name == "/registered" ||
@@ -157,10 +151,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               }
               return true;
             });
-          } else {
-            logger.log("We currently have no open login attempts.");
           }
         } catch (exception) {
+          // We might need to handle this properly.
           logger.log(exception);
         }
       });
@@ -176,7 +169,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Future onActivate(bool initFirebase) async {
     var buildNr = (await PackageInfo.fromPlatform()).buildNumber;
-    logger.log('Current buildnumber: ' + buildNr);
 
     int response = await checkVersionNumber(context, buildNr);
 
@@ -187,7 +179,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       String tmpDoubleName = await getDoubleName();
 
-      // Check if the user didn't click the notification.
       checkIfThereAreLoginAttempts(tmpDoubleName);
       await initUniLinks();
 
@@ -195,35 +186,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         var sei = await getSignedEmailIdentifier();
         var email = await getEmail();
 
-        logger.log("sei: " + sei.toString());
-
         if (sei != null &&
             sei.isNotEmpty &&
             email["email"] != null &&
             email["verified"]) {
-          logger.log(
-              "Email is verified and we have a signed email to verify this verification to a third party");
-
-          logger.log("Email: ", email["email"]);
-          logger.log("Verification status: ", email["verified"].toString());
-          logger.log("Signed email: ", sei);
-
-          // We could recheck the signed email here, but this seems to be overkill, since its already verified.
         } else {
-          logger.log(
-              "We are missing email information or have not been verified yet, attempting to retrieve data ...");
-
-          logger.log("Email: ", email["email"]);
-          logger.log("Verification status: ", email["verified"].toString());
-          logger.log("Signed email: ", sei.toString());
-
-          logger.log("Getting signed email from openkyc.");
           getSignedEmailIdentifierFromOpenKYC(tmpDoubleName)
               .then((response) async {
             if (response.statusCode == 404) {
-              logger.log(
-                  "Can't retrieve signedEmailidentifier, we need to resend email verification.");
-              logger.log("Response: " + response.body);
               return;
             }
 
@@ -232,9 +202,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
             if (signedEmailIdentifier != null &&
                 signedEmailIdentifier.isNotEmpty) {
-              logger.log(
-                  "Received signedEmailIdentifier: " + signedEmailIdentifier);
-
               var vsei = json.decode(
                   (await verifySignedEmailIdentifier(signedEmailIdentifier))
                       .body);
@@ -243,19 +210,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   vsei["email"] == email["email"] &&
                   vsei["identifier"].toLowerCase() ==
                       tmpDoubleName.toLowerCase()) {
-                logger.log(
-                    "Verified signedEmailIdentifier authenticity, saving data.");
                 await saveEmail(vsei["email"], true);
                 await saveSignedEmailIdentifier(signedEmailIdentifier);
               } else {
-                logger.log(
-                    "Couldn't verify authenticity, saving unverified email.");
                 await saveEmail(email["email"], false);
                 await removeSignedEmailIdentifier();
               }
-            } else {
-              logger.log(
-                  "No valid signed email has been found, please redo the verification process.");
             }
           });
         }
@@ -327,15 +287,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void onItemTapped(int index) {
-    // if (isLoading) {
-    //   if (flutterWebViewPlugins[selectedIndex] != null) {
-    //     flutterWebViewPlugins[selectedIndex].close();
-    //   }
-    //   // flutterWebViewPlugins[selectedIndex] = null;
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    // }
     setState(() {
       isLoading = true;
       for (var flutterWebViewPlugin in flutterWebViewPlugins) {
@@ -353,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     this.launchWebviewApp(index);
   }
 
-  void launchWebviewApp (int index) {
+  void launchWebviewApp(int index) {
     updateApp(
       apps[index],
       flutterWebViewPlugins,
@@ -379,7 +330,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         this.isLoading = false;
       });
       await flutterWebViewPlugins[selectedIndex].show();
-      logger.log("Showing webview");
     }
   }
 
@@ -456,17 +406,4 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     return new Size(preferredWidth, preferredHeight);
   }
-
-}
-
-class HexColor extends Color {
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

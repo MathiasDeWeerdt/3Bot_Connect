@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String initialLink = null;
   int selectedIndex = 0;
   AppBar appBar;
-  BottomNavBar bottomNavBar;
   BuildContext bodyContext;
   bool isLoading = false;
   bool showPreference = false;
@@ -246,12 +245,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       elevation: 0.0,
     );
 
-    bottomNavBar = BottomNavBar(
-      key: navbarKey,
-      selectedIndex: selectedIndex,
-      onItemTapped: onItemTapped,
-    );
-
     return CustomScaffold(
       renderBackground: selectedIndex != 0,
       appBar: PreferredSize(
@@ -277,7 +270,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         future: getDoubleName(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            return bottomNavBar;
+            return BottomNavBar(
+              key: navbarKey,
+              selectedIndex: selectedIndex,
+              onItemTapped: onItemTapped,
+            );
           } else {
             return new Container(width: 0.0, height: 0.0);
           }
@@ -406,4 +403,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     return new Size(preferredWidth, preferredHeight);
   }
+}
+
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

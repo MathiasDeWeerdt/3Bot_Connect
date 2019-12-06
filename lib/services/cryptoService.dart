@@ -59,29 +59,24 @@ Future<bool> verifySign(String data, String pk) async {
 
 Future<Map<String, String>> encrypt(
     String data, String publicKey, String sk) async {
-  var nonce = CryptoBox.generateNonce();
-  var private = Sodium.cryptoSignEd25519SkToCurve25519(base64.decode(sk));
+  var nonce = await CryptoBox.generateNonce();
+  var private = await Sodium.cryptoSignEd25519SkToCurve25519(base64.decode(sk));
   var public = base64.decode(publicKey);
   var message = Uint8List.fromList(data.codeUnits);
   var encryptedData =
-      Sodium.cryptoBoxEasy(message, await nonce, public, await private);
+      await Sodium.cryptoBoxEasy(message, nonce, public, private);
 
   return {
-    'nonce': base64.encode(await nonce),
-    'ciphertext': base64.encode(await encryptedData)
+    'nonce': base64.encode(nonce),
+    'ciphertext': base64.encode(encryptedData)
   };
 }
 
 Future<String> generateSeedPhrase() async {
-  String phrase = bip39.generateMnemonic(strength: 256);
-  return phrase;
+  return bip39.generateMnemonic(strength: 256);
 }
 
 Future<String> generateDerivedSeed(String appId) async {
-
-  // We could save the derivedSeed to the preferences? 
-  // final prefs = await SharedPreferences.getInstance();
-
   String privateKey = await getPrivateKey();
 
   PBKDF2 generator = new PBKDF2();

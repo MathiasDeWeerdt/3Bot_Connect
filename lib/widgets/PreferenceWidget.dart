@@ -24,7 +24,6 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
   bool showAdvancedOptions = false;
   Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_down);
   String emailAdress = '';
-  final _prefScaffold = GlobalKey<ScaffoldState>();
   BuildContext preferenceContext;
   bool biometricsCheck = false;
   bool finger = false;

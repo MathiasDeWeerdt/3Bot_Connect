@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
@@ -19,6 +17,5 @@ Future<bool> authenticate() async {
 }
 
 Future<bool> checkBiometricsAvailable() async {
-  bool canCheckBiometrics = await auth.canCheckBiometrics;
-  return canCheckBiometrics;
+  return await auth.canCheckBiometrics;
 }

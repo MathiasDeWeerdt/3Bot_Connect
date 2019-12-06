@@ -6,7 +6,6 @@ import 'package:crypto/crypto.dart';
 import 'package:threebotlogin/main.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
-import 'package:threebotlogin/services/toolsService.dart';
 import 'RegistrationWithoutScanScreen.dart';
 
 class RecoverScreen extends StatefulWidget {
@@ -46,13 +45,13 @@ class _RecoverScreenState extends State<RecoverScreen> {
       privateKey = keys['privateKey'];
     });
 
-    var userKInfoResult = await getUserInfo(doubleName);
+    var userInfoResult = await getUserInfo(doubleName);
 
-    if (userKInfoResult.statusCode != 200) {
+    if (userInfoResult.statusCode != 200) {
       throw new Exception('User not found');
     }
 
-    var body = json.decode(userKInfoResult.body);
+    var body = json.decode(userInfoResult.body);
 
     if (body['publicKey'] != keys['publicKey']) {
       throw new Exception('Seed phrase does not correspond to given name');
@@ -93,8 +92,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
   }
 
   String validateEmail(String value) {
-    Pattern pattern =
-        r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}';
+    Pattern pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}';
     RegExp regex = new RegExp(pattern);
     if (!regex.hasMatch(value)) {
       emailCheck = false;

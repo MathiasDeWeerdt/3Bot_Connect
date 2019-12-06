@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool openPendingLoginAttempt = true;
   String doubleName = '';
   var email;
-  String initialLink = null;
+  String initialLink;
   int selectedIndex = 0;
   AppBar appBar;
   BuildContext bodyContext;
@@ -403,16 +403,4 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
     return new Size(preferredWidth, preferredHeight);
   }
-}
-
-class HexColor extends Color {
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

@@ -36,9 +36,7 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
   void initState() {
     _index = 0;
     errorStepperText = '';
-    logger.log('Attempting to set doubleName');
     if (widget.doubleName != null) {
-      logger.log("widget.doubleName: " + widget.doubleName);
       setState(() {
         doubleNameController.text = widget.doubleName;
       });
@@ -53,7 +51,6 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
   checkStep(currentStep) async {
     switch (currentStep) {
       case 0:
-        var userKInfoResult;
         loadingDialog();
         if (doubleNameController.text != null ||
             doubleNameController.text != '') {
@@ -61,8 +58,8 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
           var doubleNameValidation =
               validateDoubleName(doubleNameController.text);
           if (doubleNameValidation == null) {
-            userKInfoResult = await getUserInfo(doubleName);
-            if (userKInfoResult.statusCode != 200) {
+            var userInfoResult = await getUserInfo(doubleName);
+            if (userInfoResult.statusCode != 200) {
               setState(() {
                 _index++;
               });
@@ -97,7 +94,6 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
         if (phrase == null || phrase == '') {
           phrase = await generateSeedPhrase();
         }
-
         break;
       case 2:
         setState(() {
@@ -119,12 +115,9 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
         }
         break;
       case 4:
-        print(_index);
         loadingDialog();
         var response = await finishRegistration(doubleNameController.text,
             emailController.text, 'random', keys['publicKey']);
-
-        print(response.statusCode);
         if (response.statusCode == 200) {
           registrationToPin();
         } else {
@@ -132,7 +125,6 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
         }
         break;
       default:
-        print('Whatcha doing here');
         break;
     }
   }
@@ -186,10 +178,9 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
 
   Widget registrationStepper() {
     return Theme(
-      // data: Theme.of(context),
       data: ThemeData(
-          primaryColor: Theme.of(context).accentColor,
-          accentColor: Theme.of(context).primaryColor,
+        primaryColor: Theme.of(context).accentColor,
+        accentColor: Theme.of(context).primaryColor,
       ),
       child: Stepper(
         controlsBuilder: (BuildContext context,
@@ -438,7 +429,7 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
       appBar: AppBar(
         title: Text('3Bot connect - Registration'),
       ),
-      body:  registrationStepper(),
+      body: registrationStepper(),
     );
   }
 }

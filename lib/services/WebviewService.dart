@@ -115,7 +115,8 @@ Future<void> updateApp(
   }
 }
 
-Future<void> launchApp(size, appId, BuildContext context, Size appBarSize, Function notifyParent, bool isLoading) async {
+Future<void> launchApp(size, appId, BuildContext context, Size appBarSize,
+    Function notifyParent, bool isLoading) async {
   // If the webview is not existing, make a new one and save it in our list.
   if (flutterWebViewPlugins[appId] == null) {
     flutterWebViewPlugins[appId] = new FlutterWebviewPlugin();
@@ -371,4 +372,25 @@ void _showResendEmailDialog(BuildContext context) {
       ],
     ),
   );
+}
+
+void hideWebviews() {
+  for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+    if (flutterWebViewPlugin != null) {
+      flutterWebViewPlugin.hide();
+    }
+  }
+}
+
+void showLastOpenendWebview() {
+  int index = 0;
+  for (var flutterWebViewPlugin in flutterWebViewPlugins) {
+    if (flutterWebViewPlugin != null) {
+      if (index == lastAppUsed) {
+        flutterWebViewPlugin.show();
+        showButton = true;
+      }
+      index++;
+    }
+  }
 }

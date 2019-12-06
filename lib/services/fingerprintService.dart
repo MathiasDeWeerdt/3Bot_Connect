@@ -14,7 +14,7 @@ Future<bool> authenticate() async {
   } on PlatformException catch (e) {
     print(e);
   }
-  
+
   return authenticated;
 }
 

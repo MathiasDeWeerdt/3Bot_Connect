@@ -5,6 +5,8 @@ import 'package:threebotlogin/helpers/HexColor.dart';
 import 'package:threebotlogin/widgets/BottomNavbar.dart';
 import 'package:threebotlogin/widgets/PreferenceWidget.dart';
 
+import 'HomeScreen.dart';
+
 class RegisteredScreen extends StatefulWidget {
   final Widget registeredScreen;
   final Function openFfp;

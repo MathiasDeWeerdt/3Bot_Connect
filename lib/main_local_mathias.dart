@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'config.dart';
 import 'main.dart';
@@ -6,14 +7,41 @@ import 'main.dart';
 void main() async {
   var config = Config(
       name: '3bot local',
-      threeBotApiUrl: 'http://192.168.1.3:5000/api',
-      openKycApiUrl: 'http://192.168.1.3:5005',
-      threeBotFrontEndUrl: 'http://192.168.1.3:8081/',
+      threeBotApiUrl: 'http://192.168.2.62:5000/api',
+      openKycApiUrl: 'http://192.168.2.62:5005',
+      threeBotFrontEndUrl: 'http://192.168.2.62:8081/',
       child: new MyApp());
 
   init();
 
   apps = [
+    {"disabled": true, 'openInBrowser': false},
+    {
+      "content": Text(
+        'NBH Digital Wallet',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": '',
+      "url": 'https://wallet.staging.jimber.org',
+      "appid": 'wallet.staging.jimber.org',
+      "redirecturl": '/login',
+      "bg": 'nbh.png',
+      "disabled": false,
+      "initialUrl": 'https://wallet.staging.jimber.org',
+      "visible": false,
+      "id": 1,
+      'cookieUrl': '',
+      'localStorageKeys': true,
+      'color': 0xFF34495e,
+      'errorText': false,
+      'openInBrowser': true,
+      'permissions': ['CAMERA']
+    },
+    {"disabled": true, 'openInBrowser': false},
     {
       "content": Text(
         'FreeFlowPages',
@@ -29,79 +57,46 @@ void main() async {
       "disabled": false,
       "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
-      "id": 0,
+      "id": 3,
       'cookieUrl':
           'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
       'color': 0xFF708fa0,
       'errorText': false,
       'openInBrowser': false,
-      'permissions': []
+      'permissions': [],
+      'ffpUrls': [
+        'https://staging.freeflowpages.com/s/tf-tokens',
+        'https://staging.freeflowpages.com/s/tf-grid-users',
+        'https://staging.freeflowpages.com/s/tf-grid-farming',
+        'https://staging.freeflowpages.com/s/freeflownation',
+        'https://staging.freeflowpages.com/s/3bot'
+      ]
     },
     {
       "content": Text(
-        'OpenBrowser',
+        'ChatApp',
         style: TextStyle(
           color: Colors.white,
           fontSize: 20,
         ),
         textAlign: TextAlign.center,
       ),
-      "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org/',
-      "bg": 'jimber.png',
+      "subheading": 'Chat with your 3Bot',
       "disabled": false,
-      "initialUrl": 'https://broker.jimber.org/',
+      "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
       "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
+      "id": 4,
+      'color': 0xFF708fa0,
       'errorText': false,
-      'permissions': []
-    },
-    {
-      "content": Text(
-        'NBH Digital Wallet',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": '',
-      "url": 'http://192.168.43.211:8082',
-      "bg": 'nbh.png',
-      "disabled": false,
-      "initialUrl": 'http://192.168.43.211:8082',
-      "visible": false,
-      "id": 2,
-      "appid": '192.168.43.211:8082',
-      "redirecturl": '/login',
-      'cookieUrl': '',
-      'localStorageKeys': true,
-      'color': 0xFF34495e,
-      'errorText': false,
-      'permissions': ['CAMERA']
-    },
-    {
-      "content": Icon(
-        Icons.add_circle,
-        size: 75,
-        color: Colors.white,
-      ),
-      "subheading": 'New Application',
-      "bg": 'example.jpg',
-      "url": 'https://jimber.org/app',
-      "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work',
-      "visible": false,
-      "id": 3,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'permissions': []
+      'openInBrowser': false,
+      'permissions': [],
     }
   ];
 
-  runApp(config);
-  logger.log("running main_local_mathias.dart");
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(config);
+    logger.log("running main_local_mathias.dart");
+  });
 }

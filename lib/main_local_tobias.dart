@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'config.dart';
 import 'main.dart';
@@ -15,46 +16,7 @@ void main() async {
 
   apps = [
     {
-      "content": Text(
-        'FreeFlowPages',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": 'Where privacy and social media co-exist.',
-      "bg": 'ffp.jpg',
-      "disabled": false,
-      "initialUrl": 'https://www2.freeflowpages.com/',
-      "visible": false,
-      "id": 0,
-      'cookieUrl':
-          'https://www2.freeflowpages.com/user/auth/external?authclient=3bot',
-      'color': 0xFF708fa0,
-      'errorText': false,
-      'permissions': []
-    },
-    {
-      "content": Text(
-        'OpenBrowser',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      "subheading": 'By Jimber',
-      "url": 'https://broker.jimber.org/',
-      "bg": 'jimber.png',
-      "disabled": false,
-      "initialUrl": 'https://broker.jimber.org/',
-      "visible": false,
-      "id": 1,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
-      'errorText': false,
-      'permissions': []
+      "disabled": true
     },
     {
       "content": Text(
@@ -67,36 +29,72 @@ void main() async {
       ),
       "subheading": '',
       "url": 'https://wallet.staging.jimber.org',
+      "appid": 'wallet.staging.jimber.org',
+      "redirecturl": '/login',
       "bg": 'nbh.png',
       "disabled": false,
       "initialUrl": 'https://wallet.staging.jimber.org',
       "visible": false,
-      "id": 3,
+      "id": 1,
       'cookieUrl': '',
+      'localStorageKeys': true,
       'color': 0xFF34495e,
       'errorText': false,
+      'openInBrowser': true,
       'permissions': ['CAMERA']
     },
     {
-      "content": Icon(
-        Icons.add_circle,
-        size: 75,
-        color: Colors.white,
+      "disabled": true
+    },
+    {
+      "content": Text(
+        'FreeFlowPages',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
       ),
-      "subheading": 'New Application',
-      "bg": 'example.jpg',
-      "url": 'https://jimber.org/app',
-      "disabled": true,
-      "initialUrl": 'https://cowork-lochristi.threefold.work',
+      "subheading": 'Where privacy and social media co-exist.',
+      "url": 'https://staging.freeflowpages.com/',
+      "bg": 'ffp.jpg',
+      "disabled": false,
+      "initialUrl": 'https://staging.freeflowpages.com/',
       "visible": false,
-      "id": 4,
-      'cookieUrl': '',
-      'color': 0xFF0f296a,
+      "id": 3,
+      'cookieUrl':'https://staging.freeflowpages.com/user/auth/external?authclient=3bot',
+      'color': 0xFF708fa0,
       'errorText': false,
+      'openInBrowser': false,
       'permissions': []
+    },
+    {
+      "disabled": true
+    },
+    {
+      "content": Text(
+        'ChatApp',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      "subheading": 'Chat with your 3Bot',
+      "disabled": false,
+      "url": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "initialUrl": 'https://chatbot.threefold.io?name=*name*&email=*email*',
+      "visible": false,
+      "id": 5,
+      'color': 0xFF708fa0,
+      'errorText': false,
+      'permissions': [],
     }
   ];
 
-  runApp(config);
-  logger.log("running main_local_mathias.dart");
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(config);
+    logger.log("running main_local_tobias.dart");
+  });
 }

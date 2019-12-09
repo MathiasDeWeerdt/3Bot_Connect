@@ -92,6 +92,7 @@ Future openLogin(context, message) async {
               flutterWebViewPlugin.hide();
             }
           }
+          
     } else if (data['type'] == 'email_verification') {
       getEmail().then((email) async {
         if (email['email'] != null && (await getSignedEmailIdentifier()) == null) {

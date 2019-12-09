@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:package_info/package_info.dart';
 import 'package:threebotlogin/screens/MobileRegistrationScreen.dart';
-import 'package:threebotlogin/screens/PreferenceScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/loggingService.dart';
 import 'config.dart';
@@ -126,7 +125,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: config.name,
       theme: ThemeData(
-          primaryColor: Color(0xff0f296a), accentColor: Color(0xff16a085)),
+          primaryColor: HexColor("#2d4052"), accentColor: Color(0xff16a085)),
       routes: {
         '/': (context) => HomeScreen(),
         '/scan': (context) => RegistrationScreen(),
@@ -135,7 +134,6 @@ class MyApp extends StatelessWidget {
         '/registered': (context) => SuccessfulScreen(registration: true),
         '/error': (context) => ErrorScreen(),
         '/recover': (context) => RecoverScreen(),
-        '/preference': (context) => PreferenceScreen(),
         '/changepin': (context) => ChangePinScreen(),
         '/registration': (context) => MobileRegistrationScreen()
       },

@@ -6,10 +6,12 @@ class ReuseableTextFieldStep extends StatelessWidget {
       @required this.labelText,
       @required this.controller,
       @required this.typeText,
+      @required this.errorStepperText,
       this.suffixText});
 
   final String titleText;
   final String labelText;
+  final String errorStepperText;
   final TextEditingController controller;
   final String suffixText;
   final TextInputType typeText;
@@ -39,6 +41,18 @@ class ReuseableTextFieldStep extends StatelessWidget {
             ),
             controller: controller,
           ),
+        ),
+        Row(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Text(
+                errorStepperText,
+                style: TextStyle(color: Colors.red),
+                textAlign: TextAlign.left,
+              ),
+            ),
+          ],
         ),
         Divider(
           height: 50,

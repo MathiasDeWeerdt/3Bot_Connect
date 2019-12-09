@@ -4,6 +4,7 @@ import 'package:threebotlogin/screens/RegistrationWithoutScanScreen.dart';
 import 'package:threebotlogin/services/3botService.dart';
 import 'package:threebotlogin/services/toolsService.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
+import 'package:threebotlogin/widgets/CustomScaffold.dart';
 import 'package:threebotlogin/widgets/ReusableTextStep.dart';
 import 'package:threebotlogin/widgets/ReuseableTextFieldStep.dart';
 
@@ -11,17 +12,20 @@ class MobileRegistrationScreen extends StatefulWidget {
   final String doubleName;
 
   MobileRegistrationScreen({this.doubleName});
-  
-  _MobileRegistrationScreenState createState() => _MobileRegistrationScreenState();
+
+  _MobileRegistrationScreenState createState() =>
+      _MobileRegistrationScreenState();
 }
 
 class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
   final doubleNameController = TextEditingController();
   final emailController = TextEditingController();
+  final seedConfirmationController = TextEditingController();
 
   int _index;
   bool isVisible = false;
   String phrase = '';
+  String phraseConfirmationWords = '';
   String doubleName;
 
   String errorStepperText;
@@ -33,10 +37,10 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
     _index = 0;
     errorStepperText = '';
     logger.log('Attempting to set doubleName');
-    if(widget.doubleName != null) {
+    if (widget.doubleName != null) {
       logger.log("widget.doubleName: " + widget.doubleName);
       setState(() {
-        doubleNameController.text = widget.doubleName; 
+        doubleNameController.text = widget.doubleName;
       });
     }
     super.initState();
@@ -64,17 +68,17 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
               });
             } else {
               setState(() {
-                errorStepperText = 'User exists already';
+                errorStepperText = 'Name already exists.';
               });
             }
           } else {
             setState(() {
-              errorStepperText = 'Doublename needs to be alphanumeric';
+              errorStepperText = 'Name needs to be alphanumeric';
             });
           }
         } else {
           setState(() {
-            errorStepperText = 'Doublename can\'t be empty';
+            errorStepperText = 'Name can\'t be empty';
           });
         }
         Navigator.pop(context);
@@ -102,6 +106,19 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
         keys = await generateKeysFromSeedPhrase(phrase);
         break;
       case 3:
+        bool seedWordConfirmationValidation =
+            validateSeedWords(phrase, seedConfirmationController.text);
+        if (seedWordConfirmationValidation) {
+          setState(() {
+            _index++;
+          });
+        } else {
+          setState(() {
+            errorStepperText = 'Words are not correct.';
+          });
+        }
+        break;
+      case 4:
         print(_index);
         loadingDialog();
         var response = await finishRegistration(doubleNameController.text,
@@ -130,6 +147,9 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
       "email": emailController.text,
       "phrase": phrase,
     };
+
+    // Close the modal since we are navigating to another screen
+    Navigator.of(context, rootNavigator: true).pop();
 
     Navigator.push(
         context,
@@ -166,7 +186,11 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
 
   Widget registrationStepper() {
     return Theme(
-      data: Theme.of(context),
+      // data: Theme.of(context),
+      data: ThemeData(
+          primaryColor: Theme.of(context).accentColor,
+          accentColor: Theme.of(context).primaryColor,
+      ),
       child: Stepper(
         controlsBuilder: (BuildContext context,
             {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
@@ -177,35 +201,41 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: onStepCancel,
-                    child: const Text('RETURN'),
-                    color: Colors.grey[200],
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      onStepCancel();
+                    },
+                    child: Text(
+                      _index == 0 ? 'CANCEL' : 'PREVIOUS',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Theme.of(context).accentColor,
                   ),
                   FlatButton(
                     onPressed: () {
                       FocusScope.of(context).unfocus();
                       onStepContinue();
                     },
-                    child: const Text('CONTINUE'),
-                    color: Colors.grey[200],
-                  ),
+                    child: Text(
+                      _index == 4 ? 'FINISH' : 'NEXT',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Theme.of(context).accentColor,
+                  )
                 ],
               ),
-              Text(
-                errorStepperText,
-                style: TextStyle(color: Colors.red),
-                textAlign: TextAlign.right,
-              )
             ],
           );
         },
-        type: StepperType.horizontal,
+        type: StepperType.vertical,
         steps: [
           Step(
-            isActive: _index == 0,
-            state: _index >= 0 ? StepState.complete : StepState.disabled,
-            title: Text('3Bot'),
-            subtitle: Text('Name'),
+            isActive: _index >= 0,
+            state: _index > 0
+                ? StepState.complete
+                : _index == 0 ? StepState.editing : StepState.disabled,
+            title: Text('3Bot name'),
+            subtitle: _index > 0 ? Text(doubleNameController.text) : null,
             content: Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -213,7 +243,7 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      'Hi! What is your 3bot name',
+                      'Hi, please choose a 3Bot name.',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Divider(
@@ -226,12 +256,24 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Doublename',
+                          labelText: 'Name',
                           suffixText: '.3bot',
                           suffixStyle: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         controller: doubleNameController,
                       ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Text(
+                            errorStepperText,
+                            style: TextStyle(color: Colors.red),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ],
                     ),
                     Divider(
                       height: 50,
@@ -242,25 +284,31 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
             ),
           ),
           Step(
-            isActive: _index == 1,
-            state: _index >= 1 ? StepState.complete : StepState.disabled,
+            isActive: _index >= 1,
+            state: _index > 1
+                ? StepState.complete
+                : _index == 1 ? StepState.editing : StepState.disabled,
             title: Text('Email'),
+            subtitle: _index > 1 ? Text(emailController.text) : null,
             content: Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ReuseableTextFieldStep(
-                  titleText: 'What is your email',
-                  labelText: 'email',
+                  titleText: 'What is your email?',
+                  labelText: 'Email',
                   typeText: TextInputType.emailAddress,
+                  errorStepperText: errorStepperText,
                   controller: emailController,
                 ),
               ),
             ),
           ),
           Step(
-            isActive: _index == 2,
-            state: _index >= 2 ? StepState.complete : StepState.disabled,
-            title: Text('Phrase'),
+            isActive: _index >= 2,
+            state: _index > 2
+                ? StepState.complete
+                : _index == 2 ? StepState.editing : StepState.disabled,
+            title: Text('Seed phrase'),
             content: Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -268,13 +316,36 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                   titleText:
                       'Please write this on a piece of paper and keep it in a secure place.',
                   extraText: phrase,
+                  errorStepperText: errorStepperText,
                 ),
               ),
             ),
           ),
           Step(
-            isActive: _index == 3,
-            state: _index >= 3 ? StepState.complete : StepState.disabled,
+            isActive: _index >= 3,
+            state: _index > 3
+                ? StepState.complete
+                : _index == 3 ? StepState.editing : StepState.disabled,
+            title: Text('Confirm seed phrase'),
+            content: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ReuseableTextFieldStep(
+                  titleText:
+                      'Type 3 random words from your seed phrase, separated by a space.',
+                  labelText: 'Seed phrase words',
+                  typeText: TextInputType.text,
+                  errorStepperText: errorStepperText,
+                  controller: seedConfirmationController,
+                ),
+              ),
+            ),
+          ),
+          Step(
+            isActive: _index >= 4,
+            state: _index > 4
+                ? StepState.complete
+                : _index == 4 ? StepState.editing : StepState.disabled,
             title: Text('Finishing'),
             content: Card(
               child: Column(
@@ -283,9 +354,9 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
                     height: 10.0,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'Click on continue to finish registration.',
+                      'Please check the data below, press next if it is correct. Otherwise click the pencil icon to edit them.',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -319,6 +390,11 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
           )
         ],
         currentStep: _index,
+        onStepTapped: (index) {
+          setState(() {
+            _index = index;
+          });
+        },
         onStepContinue: () {
           errorStepperText = '';
           checkStep(_index);
@@ -339,38 +415,30 @@ class _MobileRegistrationScreenState extends State<MobileRegistrationScreen> {
     );
   }
 
+  Widget errorWidget() {
+    return errorStepperText.isNotEmpty
+        ? Row(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Text(
+                  errorStepperText,
+                  style: TextStyle(color: Colors.red),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ],
+          )
+        : Container();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
       appBar: AppBar(
-        title: Text('Registration'),
-        backgroundColor: Color(0xFF0f296a),
+        title: Text('3Bot connect - Registration'),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Theme.of(context).primaryColor,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-          ),
-          child: Container(
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-              child: Container(
-                child: registrationStepper(),
-              ),
-            ),
-          ),
-        ),
-      ),
+      body:  registrationStepper(),
     );
   }
 }

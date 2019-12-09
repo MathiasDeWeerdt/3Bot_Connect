@@ -55,7 +55,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
     var body = json.decode(userKInfoResult.body);
 
     if (body['publicKey'] != keys['publicKey']) {
-      throw new Exception('Keys do not correspond to given user');
+      throw new Exception('Seed phrase does not correspond to given name');
     }
   }
 
@@ -179,14 +179,14 @@ class _RecoverScreenState extends State<RecoverScreen> {
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Doublename',
+                    labelText: 'Name',
                     suffixText: '.3bot',
                     suffixStyle: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   controller: doubleNameController,
                   validator: (value) {
                     if (value.isEmpty) {
-                      return 'Enter your Doublename';
+                      return 'Enter your Name';
                     }
                     return null;
                   }),
@@ -212,7 +212,7 @@ class _RecoverScreenState extends State<RecoverScreen> {
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'Phrase'),
+                    border: OutlineInputBorder(), labelText: 'Seed phrase'),
                 controller: seedPhrasecontroller,
                 validator: (value) {
                   if (value.isEmpty) {

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:threebotlogin/main.dart';
+import 'package:threebotlogin/services/WebviewService.dart';
 import 'package:threebotlogin/services/fingerprintService.dart';
 import 'package:threebotlogin/widgets/ImageButton.dart';
 import 'package:threebotlogin/widgets/PinField.dart';
@@ -30,17 +30,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 Future<bool> _onWillPop() async {
-  var index = 0;
   cancelLogin(await getDoubleName());
-  for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-    if (flutterWebViewPlugin != null) {
-      if (index == lastAppUsed) {
-        flutterWebViewPlugin.show();
-        showButton = true;
-      }
-      index++;
-    }
-  }
+  showLastOpenendWebview();
   return Future.value(true);
 }
 
@@ -50,34 +41,48 @@ class _LoginScreenState extends State<LoginScreen> {
       'Please select your preferred scopes and press Accept';
   String scopeText =
       'Please select your preferred scopes and press the corresponding emoji';
-  List<int> imageList = new List();
-  var selectedImageId = -1;
-  var correctImage = -1;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var scope = Map();
-  bool cancelBtnVisible = false;
 
+  List<int> imageList = new List();
+  Map scope = Map();
+
+  int selectedImageId = -1;
+  int correctImage = -1;
+
+  bool cancelBtnVisible = false;
   bool showPinfield = false;
   bool showScopeAndEmoji = false;
   bool isMobileCheck = false;
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     isMobileCheck = checkMobile();
 
-    makeScopes();
+    makePermissionPrefs();
 
-    var generated = 1;
-    var rng = new Random();
-    if (isNumeric(widget.message['randomImageId'])) {
-      correctImage = int.parse(widget.message['randomImageId']);
+    // Generate EmojiList
+    generateEmojiImageList();
+
+    if (Platform.isIOS) {
+      goToPinfield();
+      checkFingerPrintActive();
     } else {
-      correctImage = 1;
+      checkFingerPrintActive();
     }
+  }
 
+  void generateEmojiImageList() {
+    // Parse correct emoji image id that comes from our API.
+    correctImage = parseImageId(widget.message['randomImageId']);
+
+    // Add it to the list
     imageList.add(correctImage);
 
+    // Generate 3 other random emoji image ids
+    int generated = 1;
+    var rng = new Random();
     while (generated <= 3) {
       var x = rng.nextInt(266) + 1;
       if (!imageList.contains(x)) {
@@ -86,17 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
 
-    if (Platform.isIOS) {
-      goToPinfield();
-      checkFingerPrintActive();
-    } else {
-      checkFingerPrintActive();
-    }
-
-    print("====================");
-    print("I only get here once");
-    print("--------------------");
-
+    // Shuffle the list
     setState(() {
       imageList.shuffle();
     });
@@ -104,16 +99,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   checkFingerPrintActive() async {
     bool isValue = await getFingerprint();
-    print("How many times do we get here");
 
     if (isValue) {
-      bool isAuthenticate = await authenticate();
-      print("How many times");
-      print(isAuthenticate);
+      bool isAuthenticated = await authenticate();
 
-      if (isAuthenticate) {
+      if (isAuthenticated) {
         // Show scopes + emmoji
-        print('inside authenticate');
         return finishLogin();
       }
     }
@@ -122,8 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void goToPinfield() {
-    print('====================');
-    print('showing pinfield');
     setState(() {
       helperText = 'Enter your pincode to log in';
       showPinfield = true;
@@ -132,26 +121,29 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool isRequired(value, givenScope) {
-    bool flag = false;
-
-    if (jsonDecode(givenScope)[value] != null &&
-        jsonDecode(givenScope)[value]) {
-      flag = true;
-    }
-
-    return flag;
+    return jsonDecode(givenScope)[value] != null &&
+        jsonDecode(givenScope)[value];
   }
 
   makePermissionPrefs() async {
-    if (await getScopePermissions() == null) {
+    if (widget.message['scope'] != null) {
+      if (jsonDecode(widget.message['scope']).containsKey('email')) {
+        scope['email'] = await getEmail();
+      }
+
+      if (jsonDecode(widget.message['scope']).containsKey('derivedSeed')) {
+        scope['derivedSeed'] = await getDerivedSeed(widget.message['appId']);
+      }
+    }
+
+    String scopePermissions = await getScopePermissions();
+    if (scopePermissions == null) {
       saveScopePermissions(jsonEncode(HashMap()));
     }
 
-    var initialPermissions = jsonDecode(await getScopePermissions());
-    print('initialpermissions: $initialPermissions');
+    var initialPermissions = jsonDecode(scopePermissions);
 
     if (!initialPermissions.containsKey(widget.message['appId'])) {
-      print('Permissions for this appId not found in prefs');
       var newHashMap = new HashMap();
       initialPermissions[widget.message['appId']] = newHashMap;
 
@@ -163,39 +155,21 @@ class _LoginScreenState extends State<LoginScreen> {
           };
         });
       }
-      print('setting perm $initialPermissions');
       saveScopePermissions(jsonEncode(initialPermissions));
     } else {
-      print('Permissions already in prefs');
-      var arr = ['doubleName', 'email', 'derivedSeed'];
+      List<String> permissions = ['doubleName', 'email', 'derivedSeed'];
 
-      arr.forEach((var value) {
-        if (!initialPermissions[widget.message['appId']].containsKey(value)) {
-          print('$scope $value  ${!scope.keys.toList().contains(value)}');
-          initialPermissions[widget.message['appId']][value] = {
+      permissions.forEach((var permission) {
+        if (!initialPermissions[widget.message['appId']]
+            .containsKey(permission)) {
+          initialPermissions[widget.message['appId']][permission] = {
             'enabled': true,
-            'required': isRequired(value, widget.message['scope'])
+            'required': isRequired(permission, widget.message['scope'])
           };
         }
       });
-      print('setting perm $initialPermissions');
       saveScopePermissions(jsonEncode(initialPermissions));
     }
-  }
-
-  void makeScopes() async {
-    print('widget ${widget.message['scope']}');
-    if (widget.message['scope'] != null) {
-      if (jsonDecode(widget.message['scope']).containsKey('email')) {
-        scope['email'] = await getEmail();
-      }
-
-      if (jsonDecode(widget.message['scope']).containsKey('derivedSeed')) {
-        scope['derivedSeed'] = await getDerivedSeed(widget.message['appId']);
-      }
-    }
-
-    await makePermissionPrefs();
   }
 
   finishLogin() {
@@ -361,30 +335,27 @@ class _LoginScreenState extends State<LoginScreen> {
       selectedImageId = imageId;
     });
 
-    if (selectedImageId != -1 || isMobile()) {
-      if (isMobile() || selectedImageId == correctImage) {
-        setState(() {
-          print('send it again');
-          sendIt();
-        });
-      } else {
-        setState(() {
-          print('send it again');
-          sendIt();
-        });
-        _scaffoldKey.currentState.showSnackBar(
-            SnackBar(content: Text('Oops... that\'s the wrong emoji')));
-      }
-    } else {
+    // If nothing selected ? Show error
+    if (selectedImageId == -1) {
       _scaffoldKey.currentState
           .showSnackBar(SnackBar(content: Text('Please select an emoji')));
+      return;
     }
+
+    // If incorrect emoji, show error
+    if (selectedImageId != correctImage) {
+      _scaffoldKey.currentState.showSnackBar(
+          SnackBar(content: Text('Oops... that\'s the wrong emoji')));
+      return;
+    }
+
+    // Else send it
+    sendIt();
   }
 
   pinFilledIn(p) async {
     final pin = await getPin();
     if (pin == p) {
-      print('Onto showing scopes and emojis');
       return finishLogin();
     } else {
       _scaffoldKey.currentState.showSnackBar(
@@ -395,26 +366,16 @@ class _LoginScreenState extends State<LoginScreen> {
   cancelIt() async {
     cancelLogin(await getDoubleName());
     Navigator.popUntil(context, ModalRoute.withName('/'));
-    var index = 0;
 
-    for (var flutterWebViewPlugin in flutterWebViewPlugins) {
-      if (flutterWebViewPlugin != null) {
-        if (index == lastAppUsed) {
-          flutterWebViewPlugin.show();
-          showButton = true;
-        }
-        index++;
-      }
-    }
+    showLastOpenendWebview();
   }
 
   sendIt() async {
-    print('sendIt');
     var state = widget.message['state'];
 
     var publicKey = widget.message['appPublicKey']?.replaceAll(" ", "+");
     bool hashMatch = RegExp(r"[^A-Za-z0-9]+").hasMatch(state);
-    print("hash match?? " + hashMatch.toString() + " false is ok");
+
     if (hashMatch) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('States can only be alphanumeric [^A-Za-z0-9]'),
@@ -435,8 +396,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     await sendData(state, await signedHash, await data, selectedImageId);
 
-    if (selectedImageId == correctImage || isMobile()) {
-      if (widget.closeWhenLoggedIn && isMobile()) {
+    if (selectedImageId == correctImage || isMobileCheck) {
+      if (widget.closeWhenLoggedIn && isMobileCheck) {
         if (Platform.isIOS) {
           Navigator.popUntil(context, ModalRoute.withName('/'));
           Navigator.pushNamed(context, '/success');
@@ -447,23 +408,19 @@ class _LoginScreenState extends State<LoginScreen> {
         try {
           Navigator.popUntil(context, ModalRoute.withName('/'));
           Navigator.pushNamed(context, '/success');
-        } catch (e) {}
+        } catch (e) {
+          print(e);
+        }
       }
     }
   }
 
   dynamic buildScope() async {
-    Map tmpScope  = new Map.from(scope);
+    Map tmpScope = new Map.from(scope);
 
     var json = jsonDecode(await getScopePermissions());
-    var permissions = json[widget.message['appId']]; // scope['derivedSeed']['appId']
+    var permissions = json[widget.message['appId']];
     var keysOfPermissions = permissions.keys.toList();
-
-    print("====================");
-    print(tmpScope);
-    print(permissions);
-    print(keysOfPermissions); 
-    print("--------------------");
 
     keysOfPermissions.forEach((var value) {
       if (!permissions[value]['enabled']) {
@@ -476,34 +433,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool checkMobile() {
     var mobile = widget.message['mobile'];
-    if (mobile == true || mobile == 'true') {
-      return true;
-    } else {
-      return false;
-    }
+    return mobile == true || mobile == 'true';
   }
 
-  bool isMobile() {
-    var mobile = widget.message['mobile'];
-
-    if (mobile is String) {
-      return mobile == 'true';
-    } else if (mobile is bool) {
-      return mobile == true;
+  int parseImageId(String imageId) {
+    if (imageId == null || imageId == '') {
+      return 1;
     }
-
-    return false;
-  }
-
-  bool isNumeric(String s) {
-    if (s == null) {
-      return false;
-    }
-
-    try {
-      return double.tryParse(s) != null;
-    } catch (e) {
-      return false;
-    }
+    return int.parse(imageId);
   }
 }

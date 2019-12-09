@@ -13,7 +13,6 @@ String threeBotApiUrl = config.threeBotApiUrl;
 Map<String, String> requestHeaders = {'Content-type': 'application/json'};
 
 sendScannedFlag(String hash, String deviceId, String doubleName) async {
-  print('$threeBotApiUrl/flag');
   http.post(
     '$threeBotApiUrl/flag',
     body: json.encode({'hash': hash, 'deviceId': deviceId, 'isSigned': true, 'doubleName': doubleName}),
@@ -41,9 +40,6 @@ Future sendData(String hash, String signedHash, data, selectedImageId) {
 }
 
 Future sendPublicKey(Map<String, Object> data) async {
-  logger
-      .log('Sending appPublicKey to backend with appId: ' + json.encode(data));
-
   String timestamp = new DateTime.now().millisecondsSinceEpoch.toString();
   String privatekey = await getPrivateKey();
 
@@ -96,7 +92,7 @@ Future<Response> removeDeviceId(String doubleName) async {
     'Content-type': 'application/json',
     'Jimber-Authorization': signedPayload
   };
-  
+
   try {
     return await http.delete('$threeBotApiUrl/users/$doubleName/deviceid',
       headers: loginRequestHeaders);
@@ -126,9 +122,8 @@ Future<int> checkVersionNumber(BuildContext context, String version) async {
     return -1;
   } else {
     try {
-      var min = int.parse(minVersion);
-      var current = int.parse(version);
-      print((min <= current).toString());
+      int min = int.parse(minVersion);
+      int current = int.parse(version);
 
       if (min <= current) {
         return 1;
@@ -153,9 +148,6 @@ Future getUserInfo(doubleName) {
 }
 
 Future<http.Response> finishRegistration(String doubleName, String email, String sid, String publicKey) async {
-
-  logger.log(doubleName + ' ' + sid + ' ' + email + ' ' + publicKey);
-
   return http.post('$threeBotApiUrl/mobileregistration', body: json.encode({
     'doubleName' : doubleName+'.3bot',
     'sid' : sid,
@@ -166,7 +158,6 @@ Future<http.Response> finishRegistration(String doubleName, String email, String
 }
 
 Future sendRegisterSign(String doubleName) {
-  print("SIGNING $doubleName");
   return http.post('$threeBotApiUrl/signRegister',
       body: json.encode({
         'doubleName': doubleName,
@@ -176,9 +167,4 @@ Future sendRegisterSign(String doubleName) {
 
 Future<http.Response> getShowApps() async {
     return http.get('$threeBotApiUrl/showapps', headers: requestHeaders);
-  // try {
-  //   return (await http.get('$threeBotApiUrl/showapps', headers: requestHeaders)).body == "Tue";
-  // } on SocketException catch (error) {
-  //   logger.log("Can't connect to server: " + error.toString());
-  // }
 }

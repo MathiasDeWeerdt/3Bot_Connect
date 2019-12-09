@@ -2,12 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threebotlogin/services/cryptoService.dart';
-
-import 'package:threebotlogin/widgets/CustomDialog.dart';
 
 import '3botService.dart';
 import 'cryptoService.dart';
@@ -130,12 +127,10 @@ Future<String> getSignedEmailIdentifier() async {
 }
 
 Future<Map<String, Object>> getKeys(String appId, String doubleName) async {
-  print("##################### Getkeys #############################");
   return await generateDerivedKeypair(appId, doubleName);
 }
 
 Future<String> getDerivedSeed(String appId) async {
-  print("Getting derivedKey");
   return await generateDerivedSeed(appId);
 }
 
@@ -191,7 +186,6 @@ Future<bool> clearData() async {
   }
 
   if (response != null && response.statusCode == 200) {
-    print("Removing account");
     prefs.clear();
     return true;
   } else {

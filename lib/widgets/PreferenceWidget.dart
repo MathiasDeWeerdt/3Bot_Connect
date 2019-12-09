@@ -9,7 +9,8 @@ import 'package:threebotlogin/widgets/PinField.dart';
 
 class PreferenceWidget extends StatefulWidget {
   final Function(bool) showPreference;
-  PreferenceWidget(this.showPreference, {Key key})
+  final Function routeToHome;
+  PreferenceWidget(this.showPreference, this.routeToHome, {Key key})
       : super(key: key);
   @override
   _PreferenceWidgetState createState() => _PreferenceWidgetState();
@@ -23,7 +24,6 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
   bool showAdvancedOptions = false;
   Icon showAdvancedOptionsIcon = Icon(Icons.keyboard_arrow_down);
   String emailAdress = '';
-  final _prefScaffold = GlobalKey<ScaffoldState>();
   BuildContext preferenceContext;
   bool biometricsCheck = false;
   bool finger = false;
@@ -297,6 +297,7 @@ class _PreferenceWidgetState extends State<PreferenceWidget> {
                 );
 
                 await Navigator.pushNamed(preferenceContext, '/');
+                widget.routeToHome();
               } else {
                 showDialog(
                     context: preferenceContext,

@@ -79,11 +79,7 @@ packages:
       name: firebase_messaging
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
     version: "6.0.3"
-=======
-    version: "6.0.2"
->>>>>>> v1.4
   flutter:
     dependency: "direct main"
     description: flutter
